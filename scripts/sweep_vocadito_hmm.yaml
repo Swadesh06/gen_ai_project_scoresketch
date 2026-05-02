@@ -1,0 +1,38 @@
+program: scripts/sweep_vocadito_hmm.py
+method: bayes
+metric:
+  name: mean_f1
+  goal: maximize
+parameters:
+  p_sustain:
+    distribution: uniform
+    min: 0.70
+    max: 0.97
+  p_end:
+    distribution: uniform
+    min: 0.02
+    max: 0.20
+  p_start:
+    distribution: uniform
+    min: 0.02
+    max: 0.30
+  sigma_voicing:
+    distribution: uniform
+    min: 0.15
+    max: 0.60
+  sigma_midi:
+    distribution: uniform
+    min: 0.20
+    max: 1.00
+  interval_decay:
+    distribution: uniform
+    min: 0.30
+    max: 0.80
+  midi_lo:
+    value: 36
+  midi_hi:
+    value: 96
+  vocadito_dir:
+    value: ~/datasets/vocadito
+  annotator:
+    value: A1
