@@ -5,7 +5,7 @@ from typing import Literal
 
 InputKind = Literal["humming", "instrument", "piano", "guitar"]
 Mode = Literal["soft", "medium", "hard"]
-PitchModel = Literal["pesto", "crepe"]
+PitchModel = Literal["pesto", "crepe", "pesto_crepevoicing"]
 Transcriber = Literal["bytedance_piano", "basic_pitch"]
 NoteSegmenter = Literal["voicing", "hmm"]
 

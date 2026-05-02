@@ -11,6 +11,7 @@ from humscribe.instrument.basic_pitch import transcribe_basic_pitch
 from humscribe.instrument.piano import transcribe_piano
 from humscribe.notes import NoteEvent
 from humscribe.pitch.crepe_track import track_pitch_crepe
+from humscribe.pitch.ensemble import track_pitch_hybrid_voicing
 from humscribe.pitch.pesto_track import track_pitch_pesto
 from humscribe.pitch.voicing import segment_pitch_to_notes
 from humscribe.rhythm.viterbi_quantize import viterbi_quantize_rhythm
@@ -81,6 +82,8 @@ def _branch_notes(audio_path: str, audio: np.ndarray, sr: int, cfg: PipelineConf
             t, hz, vc = track_pitch_pesto(audio, sr)
         elif cfg.pitch_model == "crepe":
             t, hz, vc = track_pitch_crepe(audio, sr)
+        elif cfg.pitch_model == "pesto_crepevoicing":
+            t, hz, vc = track_pitch_hybrid_voicing(audio, sr)
         else:
             raise ValueError(f"unknown pitch_model: {cfg.pitch_model!r}")
         return segment_pitch_to_notes(t, hz, vc, cfg.mode_config)
