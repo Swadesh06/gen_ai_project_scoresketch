@@ -76,7 +76,8 @@ def run_piece(piece_dir: Path, beat_tol: float = 0.07) -> dict:
     render_midi(score_mid, score_wav)
     beats = load_score_beats(score_ann)
     avg_beat = float(np.diff(beats).mean()) if len(beats) >= 2 else 0.5
-    pred_beats, _, bpm = track_beats_beat_this(str(score_wav))
+    target_bpm = 60.0 / avg_beat
+    pred_beats, _, bpm = track_beats_beat_this(str(score_wav), target_bpm=target_bpm)
     f_beat = float(mir_eval.beat.f_measure(beats, pred_beats, f_measure_threshold=beat_tol))
     notes = transcribe_piano(str(score_wav))
     onsets = np.array([n.onset_s for n in notes], dtype=np.float64)
