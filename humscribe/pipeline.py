@@ -14,6 +14,7 @@ from humscribe.pitch.crepe_track import track_pitch_crepe
 from humscribe.pitch.pesto_track import track_pitch_pesto
 from humscribe.pitch.voicing import segment_pitch_to_notes
 from humscribe.rhythm.viterbi_quantize import viterbi_quantize_rhythm
+from humscribe.rhythm.voice_tracking import quantize_with_voice_tracking
 from humscribe.score import build_stream, render_svg, write_musicxml
 
 
@@ -42,11 +43,16 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
     onsets = np.array([n.onset_s for n in notes], dtype=np.float64)
     offsets = np.array([n.offset_s for n in notes], dtype=np.float64)
     if len(onsets) > 0 and len(beats) >= 2:
-        q_on, q_off = viterbi_quantize_rhythm(
-            onsets, offsets, beats,
-            tatums_per_beat=cfg.tatums_per_beat,
-            offgrid_penalty=cfg.mode_config.dp_offgrid_penalty,
-        )
+        if not cfg.is_humming():
+            q_on, q_off = quantize_with_voice_tracking(
+                notes, beats, tatums_per_beat=cfg.tatums_per_beat,
+            )
+        else:
+            q_on, q_off = viterbi_quantize_rhythm(
+                onsets, offsets, beats,
+                tatums_per_beat=cfg.tatums_per_beat,
+                offgrid_penalty=cfg.mode_config.dp_offgrid_penalty,
+            )
     else:
         q_on = np.zeros(len(onsets), dtype=np.int64)
         q_off = np.zeros(len(onsets), dtype=np.int64)
