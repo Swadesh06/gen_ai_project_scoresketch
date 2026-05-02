@@ -1,0 +1,156 @@
+{
+  "summary": {
+    "total_clips": 20,
+    "clips_with_notes": 20,
+    "pct_nonempty": 1.0,
+    "gate_pass": true
+  },
+  "rows": [
+    {
+      "mode": "soft",
+      "track_id": "q1",
+      "n_notes": 43,
+      "bpm": 100.00000000000006,
+      "svg_bytes": 4679
+    },
+    {
+      "mode": "soft",
+      "track_id": "q10",
+      "n_notes": 39,
+      "bpm": 85.71428571428577,
+      "svg_bytes": 4279
+    },
+    {
+      "mode": "soft",
+      "track_id": "q100",
+      "n_notes": 46,
+      "bpm": 125.0,
+      "svg_bytes": 5022
+    },
+    {
+      "mode": "soft",
+      "track_id": "q101",
+      "n_notes": 83,
+      "bpm": 62.50000000000006,
+      "svg_bytes": 8775
+    },
+    {
+      "mode": "soft",
+      "track_id": "q102",
+      "n_notes": 107,
+      "bpm": 48.00000000000005,
+      "svg_bytes": 11236
+    },
+    {
+      "mode": "soft",
+      "track_id": "q103",
+      "n_notes": 47,
+      "bpm": 136.36363636363623,
+      "svg_bytes": 5137
+    },
+    {
+      "mode": "soft",
+      "track_id": "q104",
+      "n_notes": 48,
+      "bpm": 103.44827586206927,
+      "svg_bytes": 5240
+    },
+    {
+      "mode": "soft",
+      "track_id": "q105",
+      "n_notes": 89,
+      "bpm": 130.43478260869566,
+      "svg_bytes": 9433
+    },
+    {
+      "mode": "soft",
+      "track_id": "q106",
+      "n_notes": 81,
+      "bpm": 78.94736842105266,
+      "svg_bytes": 8621
+    },
+    {
+      "mode": "soft",
+      "track_id": "q107",
+      "n_notes": 127,
+      "bpm": 100.00000000000006,
+      "svg_bytes": 13348
+    },
+    {
+      "mode": "medium",
+      "track_id": "q1",
+      "n_notes": 27,
+      "bpm": 100.00000000000006,
+      "svg_bytes": 3059
+    },
+    {
+      "mode": "medium",
+      "track_id": "q10",
+      "n_notes": 29,
+      "bpm": 85.71428571428577,
+      "svg_bytes": 3270
+    },
+    {
+      "mode": "medium",
+      "track_id": "q100",
+      "n_notes": 24,
+      "bpm": 125.0,
+      "svg_bytes": 2765
+    },
+    {
+      "mode": "medium",
+      "track_id": "q101",
+      "n_notes": 56,
+      "bpm": 62.50000000000006,
+      "svg_bytes": 6035
+    },
+    {
+      "mode": "medium",
+      "track_id": "q102",
+      "n_notes": 67,
+      "bpm": 48.00000000000005,
+      "svg_bytes": 7172
+    },
+    {
+      "mode": "medium",
+      "track_id": "q103",
+      "n_notes": 29,
+      "bpm": 136.36363636363623,
+      "svg_bytes": 3281
+    },
+    {
+      "mode": "medium",
+      "track_id": "q104",
+      "n_notes": 31,
+      "bpm": 103.44827586206927,
+      "svg_bytes": 3506
+    },
+    {
+      "mode": "medium",
+      "track_id": "q105",
+      "n_notes": 79,
+      "bpm": 130.43478260869566,
+      "svg_bytes": 8408
+    },
+    {
+      "mode": "medium",
+      "track_id": "q106",
+      "n_notes": 55,
+      "bpm": 78.94736842105266,
+      "svg_bytes": 5967
+    },
+    {
+      "mode": "medium",
+      "track_id": "q107",
+      "n_notes": 71,
+      "bpm": 100.00000000000006,
+      "svg_bytes": 7589
+    }
+  ],
+  "config": {
+    "gate": "mtg_qbh_visual",
+    "modes": "soft,medium",
+    "n_clips": 10,
+    "git_sha": "1aa1500"
+  }
+}

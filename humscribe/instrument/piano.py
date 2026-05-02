@@ -1,7 +1,7 @@
 """ByteDance piano transcription wrapper. Returns list[NoteEvent].
 
-First call downloads ~330 MB Zenodo checkpoint to ~/.cache; the model itself
-runs on CUDA when available. CPU inference works but is slow.
+First call downloads ~170 MB Zenodo checkpoint to ~/piano_transcription_inference_data/.
+Defaults to CUDA when available; CPU is the fallback.
 """
 from __future__ import annotations
 from pathlib import Path
@@ -9,6 +9,7 @@ import tempfile
 
 import librosa
 import numpy as np
+import torch
 
 from piano_transcription_inference import PianoTranscription, sample_rate as PT_SR
 
@@ -18,13 +19,18 @@ from humscribe.notes import NoteEvent
 _CACHED: dict[str, "PianoTranscription"] = {}
 
 
-def _get_model(device: str = "cpu") -> "PianoTranscription":
-    if device not in _CACHED:
-        _CACHED[device] = PianoTranscription(device=device)
-    return _CACHED[device]
+def _autodevice() -> str:
+    return "cuda" if torch.cuda.is_available() else "cpu"
 
 
-def transcribe_piano(audio_path: str, device: str = "cpu") -> list[NoteEvent]:
+def _get_model(device: str | None = None) -> "PianoTranscription":
+    dev = device or _autodevice()
+    if dev not in _CACHED:
+        _CACHED[dev] = PianoTranscription(device=dev)
+    return _CACHED[dev]
+
+
+def transcribe_piano(audio_path: str, device: str | None = None) -> list[NoteEvent]:
     audio, _ = librosa.load(str(audio_path), sr=PT_SR, mono=True)
     audio = audio.astype(np.float32)
     model = _get_model(device=device)
