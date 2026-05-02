@@ -38,6 +38,7 @@ from humscribe.instrument.piano import transcribe_piano
 from humscribe.rhythm.viterbi_quantize import (
     adaptive_tatums_per_beat, viterbi_quantize_rhythm,
 )
+from humscribe.rhythm.voice_tracking import quantize_with_voice_tracking
 
 DEFAULT_SF2 = "/home/swadesh/miniconda3/envs/humscribe/lib/python3.11/site-packages/pretty_midi/TimGM6mb.sf2"
 ALLOWED_QL = np.array([0.0625, 0.125, 0.1875, 0.25, 0.375, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0])
@@ -89,7 +90,7 @@ def git_sha() -> str:
 
 
 def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
-         stage5_threshold: float, tatums_per_beat: int) -> None:
+         stage5_threshold: float, tatums_per_beat: int, use_voice_tracking: bool) -> None:
     asap = Path(asap_dir).expanduser()
     ann_all = json.loads((asap / "asap_annotations.json").read_text())
     perf_keys = [k for k in ann_all if piece_pattern in k]
@@ -138,9 +139,12 @@ def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
     notes = transcribe_piano(str(score_wav))
     onsets = np.array([n.onset_s for n in notes], dtype=np.float64)
     offsets = np.array([n.offset_s for n in notes], dtype=np.float64)
-    print(f"  ByteDance notes: {len(notes)}  on score-rendered audio  TPB={chosen_tpb}")
+    print(f"  ByteDance notes: {len(notes)}  on score-rendered audio  TPB={chosen_tpb}  voice_tracking={use_voice_tracking}")
 
-    q_on, q_off = viterbi_quantize_rhythm(onsets, offsets, score_beats, tatums_per_beat=chosen_tpb)
+    if use_voice_tracking:
+        q_on, q_off = quantize_with_voice_tracking(notes, score_beats, tatums_per_beat=chosen_tpb)
+    else:
+        q_on, q_off = viterbi_quantize_rhythm(onsets, offsets, score_beats, tatums_per_beat=chosen_tpb)
     pred_durs = (q_off - q_on) / float(chosen_tpb)
 
     score_m21 = music21.converter.parse(str(score_xml))
@@ -214,6 +218,8 @@ if __name__ == "__main__":
                     help="aligned-snapped quarterLength match floor; current DP delivers ~70%")
     ap.add_argument("--tatums-per-beat", type=int, default=0,
                     help="0 = adaptive (TPB=24 if BPM<70 else 12); set >0 to force")
+    ap.add_argument("--voice-tracking", action="store_true",
+                    help="enable per-voice DP (B15)")
     args = ap.parse_args()
     main(args.asap_dir, args.piece_pattern, args.beat_tol, args.ql_tol,
-         args.stage5_threshold, args.tatums_per_beat)
+         args.stage5_threshold, args.tatums_per_beat, args.voice_tracking)
