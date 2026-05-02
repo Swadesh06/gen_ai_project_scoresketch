@@ -1,0 +1,63 @@
+{
+  "rows": [
+    {
+      "piece": "Bach/Fugue/bwv_846",
+      "f_beat": 0.8451882845188285,
+      "stage5_raw": 0.8237704918032787,
+      "stage5_snap": 0.825136612021858,
+      "n_pred_notes": 736,
+      "n_gt_notes": 755,
+      "n_matched": 732,
+      "bpm": 122.44897959183713
+    },
+    {
+      "piece": "Bach/Fugue/bwv_848",
+      "f_beat": 0.9692671394799054,
+      "stage5_raw": 0.8696264975334743,
+      "stage5_snap": 0.8745595489781536,
+      "n_pred_notes": 1427,
+      "n_gt_notes": 1429,
+      "n_matched": 1419,
+      "bpm": 120.0
+    },
+    {
+      "piece": "Bach/Fugue/bwv_854",
+      "f_beat": 0.9439252336448598,
+      "stage5_raw": 0.8916323731138546,
+      "stage5_snap": 0.8943758573388203,
+      "n_pred_notes": 740,
+      "n_gt_notes": 732,
+      "n_matched": 729,
+      "bpm": 120.0
+    },
+    {
+      "piece": "Bach/Fugue/bwv_856",
+      "f_beat": 0.7784090909090909,
+      "stage5_raw": 0.7916102841677943,
+      "stage5_snap": 0.8010825439783491,
+      "n_pred_notes": 749,
+      "n_gt_notes": 798,
+      "n_matched": 739,
+      "bpm": 230.76923076923097
+    },
+    {
+      "piece": "Bach/Fugue/bwv_857",
+      "f_beat": 0.948024948024948,
+      "stage5_raw": 0.8249619482496194,
+      "stage5_snap": 0.8287671232876712,
+      "n_pred_notes": 1327,
+      "n_gt_notes": 1331,
+      "n_matched": 1314,
+      "bpm": 120.0
+    }
+  ],
+  "summary": {
+    "n": 5,
+    "mean_f_beat": 0.8969629393155264,
+    "mean_stage5_raw": 0.8403203189736042,
+    "mean_stage5_snap": 0.8447843371209703,
+    "median_stage5_snap": 0.8287671232876712,
+    "stage5_pct_pass_85": 0.4,
+    "stage5_pct_pass_90": 0.0
+  }
+}
