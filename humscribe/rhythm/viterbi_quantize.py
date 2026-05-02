@@ -1,11 +1,19 @@
 """Cemgil-Kappen DP rhythm quantization.
 
-Onsets and offsets are mapped to a tatum grid with `tatums_per_beat` slots per
-beat (default 12: covers eighth, eighth-triplet, sixteenth + dotted variants).
-Cost = Gaussian onset deviation + transition penalty discouraging off-grid drift.
+Onsets are quantized via Viterbi DP (Gaussian observation cost + off-grid
+transition penalty). Offsets are quantized by snapping the observed duration to
+the nearest *musically allowed* tatum count — which dramatically reduces the
+"7/12 quarter" type artefacts that pure rounding produces (Phase B Exp B1).
 """
 from __future__ import annotations
 import numpy as np
+
+# Allowed durations in tatums at TPB=12. Each is the integer-rounded count for a
+# common rhythmic value; we keep both 1 and 2 to approximate 32nd notes (which
+# exact-represent at TPB=24+).
+DEFAULT_ALLOWED_DURATIONS_TATUMS_TPB12 = np.array(
+    [1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 48], dtype=np.int64,
+)
 
 
 def viterbi_quantize_rhythm(
@@ -16,6 +24,7 @@ def viterbi_quantize_rhythm(
     sigma_tatums: float = 1.0,
     offgrid_penalty: float = 1.0,
     search_window_tatums: int = 6,
+    allowed_durations_tatums: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     onsets = np.asarray(onsets, dtype=np.float64)
     offsets = np.asarray(offsets, dtype=np.float64)
@@ -73,7 +82,9 @@ def viterbi_quantize_rhythm(
         q_on[i - 1] = int(cands[i - 1][prev_idx])
         cur_idx = prev_idx
 
-    q_off = _quantize_offsets(off_tatum_f, q_on)
+    if allowed_durations_tatums is None and tatums_per_beat == 12:
+        allowed_durations_tatums = DEFAULT_ALLOWED_DURATIONS_TATUMS_TPB12
+    q_off = _quantize_offsets(off_tatum_f, q_on, allowed_durations_tatums)
     return q_on, q_off
 
 
@@ -114,9 +125,23 @@ def _gaussian_costs(observed: float, candidates: np.ndarray, sigma: float) -> np
     return 0.5 * diff * diff
 
 
-def _quantize_offsets(off_tatum_f: np.ndarray, q_on: np.ndarray) -> np.ndarray:
+def _quantize_offsets(
+    off_tatum_f: np.ndarray,
+    q_on: np.ndarray,
+    allowed_durations_tatums: np.ndarray | None,
+) -> np.ndarray:
     q_off = np.empty(len(off_tatum_f), dtype=np.int64)
+    if allowed_durations_tatums is None:
+        for i, v in enumerate(off_tatum_f):
+            rounded = int(round(float(v)))
+            q_off[i] = max(rounded, q_on[i] + 1)
+        return q_off
+    allowed = np.sort(np.asarray(allowed_durations_tatums, dtype=np.int64))
     for i, v in enumerate(off_tatum_f):
-        rounded = int(round(float(v)))
-        q_off[i] = max(rounded, q_on[i] + 1)
+        observed_dur = float(v) - float(q_on[i])
+        if observed_dur <= 0:
+            q_off[i] = q_on[i] + int(allowed[0])
+            continue
+        idx = int(np.argmin(np.abs(allowed.astype(np.float64) - observed_dur)))
+        q_off[i] = q_on[i] + int(allowed[idx])
     return q_off

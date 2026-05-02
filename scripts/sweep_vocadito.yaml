@@ -1,0 +1,29 @@
+program: scripts/sweep_vocadito_humming.py
+method: bayes
+metric:
+  name: mean_f1
+  goal: maximize
+parameters:
+  voicing_threshold:
+    distribution: uniform
+    min: 0.20
+    max: 0.65
+  min_note_seconds:
+    distribution: uniform
+    min: 0.04
+    max: 0.16
+  pitch_smooth_window:
+    values: [3, 5, 7, 9, 11]
+  onset_merge_seconds:
+    distribution: uniform
+    min: 0.02
+    max: 0.10
+  vocadito_dir:
+    value: ~/datasets/vocadito
+  annotator:
+    value: A1
+early_terminate:
+  type: hyperband
+  s: 2
+  eta: 3
+  min_iter: 1
