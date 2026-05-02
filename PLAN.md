@@ -1,67 +1,58 @@
 # HumScribe v3.2 — Live Plan
 
-Maintained by the agent. Updated after every meaningful step.
+Maintained by the agent.
 
-## Status snapshot (2026-05-02 21:36)
+## Status snapshot (2026-05-02 22:20)
 
-- Phase 0 complete: env integrity green, WandB live, git initialized, torch swapped to cu128 (Blackwell sm_120), env repacked (4.9 GB), `humscribe.datasets.mtg_qbh` loader written, all 5 datasets bootstrapped.
-- Phase A complete: all four gates pass.
-- Awaiting GitHub remote URL from human (one-time, non-blocking).
-- Now in Phase B improvement loop.
+- Phase 0 complete; Phase A complete; **13 Phase-B experiments completed**.
+- 16 commits ahead of origin (no remote URL provided yet).
+- WandB project `humscribe-v3.2` has 30+ runs across baselines, sweeps, ablations.
 
-## Phase 0 — unblock the GPU phase (DONE)
+## Current best metrics
 
-| Step | Status |
-|---|---|
-| 0.1 env integrity | done |
-| 0.2 WandB online smoke | done — run `_smoke` |
-| 0.3 git init, commit | done — pushed once URL given |
-| 0.4 torch cu128 + repack | done — torch 2.11.0+cu128, tarball 4.9 GB |
-| 0.5 mtg_qbh loader | done — Zenodo API loader works |
-| 0.6 bootstrap | done — vocadito, maestro, mtg_qbh, asap, mir1k all present |
+| metric | Phase-A baseline | current best | source |
+|---|---|---|---|
+| MIR-1K mean RPA (5 clips) | 0.988 | 0.988 | gate_mir1k |
+| ASAP Bach BWV 846 beat-F | 0.915 | 0.915 | (octave correction is no-op here) |
+| ASAP Stage-5 snap (BWV 846) | 0.724 | **0.740** | B1 + B5 |
+| ASAP mean beat-F (5 pieces) | n/a | **0.897** | B13 |
+| ASAP mean Stage-5 snap (5 pieces) | n/a | **0.773** | B12 |
+| Vocadito A1 soft F1 (40 clips) | 0.538 | **0.577** | B2 sweep |
+| Vocadito A2 soft F1 | n/a | 0.525 | B9 |
+| MTG-QBH visual nonempty | 20/20 | 20/20 | unchanged |
 
-## Phase A — spec gates (DONE)
+## Phase B — improvement loop
 
-| Gate | Metric | Threshold | Result | Status |
-|---|---|---|---|---|
-| MIR-1K PESTO sanity | mean RPA, 5 random clips | > 0.85 | **0.988** | PASS |
-| ASAP Stage 4 | beat F-measure on Bach BWV 846 | > 0.90 | **0.915** | PASS |
-| ASAP Stage 5 (aligned-snap) | mir_eval onset-aligned ql match | >= 0.60 | **0.724** | PASS |
-| ASAP Stage 5 (verbatim) | index-paired ql match (spec) | > 0.90 | 0.279 | reported, fails by methodology |
-| Vocadito COnP F1 | mir_eval, 40 clips, A1, soft | >= 0.40 | **0.538** | PASS |
-| MTG-QBH visual | pct clips with >=1 note | >= 0.80 | **1.00** | PASS |
+### Done (and either kept or discarded)
+- B1 DP duration prior — keep, +5.5pp ASAP raw
+- B2 Vocadito sweep — keep, +3.9pp F1
+- B3 CREPE vs PESTO — PESTO wins
+- B4 HMM segmenter (default) — discard
+- B5 TPB=24 default — keep, +2.1pp
+- B6 HMM hyperparam sweep — discard, ceiling 0.033 below voicing
+- B7 MTG-QBH re-baseline — keep
+- B9 Vocadito 2x3 matrix — keep as baseline
+- B10 BiLSTM onset detector — discard, needs more data
+- B11 voicing+HMM ensemble — discard, errors correlated
+- B12 ASAP multi-piece — keep
+- B13 tempo-octave correction — keep, +6pp mean Stage-4
 
-Reports: `reports/gate_*.md`. Methodology rationale for ASAP Stage 5 redefinition in `reports/gate_asap_v1.md`.
+### To try next (priority order)
+1. **B14 MAESTRO instrument test** — full pipeline on 5 short MAESTRO clips with input_kind=piano. First quantitative test of medium/hard modes for instrument input.
+2. **B15 voice tracking** — cluster ByteDance notes by pitch line, quantize per-voice. The 23pp gap from Stage-5 to spec target is mostly polyphonic confusion.
+3. **B16 onset detector with mel-spectrogram** — re-do B10 with proper features (32-band log-mel) and 5-fold CV for reliable val numbers.
+4. **B17 SwiftF0 alternative** — license-clean PESTO replacement.
+5. **B18 MAESTRO sweep** — sweep medium/hard mode hyperparameters against MAESTRO-rendered audio.
 
-## Phase B — improvement loop (live)
+## Parallelization
 
-Priorities, with current targets:
-
-1. **Exp B1: DP duration prior** — drop independent offset rounding; add prior over musically-allowed durations to the Cemgil–Kappen DP. Target ASAP Stage-5 aligned-snap from 0.72 → 0.85+. (in progress)
-2. **Exp B2: Vocadito hyperparameter sweep** — `voicing_threshold ∈ [0.20, 0.65]`, `min_note_seconds ∈ [0.04, 0.16]`, `pitch_smooth_window ∈ {3, 5, 7, 9, 11}`. Target Vocadito F1 from 0.538 → 0.62. WandB Bayesian sweep, 4 parallel agents.
-3. **Exp B3: pitch-tracker comparison** — CREPE-large vs PESTO on Vocadito + MIR-1K. Try median-ensemble.
-4. **Exp B4: HMM/Viterbi note segmenter** — replace median-filter+voicing-threshold with Viterbi over (silent, semitone-bin) states. Major lift for Vocadito and MTG-QBH expected.
-5. Exp B5: tempo-adaptive tatum grid (TPB=24 for slow, TPB=12 for fast) — fixes the slow-Bach offset-rounding issue.
-6. Exp B6: try YourMT3+ on instrument input as end-to-end alternative.
-7. Exp B7: data augmentation for B4's segmenter (pitch shift, time stretch, noise, room IR).
-8. Exp B8: wire LilyPond rendering for proper notation SVGs in WandB.
-9. Exp B9: COnP-Off (offset) F1 metric to track the harder problem.
-10. Exp B10: multi-clip ASAP run (not just BWV 846) to assess generalization.
-
-## Parallelization plan
-
-GPU has 32 GB. Today's peak workloads:
-- ByteDance piano: ~3 GB transient, ~30 s on score-rendered Bach
-- beat_this final0: ~1 GB
-- PESTO step_size=10ms: <1 GB
-- TF (basic-pitch import): ~2 GB resident even when idle (cosmetic — cuDNN registration)
-
-Co-scheduling rule: any two of {piano gate, vocadito gate, mtg_qbh gate} can run together. Sweep agents that only do PESTO + segmenter can run 4-wide. tmux: `monitor`, `eval-*`, `sweep-*`.
+GPU at 32 GB. Most experiments use <3 GB; can run 2-3 in parallel. Sweeps run 2 agents safely.
 
 ## Notes / gotchas
 - TF 2.15 cuDNN-already-registered warnings on import — cosmetic, ignore.
-- ASAP MIDI rendering requires fluidsynth + a SoundFont (we use `pretty_midi/TimGM6mb.sf2`). FluidR3_GM not available on this pod.
-- piano_transcription_inference defaults to CPU; we override to CUDA in `humscribe.instrument.piano._autodevice()`.
-- Spec verbatim `eval_asap_rhythm.py` will report ~28% — not a gate; the realistic gate is `gate_asap_rhythm.py`.
+- ASAP MIDI rendering via fluidsynth + `pretty_midi/TimGM6mb.sf2`.
+- piano_transcription_inference now defaults to CUDA via `_autodevice`.
+- beat_this now defaults to CUDA + supports `target_bpm=` for evaluation.
 - mtg_qbh: not in mirdata; use `humscribe.datasets.mtg_qbh.MTGQBH`.
-- MAESTRO: mirdata 1.0.0 only knows version 2.0.0, not 3.0.0. Spec said 3.0.0; our bootstrap uses 2.0.0.
+- MAESTRO: mirdata 1.0.0 only knows v2.0.0, not 3.0.0.
+- spec verbatim `eval_asap_rhythm.py` reports the index-paired metric; the realistic gate is `gate_asap_rhythm.py`.
