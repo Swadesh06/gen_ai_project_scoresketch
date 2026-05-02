@@ -1,0 +1,44 @@
+# secrets
+.env
+*.token
+*.tok
+*token*
+*key*
+*secret*
+.netrc
+
+# python build / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+.eggs/
+*.egg
+
+# notebooks
+.ipynb_checkpoints/
+
+# experiment outputs
+checkpoints/
+logs/
+outputs/
+wandb/
+**/wandb/
+
+# data — never in repo
+~/datasets/
+datasets/
+
+# env tarballs
+*.tar.gz
+
+# editor / OS junk
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# starter prompt — operator-only artifact, never commit
+STARTER_PROMPT.md
