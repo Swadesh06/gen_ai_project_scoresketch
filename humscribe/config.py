@@ -7,6 +7,7 @@ InputKind = Literal["humming", "instrument", "piano", "guitar"]
 Mode = Literal["soft", "medium", "hard"]
 PitchModel = Literal["pesto", "crepe"]
 Transcriber = Literal["bytedance_piano", "basic_pitch"]
+NoteSegmenter = Literal["voicing", "hmm"]
 
 
 @dataclass
@@ -64,6 +65,7 @@ class PipelineConfig:
     mode: Mode = "soft"
     pitch_model: PitchModel = "pesto"
     transcriber: Transcriber | None = None
+    note_segmenter: NoteSegmenter = "voicing"
     tatums_per_beat: int = 12
     sample_rate: int = 22050
     render_svg: bool = True

@@ -16,11 +16,12 @@ def track_pitch_crepe(
     if audio.ndim == 2:
         audio = audio.mean(axis=1)
     arr = audio.astype(np.float32, copy=False)
-    x = torch.from_numpy(arr).unsqueeze(0)
     target_sr = 16000
     if sr != target_sr:
-        x = torchcrepe.resample(x, sr, target_sr)
+        import librosa
+        arr = librosa.resample(arr, orig_sr=sr, target_sr=target_sr).astype(np.float32)
         sr = target_sr
+    x = torch.from_numpy(arr).unsqueeze(0)
     hop = max(int(round(hop_ms * 1e-3 * sr)), 1)
     pitch, periodicity = torchcrepe.predict(
         x, sr, hop_length=hop, fmin=fmin, fmax=fmax, model=model,

@@ -20,6 +20,7 @@ import wandb
 from humscribe.audio_io import load_audio
 from humscribe.config import PipelineConfig
 from humscribe.pitch.crepe_track import track_pitch_crepe
+from humscribe.pitch.hmm_segment import segment_pitch_to_notes_hmm
 from humscribe.pitch.pesto_track import track_pitch_pesto
 from humscribe.pitch.voicing import segment_pitch_to_notes
 from humscribe.notes import NoteEvent, midi_to_hz
@@ -34,8 +35,12 @@ def load_vocadito_notes(csv_path: Path) -> tuple[np.ndarray, np.ndarray]:
     return intervals, pitch_hz
 
 
-def predict_notes(audio_path: str, mode: str, pitch_model: str = "pesto") -> list[NoteEvent]:
-    cfg = PipelineConfig(input_kind="humming", mode=mode, pitch_model=pitch_model)
+def predict_notes(audio_path: str, mode: str, pitch_model: str = "pesto",
+                  segmenter: str = "voicing") -> list[NoteEvent]:
+    cfg = PipelineConfig(
+        input_kind="humming", mode=mode,
+        pitch_model=pitch_model, note_segmenter=segmenter,
+    )
     audio, sr = load_audio(audio_path, target_sr=cfg.sample_rate)
     if pitch_model == "pesto":
         t, hz, vc = track_pitch_pesto(audio, sr)
@@ -43,7 +48,12 @@ def predict_notes(audio_path: str, mode: str, pitch_model: str = "pesto") -> lis
         t, hz, vc = track_pitch_crepe(audio, sr)
     else:
         raise ValueError(f"unknown pitch_model: {pitch_model!r}")
-    notes = segment_pitch_to_notes(t, hz, vc, cfg.mode_config)
+    if segmenter == "voicing":
+        notes = segment_pitch_to_notes(t, hz, vc, cfg.mode_config)
+    elif segmenter == "hmm":
+        notes = segment_pitch_to_notes_hmm(t, hz, vc, cfg.mode_config)
+    else:
+        raise ValueError(f"unknown segmenter: {segmenter!r}")
     return [n for n in notes if (n.offset_s - n.onset_s) >= cfg.mode_config.min_note_seconds]
 
 
@@ -72,7 +82,7 @@ def git_sha() -> str:
 
 def main(vocadito_dir: str, mode: str, annotator: str, n_clips: int,
          onset_tol: float, pitch_tol_cents: float, gate_threshold: float,
-         pitch_model: str) -> None:
+         pitch_model: str, segmenter: str) -> None:
     root = Path(vocadito_dir).expanduser()
     audio_dir = root / "Audio"
     notes_dir = root / "Annotations" / "Notes"
@@ -93,12 +103,13 @@ def main(vocadito_dir: str, mode: str, annotator: str, n_clips: int,
         "gate_threshold_f1": gate_threshold,
         "git_sha": git_sha(),
         "pitch_model": pitch_model,
+        "segmenter": segmenter,
     }
     run = wandb.init(
         project="humscribe-v3.2",
-        name=f"gate_vocadito_{mode}_{pitch_model}_{annotator}_n{len(note_files)}",
+        name=f"gate_vocadito_{mode}_{pitch_model}_{segmenter}_{annotator}_n{len(note_files)}",
         config=cfg,
-        tags=["gate", "vocadito", "conp", f"mode-{mode}", f"pitch-{pitch_model}"],
+        tags=["gate", "vocadito", "conp", f"mode-{mode}", f"pitch-{pitch_model}", f"seg-{segmenter}"],
         dir="logs/wandb",
     )
 
@@ -110,7 +121,7 @@ def main(vocadito_dir: str, mode: str, annotator: str, n_clips: int,
             print(f"skip {clip_id}: missing audio")
             continue
         gt_iv, gt_hz = load_vocadito_notes(nf)
-        notes = predict_notes(str(wav), mode, pitch_model)
+        notes = predict_notes(str(wav), mode, pitch_model, segmenter)
         scores = score_clip(notes, gt_iv, gt_hz, onset_tol, pitch_tol_cents)
         scores["clip"] = clip_id
         per_clip.append(scores)
@@ -133,7 +144,7 @@ def main(vocadito_dir: str, mode: str, annotator: str, n_clips: int,
     wandb.log(summary)
     wandb.summary.update(summary)
 
-    out = Path(f"reports/_gate_vocadito_{mode}_{pitch_model}_{annotator}.json")
+    out = Path(f"reports/_gate_vocadito_{mode}_{pitch_model}_{segmenter}_{annotator}.json")
     out.parent.mkdir(exist_ok=True)
     out.write_text(json.dumps({"summary": summary, "per_clip": per_clip, "config": cfg}, indent=2))
     print(f"\nrun: {run.url}\njson: {out}")
@@ -151,6 +162,8 @@ if __name__ == "__main__":
     ap.add_argument("--gate-threshold", type=float, default=0.40,
                     help="F1 floor; v3.2 spec doesn't fix this — 0.40 is a 'not broken' bar")
     ap.add_argument("--pitch-model", choices=["pesto", "crepe"], default="pesto")
+    ap.add_argument("--segmenter", choices=["voicing", "hmm"], default="voicing")
     args = ap.parse_args()
     main(args.vocadito_dir, args.mode, args.annotator, args.n_clips,
-         args.onset_tol, args.pitch_tol_cents, args.gate_threshold, args.pitch_model)
+         args.onset_tol, args.pitch_tol_cents, args.gate_threshold,
+         args.pitch_model, args.segmenter)
