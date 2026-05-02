@@ -19,30 +19,32 @@ class ModeConfig:
     pitch_smooth_window: int
 
     @staticmethod
-    def for_mode(mode: Mode) -> "ModeConfig":
+    def for_mode(mode: Mode, pitch_model: "PitchModel" = "pesto") -> "ModeConfig":
+        # voicing_threshold and pitch_smooth_window depend on the pitch_model
+        # because PESTO confidence and CREPE periodicity have different scales.
+        # Defaults tuned by exp_B2/B22 (PESTO) and exp_B36/B36b (hybrid).
         if mode == "soft":
-            # Tuned by exp_B2 sweep (F1 0.538 -> 0.577) + exp_B22 extreme PSW (+2.1pp -> 0.597).
+            if pitch_model == "pesto_crepevoicing":
+                return ModeConfig(
+                    voicing_threshold=0.75, min_note_seconds=0.052,
+                    onset_merge_seconds=0.026, dp_offgrid_penalty=0.5,
+                    pitch_smooth_window=19,
+                )
             return ModeConfig(
-                voicing_threshold=0.315,
-                min_note_seconds=0.052,
-                onset_merge_seconds=0.026,
-                dp_offgrid_penalty=0.5,
+                voicing_threshold=0.315, min_note_seconds=0.052,
+                onset_merge_seconds=0.026, dp_offgrid_penalty=0.5,
                 pitch_smooth_window=15,
             )
         if mode == "medium":
             return ModeConfig(
-                voicing_threshold=0.50,
-                min_note_seconds=0.10,
-                onset_merge_seconds=0.05,
-                dp_offgrid_penalty=1.0,
+                voicing_threshold=0.50, min_note_seconds=0.10,
+                onset_merge_seconds=0.05, dp_offgrid_penalty=1.0,
                 pitch_smooth_window=5,
             )
         if mode == "hard":
             return ModeConfig(
-                voicing_threshold=0.70,
-                min_note_seconds=0.15,
-                onset_merge_seconds=0.03,
-                dp_offgrid_penalty=2.0,
+                voicing_threshold=0.70, min_note_seconds=0.15,
+                onset_merge_seconds=0.03, dp_offgrid_penalty=2.0,
                 pitch_smooth_window=3,
             )
         raise ValueError(f"unknown mode: {mode!r}")
@@ -75,7 +77,7 @@ class PipelineConfig:
     mode_config: ModeConfig = field(init=False)
 
     def __post_init__(self) -> None:
-        self.mode_config = ModeConfig.for_mode(self.mode)
+        self.mode_config = ModeConfig.for_mode(self.mode, self.pitch_model)
         if self.transcriber is None:
             self.transcriber = default_transcriber(self.input_kind)
 
