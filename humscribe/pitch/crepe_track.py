@@ -23,9 +23,11 @@ def track_pitch_crepe(
         sr = target_sr
     x = torch.from_numpy(arr).unsqueeze(0)
     hop = max(int(round(hop_ms * 1e-3 * sr)), 1)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    x = x.to(device)
     pitch, periodicity = torchcrepe.predict(
         x, sr, hop_length=hop, fmin=fmin, fmax=fmax, model=model,
-        return_periodicity=True, batch_size=512, device="cpu",
+        return_periodicity=True, batch_size=512, device=device,
     )
     hz = pitch.squeeze(0).detach().cpu().numpy().astype(np.float64)
     voicing = periodicity.squeeze(0).detach().cpu().numpy().astype(np.float64)

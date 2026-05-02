@@ -21,12 +21,13 @@ class ModeConfig:
     @staticmethod
     def for_mode(mode: Mode) -> "ModeConfig":
         if mode == "soft":
+            # Tuned by exp_B2 sweep (16 Bayesian runs; F1 0.538 -> 0.577 on Vocadito A1).
             return ModeConfig(
-                voicing_threshold=0.30,
-                min_note_seconds=0.06,
-                onset_merge_seconds=0.08,
+                voicing_threshold=0.315,
+                min_note_seconds=0.052,
+                onset_merge_seconds=0.026,
                 dp_offgrid_penalty=0.5,
-                pitch_smooth_window=7,
+                pitch_smooth_window=11,
             )
         if mode == "medium":
             return ModeConfig(

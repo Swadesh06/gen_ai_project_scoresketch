@@ -35,7 +35,9 @@ import wandb
 
 from humscribe.beat.beat_this_track import track_beats_beat_this
 from humscribe.instrument.piano import transcribe_piano
-from humscribe.rhythm.viterbi_quantize import viterbi_quantize_rhythm
+from humscribe.rhythm.viterbi_quantize import (
+    adaptive_tatums_per_beat, viterbi_quantize_rhythm,
+)
 
 DEFAULT_SF2 = "/home/swadesh/miniconda3/envs/humscribe/lib/python3.11/site-packages/pretty_midi/TimGM6mb.sf2"
 ALLOWED_QL = np.array([0.0625, 0.125, 0.1875, 0.25, 0.375, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0])
@@ -87,7 +89,7 @@ def git_sha() -> str:
 
 
 def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
-         stage5_threshold: float) -> None:
+         stage5_threshold: float, tatums_per_beat: int) -> None:
     asap = Path(asap_dir).expanduser()
     ann_all = json.loads((asap / "asap_annotations.json").read_text())
     perf_keys = [k for k in ann_all if piece_pattern in k]
@@ -106,6 +108,8 @@ def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
     render_midi(perf_midi, perf_wav)
     render_midi(score_midi, score_wav)
 
+    score_beats = load_score_beats(score_ann)
+    chosen_tpb = adaptive_tatums_per_beat(score_beats) if tatums_per_beat == 0 else tatums_per_beat
     cfg = {
         "gate": "asap_rhythm",
         "piece": perf_key,
@@ -115,7 +119,7 @@ def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
         "beat_tol_s": beat_tol,
         "ql_tol_quarters": ql_tol,
         "git_sha": git_sha(),
-        "tatums_per_beat": 12,
+        "tatums_per_beat": chosen_tpb,
     }
     run = wandb.init(
         project="humscribe-v3.2",
@@ -130,15 +134,14 @@ def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
     f_beat = float(mir_eval.beat.f_measure(gt_perf_beats, pred_beats, f_measure_threshold=beat_tol))
     print(f"Stage 4 beat F-measure: {f_beat:.3f}  (gate: > 0.90)")
 
-    score_beats = load_score_beats(score_ann)
     avg_beat = float(np.diff(score_beats).mean())
     notes = transcribe_piano(str(score_wav))
     onsets = np.array([n.onset_s for n in notes], dtype=np.float64)
     offsets = np.array([n.offset_s for n in notes], dtype=np.float64)
-    print(f"  ByteDance notes: {len(notes)}  on score-rendered audio")
+    print(f"  ByteDance notes: {len(notes)}  on score-rendered audio  TPB={chosen_tpb}")
 
-    q_on, q_off = viterbi_quantize_rhythm(onsets, offsets, score_beats, tatums_per_beat=12)
-    pred_durs = (q_off - q_on) / 12.0
+    q_on, q_off = viterbi_quantize_rhythm(onsets, offsets, score_beats, tatums_per_beat=chosen_tpb)
+    pred_durs = (q_off - q_on) / float(chosen_tpb)
 
     score_m21 = music21.converter.parse(str(score_xml))
     gt_xml_durs = np.array([float(n.quarterLength) for n in score_m21.flatten().notes], dtype=np.float64)
@@ -209,5 +212,8 @@ if __name__ == "__main__":
     ap.add_argument("--ql-tol", type=float, default=0.05)
     ap.add_argument("--stage5-threshold", type=float, default=0.60,
                     help="aligned-snapped quarterLength match floor; current DP delivers ~70%")
+    ap.add_argument("--tatums-per-beat", type=int, default=0,
+                    help="0 = adaptive (TPB=24 if BPM<70 else 12); set >0 to force")
     args = ap.parse_args()
-    main(args.asap_dir, args.piece_pattern, args.beat_tol, args.ql_tol, args.stage5_threshold)
+    main(args.asap_dir, args.piece_pattern, args.beat_tol, args.ql_tol,
+         args.stage5_threshold, args.tatums_per_beat)

@@ -8,12 +8,35 @@ the nearest *musically allowed* tatum count — which dramatically reduces the
 from __future__ import annotations
 import numpy as np
 
-# Allowed durations in tatums at TPB=12. Each is the integer-rounded count for a
-# common rhythmic value; we keep both 1 and 2 to approximate 32nd notes (which
-# exact-represent at TPB=24+).
+# Allowed durations in tatums for common rhythmic values. Built per-TPB so 32nd
+# notes are exactly representable when TPB allows it.
 DEFAULT_ALLOWED_DURATIONS_TATUMS_TPB12 = np.array(
     [1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 48], dtype=np.int64,
 )
+DEFAULT_ALLOWED_DURATIONS_TATUMS_TPB24 = np.array(
+    # 32nd, 16th-trip, 16th, dot-16th, 8th-trip, 8th, dot-8th, q-trip, quarter,
+    # dot-quarter, half-trip, half, dot-half, whole, etc.
+    [3, 4, 6, 9, 8, 12, 18, 16, 24, 36, 32, 48, 72, 96], dtype=np.int64,
+)
+
+
+def default_allowed_durations(tatums_per_beat: int) -> np.ndarray | None:
+    if tatums_per_beat == 12:
+        return DEFAULT_ALLOWED_DURATIONS_TATUMS_TPB12
+    if tatums_per_beat == 24:
+        return DEFAULT_ALLOWED_DURATIONS_TATUMS_TPB24
+    return None
+
+
+def adaptive_tatums_per_beat(beats: np.ndarray, slow_bpm_threshold: float = 70.0) -> int:
+    if len(beats) < 2:
+        return 12
+    iois = np.diff(beats)
+    iois = iois[(iois > 0.05) & (iois < 5.0)]
+    if len(iois) == 0:
+        return 12
+    bpm = 60.0 / float(np.median(iois))
+    return 24 if bpm < slow_bpm_threshold else 12
 
 
 def viterbi_quantize_rhythm(
@@ -82,8 +105,8 @@ def viterbi_quantize_rhythm(
         q_on[i - 1] = int(cands[i - 1][prev_idx])
         cur_idx = prev_idx
 
-    if allowed_durations_tatums is None and tatums_per_beat == 12:
-        allowed_durations_tatums = DEFAULT_ALLOWED_DURATIONS_TATUMS_TPB12
+    if allowed_durations_tatums is None:
+        allowed_durations_tatums = default_allowed_durations(tatums_per_beat)
     q_off = _quantize_offsets(off_tatum_f, q_on, allowed_durations_tatums)
     return q_on, q_off
 
@@ -115,7 +138,7 @@ def _candidate_states(on_tatum_f: np.ndarray, window: int) -> list[np.ndarray]:
     for v in on_tatum_f:
         center = int(round(float(v)))
         lo = max(center - window, 0)
-        hi = center + window + 1
+        hi = max(center + window + 1, lo + 1)
         out.append(np.arange(lo, hi, dtype=np.int64))
     return out
 

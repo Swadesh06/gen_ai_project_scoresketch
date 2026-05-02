@@ -14,7 +14,8 @@ def track_pitch_pesto(
     if audio.ndim == 2:
         audio = audio.mean(axis=1)
     arr = audio.astype(np.float32, copy=False)
-    x = torch.from_numpy(arr)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    x = torch.from_numpy(arr).to(device)
     timesteps, pitch_hz, conf, _act = pesto.predict(
         x, sr, step_size=float(step_size_ms),
     )
