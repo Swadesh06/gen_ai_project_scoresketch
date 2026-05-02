@@ -67,7 +67,7 @@ class PipelineConfig:
     pitch_model: PitchModel = "pesto"
     transcriber: Transcriber | None = None
     note_segmenter: NoteSegmenter = "voicing"
-    tatums_per_beat: int = 12
+    tatums_per_beat: int = 24
     sample_rate: int = 22050
     render_svg: bool = True
     musicxml_path: str | None = None
