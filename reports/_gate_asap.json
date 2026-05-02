@@ -2,9 +2,9 @@
   "summary": {
     "stage4_beat_f": 0.914798206278027,
     "stage4_pass": true,
-    "stage5_verbatim_pct": 0.29891304347826086,
-    "stage5_aligned_raw_pct": 0.8456284153005464,
-    "stage5_aligned_snap_pct": 0.8469945355191257,
+    "stage5_verbatim_pct": 0.30842391304347827,
+    "stage5_aligned_raw_pct": 0.8237704918032787,
+    "stage5_aligned_snap_pct": 0.825136612021858,
     "stage5_pass": true,
     "n_pred_beats": 117,
     "n_gt_perf_beats": 106,
@@ -22,7 +22,7 @@
     "stage5_threshold": 0.6,
     "beat_tol_s": 0.07,
     "ql_tol_quarters": 0.05,
-    "git_sha": "bc936f6",
+    "git_sha": "657a9d0",
     "tatums_per_beat": 24
   },
   "first_20_pred_durs": [

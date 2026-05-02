@@ -38,6 +38,7 @@ from humscribe.instrument.piano import transcribe_piano
 from humscribe.rhythm.viterbi_quantize import (
     adaptive_tatums_per_beat, viterbi_quantize_rhythm,
 )
+from humscribe.rhythm.voice_hmm import quantize_with_hmm_voice_tracking
 from humscribe.rhythm.voice_tracking import quantize_with_voice_tracking
 
 DEFAULT_SF2 = "/home/swadesh/miniconda3/envs/humscribe/lib/python3.11/site-packages/pretty_midi/TimGM6mb.sf2"
@@ -90,7 +91,8 @@ def git_sha() -> str:
 
 
 def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
-         stage5_threshold: float, tatums_per_beat: int, use_voice_tracking: bool) -> None:
+         stage5_threshold: float, tatums_per_beat: int, use_voice_tracking: bool,
+         voice_tracker: str = "greedy") -> None:
     asap = Path(asap_dir).expanduser()
     ann_all = json.loads((asap / "asap_annotations.json").read_text())
     perf_keys = [k for k in ann_all if piece_pattern in k]
@@ -143,7 +145,10 @@ def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
     print(f"  ByteDance notes: {len(notes)}  on score-rendered audio  TPB={chosen_tpb}  voice_tracking={use_voice_tracking}")
 
     if use_voice_tracking:
-        q_on, q_off = quantize_with_voice_tracking(notes, score_beats, tatums_per_beat=chosen_tpb)
+        if voice_tracker == "hmm":
+            q_on, q_off = quantize_with_hmm_voice_tracking(notes, score_beats, tatums_per_beat=chosen_tpb)
+        else:
+            q_on, q_off = quantize_with_voice_tracking(notes, score_beats, tatums_per_beat=chosen_tpb)
     else:
         q_on, q_off = viterbi_quantize_rhythm(onsets, offsets, score_beats, tatums_per_beat=chosen_tpb)
     pred_durs = (q_off - q_on) / float(chosen_tpb)
@@ -221,6 +226,8 @@ if __name__ == "__main__":
                     help="0 = adaptive (TPB=24 if BPM<70 else 12); set >0 to force")
     ap.add_argument("--voice-tracking", action=argparse.BooleanOptionalAction, default=True,
                     help="enable per-voice DP (B15); on by default")
+    ap.add_argument("--voice-tracker", choices=["greedy", "hmm"], default="greedy")
     args = ap.parse_args()
     main(args.asap_dir, args.piece_pattern, args.beat_tol, args.ql_tol,
-         args.stage5_threshold, args.tatums_per_beat, args.voice_tracking)
+         args.stage5_threshold, args.tatums_per_beat, args.voice_tracking,
+         voice_tracker=args.voice_tracker)
