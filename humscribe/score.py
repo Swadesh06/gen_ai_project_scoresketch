@@ -58,6 +58,11 @@ def write_musicxml(s: stream.Stream, out_path: str | Path | None = None) -> str:
 
 
 def render_svg(s: stream.Stream, notes: Sequence[NoteEvent], bpm: float) -> str:
+    """Real notation via Verovio (preferred) > music21+LilyPond > piano-roll fallback."""
+    try:
+        return _verovio_svg(s)
+    except Exception:
+        pass
     try:
         from music21 import environment
         env = environment.Environment()
@@ -69,6 +74,25 @@ def render_svg(s: stream.Stream, notes: Sequence[NoteEvent], bpm: float) -> str:
     except Exception:
         pass
     return _pianoroll_svg(notes, bpm)
+
+
+def _verovio_svg(s: stream.Stream) -> str:
+    """Render music21 Stream via Verovio's MusicXML loader. Returns first page SVG.
+    Raises on any error so render_svg falls back."""
+    import verovio
+    musicxml = write_musicxml(s)
+    tk = verovio.toolkit()
+    tk.setOptions({
+        "scale": 40, "pageHeight": 2970, "pageWidth": 2100,
+        "adjustPageHeight": True, "adjustPageWidth": False,
+        "footer": "none", "header": "none",
+    })
+    if not tk.loadData(musicxml):
+        raise RuntimeError("verovio could not load musicxml")
+    n_pages = tk.getPageCount()
+    if n_pages < 1:
+        raise RuntimeError("verovio rendered no pages")
+    return tk.renderToSVG(1)
 
 
 def _pianoroll_svg(notes: Sequence[NoteEvent], bpm: float) -> str:
