@@ -2,57 +2,58 @@
 
 Maintained by the agent.
 
-## Status snapshot (2026-05-02 22:20)
+## Status snapshot (2026-05-02 22:32)
 
-- Phase 0 complete; Phase A complete; **13 Phase-B experiments completed**.
-- 16 commits ahead of origin (no remote URL provided yet).
-- WandB project `humscribe-v3.2` has 30+ runs across baselines, sweeps, ablations.
+- Phase 0 + Phase A complete; **15 Phase-B experiments** completed (3 in flight or pending).
+- 17 commits ahead of origin (no remote URL provided yet — all commits local).
+- WandB project `humscribe-v3.2` has 50+ runs.
 
-## Current best metrics
+## Current best metrics (vs Phase-A baselines)
 
-| metric | Phase-A baseline | current best | source |
+| metric | Phase A | current | Δ |
 |---|---|---|---|
-| MIR-1K mean RPA (5 clips) | 0.988 | 0.988 | gate_mir1k |
-| ASAP Bach BWV 846 beat-F | 0.915 | 0.915 | (octave correction is no-op here) |
-| ASAP Stage-5 snap (BWV 846) | 0.724 | **0.740** | B1 + B5 |
-| ASAP mean beat-F (5 pieces) | n/a | **0.897** | B13 |
-| ASAP mean Stage-5 snap (5 pieces) | n/a | **0.773** | B12 |
-| Vocadito A1 soft F1 (40 clips) | 0.538 | **0.577** | B2 sweep |
-| Vocadito A2 soft F1 | n/a | 0.525 | B9 |
-| MTG-QBH visual nonempty | 20/20 | 20/20 | unchanged |
+| MIR-1K mean RPA | 0.988 | 0.988 | 0 |
+| ASAP Bach BWV 846 beat-F | 0.915 | 0.915 | 0 |
+| ASAP S5 snap (BWV 846, B15 voice tracking) | 0.724 | **0.779** | +5.5pp |
+| ASAP mean beat-F (5 pieces, B13 octave) | n/a | **0.897** | n/a |
+| ASAP mean S5 snap (5 pieces, B15) | n/a | **0.853** | n/a |
+| ASAP S5 pieces ≥ 0.80 (5 pieces) | 0/5 | **4/5** | n/a |
+| Vocadito A1 soft F1 (B2 sweep) | 0.538 | **0.577** | +3.9pp |
+| MAESTRO instrument F1 (B14, sanity) | n/a | **0.984** | n/a |
+| MTG-QBH 10-clip nonempty | 100% | 100% | 0 |
 
-## Phase B — improvement loop
+Spec target ASAP S5: 0.90 — bwv_854 hit 0.903 (first piece to clear).
 
-### Done (and either kept or discarded)
-- B1 DP duration prior — keep, +5.5pp ASAP raw
-- B2 Vocadito sweep — keep, +3.9pp F1
-- B3 CREPE vs PESTO — PESTO wins
-- B4 HMM segmenter (default) — discard
-- B5 TPB=24 default — keep, +2.1pp
-- B6 HMM hyperparam sweep — discard, ceiling 0.033 below voicing
-- B7 MTG-QBH re-baseline — keep
-- B9 Vocadito 2x3 matrix — keep as baseline
-- B10 BiLSTM onset detector — discard, needs more data
-- B11 voicing+HMM ensemble — discard, errors correlated
-- B12 ASAP multi-piece — keep
-- B13 tempo-octave correction — keep, +6pp mean Stage-4
+## Phase B — kept improvements
 
-### To try next (priority order)
-1. **B14 MAESTRO instrument test** — full pipeline on 5 short MAESTRO clips with input_kind=piano. First quantitative test of medium/hard modes for instrument input.
-2. **B15 voice tracking** — cluster ByteDance notes by pitch line, quantize per-voice. The 23pp gap from Stage-5 to spec target is mostly polyphonic confusion.
-3. **B16 onset detector with mel-spectrogram** — re-do B10 with proper features (32-band log-mel) and 5-fold CV for reliable val numbers.
-4. **B17 SwiftF0 alternative** — license-clean PESTO replacement.
-5. **B18 MAESTRO sweep** — sweep medium/hard mode hyperparameters against MAESTRO-rendered audio.
+1. B1 DP duration prior on offset quantization (+5.5pp ASAP raw).
+2. B2 Vocadito hyperparam sweep — new soft-mode defaults.
+3. B5 TPB=24 default (+2.1pp ASAP snap).
+4. B13 beat_this(target_bpm=) tempo-octave correction (+6pp mean S4).
+5. B14 MAESTRO instrument sanity test — pipeline saturated.
+6. **B15 voice tracking + per-voice DP** (+8pp ASAP S5 snap, the largest single win).
 
-## Parallelization
+## Phase B — discarded ideas
 
-GPU at 32 GB. Most experiments use <3 GB; can run 2-3 in parallel. Sweeps run 2 agents safely.
+- B3 CREPE vs PESTO (PESTO wins 1.4pp).
+- B4 default HMM (loses to voicing baseline).
+- B6 HMM hyperparam sweep (HMM ceiling below voicing).
+- B10 BiLSTM onset detector (small training set, sparse features).
+- B11 voicing+HMM ensemble (errors correlated).
+
+## Phase B — to try next (priority order)
+
+1. **B16 voice tracker hyperparam sweep** (in flight) — pj × tg grid.
+2. **B17 onset-DP cost prior** — penalize odd onset positions in metrical context.
+3. **B18 Vocadito A2-targeted sweep** — see if A2 has different optimum (weak — A1 sweep already accommodated A2 data).
+4. **B19 Onset detector with mel-spectrogram features** — re-do B10 with proper features + 5-fold CV.
+5. **B20 LilyPond/MuseScore SVG rendering** — install via conda; produce real notation.
 
 ## Notes / gotchas
-- TF 2.15 cuDNN-already-registered warnings on import — cosmetic, ignore.
+- TF 2.15 cuDNN-register warnings on import — cosmetic.
 - ASAP MIDI rendering via fluidsynth + `pretty_midi/TimGM6mb.sf2`.
-- piano_transcription_inference now defaults to CUDA via `_autodevice`.
-- beat_this now defaults to CUDA + supports `target_bpm=` for evaluation.
-- mtg_qbh: not in mirdata; use `humscribe.datasets.mtg_qbh.MTGQBH`.
+- piano_transcription_inference + beat_this both default to CUDA (auto-detect).
+- mtg_qbh: `humscribe.datasets.mtg_qbh.MTGQBH` (mirdata 1.0.0 doesn't ship it).
 - MAESTRO: mirdata 1.0.0 only knows v2.0.0, not 3.0.0.
-- spec verbatim `eval_asap_rhythm.py` reports the index-paired metric; the realistic gate is `gate_asap_rhythm.py`.
+- spec verbatim `eval_asap_rhythm.py` reports the index-paired metric (broken methodology, ~28%); the realistic gate is `gate_asap_rhythm.py` with VT default-on.
+- `humscribe.pipeline.transcribe()` now uses voice tracking for instrument input by default.

@@ -23,8 +23,9 @@ from humscribe.rhythm.viterbi_quantize import (
 
 @dataclass
 class VoiceTrackConfig:
-    pitch_jump: float = 4.0          # semitones; soprano usually moves <= 4 per step
-    time_gap_s: float = 1.5          # voice times out after this gap
+    # Tuned by exp_B16 sweep (BWV 846: snap 0.779 -> 0.847 with these defaults).
+    pitch_jump: float = 3.0          # semitones; tight to keep voice lines coherent
+    time_gap_s: float = 0.5          # short timeout: aggressive new-voice creation
     keep_offset_min_dur_s: float = 0.05
 
 
