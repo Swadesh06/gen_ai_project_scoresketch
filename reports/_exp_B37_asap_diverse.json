@@ -1,0 +1,61 @@
+{
+  "rows": [
+    {
+      "piece": "Bach/Fugue/bwv_846",
+      "f_beat": 0.8451882845188285,
+      "stage5_raw": 0.8456284153005464,
+      "stage5_snap": 0.8469945355191257,
+      "n_pred": 736,
+      "n_gt": 755,
+      "n_matched": 732,
+      "bpm": 122.44897959183713
+    },
+    {
+      "piece": "Chopin/Berceuse_op_57",
+      "f_beat": 0.38709677419354843,
+      "stage5_raw": 0.5219885277246654,
+      "stage5_snap": 0.46908859145952836,
+      "n_pred": 1603,
+      "n_gt": 1691,
+      "n_matched": 1569,
+      "bpm": 30.0
+    },
+    {
+      "piece": "Beethoven/Piano_Sonatas/21-1",
+      "f_beat": 0.880301602262017,
+      "stage5_raw": 0.7122096633958515,
+      "stage5_snap": 0.7177990311762514,
+      "n_pred": 8192,
+      "n_gt": 8677,
+      "n_matched": 8051,
+      "bpm": 150.00000000000853
+    },
+    {
+      "piece": "Schumann/Toccata",
+      "f_beat": 0.7023907666941468,
+      "stage5_raw": 0.7032513023172265,
+      "stage5_snap": 0.744745823603377,
+      "n_pred": 5731,
+      "n_gt": 6066,
+      "n_matched": 5567,
+      "bpm": 124.99999999999896
+    },
+    {
+      "piece": "Liszt/Sonata",
+      "f_beat": 0.671819511176102,
+      "stage5_raw": 0.18722613198778382,
+      "stage5_snap": 0.07821006506440048,
+      "n_pred": 15435,
+      "n_gt": 16025,
+      "n_matched": 15062,
+      "bpm": 115.38461538461942
+    }
+  ],
+  "summary": {
+    "n": 5,
+    "mean_f_beat": 0.6973593877689286,
+    "mean_stage5_snap": 0.5713676093645366,
+    "median_stage5_snap": 0.7177990311762514,
+    "stage5_pct_pass_85": 0.0
+  }
+}

@@ -49,6 +49,10 @@ def predict_notes(audio_path: str, mode: str, pitch_model: str = "pesto",
         t, hz, vc = track_pitch_crepe(audio, sr)
     elif pitch_model == "ensemble":
         t, hz, vc = track_pitch_ensemble(audio, sr)
+    elif pitch_model == "pesto_crepevoicing":
+        t, hz, _pv = track_pitch_pesto(audio, sr)
+        ct, _ch, cv = track_pitch_crepe(audio, sr)
+        vc = np.interp(t, ct, cv) if len(ct) > 0 else _pv
     else:
         raise ValueError(f"unknown pitch_model: {pitch_model!r}")
     if segmenter == "voicing":
@@ -164,7 +168,7 @@ if __name__ == "__main__":
     ap.add_argument("--pitch-tol-cents", type=float, default=50.0)
     ap.add_argument("--gate-threshold", type=float, default=0.40,
                     help="F1 floor; v3.2 spec doesn't fix this — 0.40 is a 'not broken' bar")
-    ap.add_argument("--pitch-model", choices=["pesto", "crepe", "ensemble"], default="pesto")
+    ap.add_argument("--pitch-model", choices=["pesto", "crepe", "ensemble", "pesto_crepevoicing"], default="pesto")
     ap.add_argument("--segmenter", choices=["voicing", "hmm"], default="voicing")
     args = ap.parse_args()
     main(args.vocadito_dir, args.mode, args.annotator, args.n_clips,
