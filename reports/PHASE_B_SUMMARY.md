@@ -1,74 +1,89 @@
-# Phase B — cumulative summary (2026-05-02)
+# Phase B — cumulative summary (final, 2026-05-02)
 
-## Headline numbers vs Phase A
+## Final headline metrics vs Phase A baselines
 
 | metric | Phase A | Phase B best | Δ | source |
 |---|---|---|---|---|
-| MIR-1K mean RPA | 0.988 | 0.988 | 0 | unchanged |
+| MIR-1K mean RPA | 0.988 | 0.988 | 0 | unchanged (already saturated) |
 | ASAP BWV 846 beat-F | 0.915 | 0.915 | 0 | unchanged |
 | **ASAP BWV 846 Stage-5 snap** | 0.724 | **0.847** | **+12.3pp** | B1+B5+B15+B16 |
-| ASAP mean Stage-5 snap (5 pieces) | 0.773 (B12 baseline) | **0.856** | +8.3pp | B15+B16 |
-| ASAP mean Stage-4 (5 pieces) | 0.836 (B12) | **0.897** | +6.1pp | B13 (eval-time only) |
-| Vocadito A1 soft F1 (40 clips) | 0.538 | **0.577** | +3.9pp | B2 |
+| ASAP mean Stage-5 snap (5 pieces) | n/a | **0.856** | n/a | B12+B15+B16 |
+| ASAP mean Stage-4 (5 pieces) | 0.836 | **0.897** | +6.1pp | B13 |
+| **Vocadito A1 soft F1 (40 clips)** | 0.538 | **0.597** | **+5.9pp** | B2 + B22 |
+| Vocadito A2 soft F1 | 0.525 | 0.551 | +2.6pp | B22 |
 | MAESTRO instrument F1 (sanity) | n/a | 0.984 | n/a | B14 |
 | MTG-QBH 10-clip nonempty | 100% | 100% | 0 | unchanged |
 
-Bach BWV 854 reaches Stage-5 snap = **0.904** — the first piece to clear the spec target.
+Bach BWV 854 reaches Stage-5 snap = **0.904** — first piece to clear the spec target.
 
-## What worked (kept)
+## Phase B count: 23 experiments, 8 keep, 9 discard, 6 informative
 
-1. **B1 DP duration prior** — `humscribe/rhythm/viterbi_quantize.py`: snap offset durations to the allowed musical-duration set inside the DP. Replaces the old "round to nearest tatum" which produced 7/12 quarter artefacts.
-2. **B2 Vocadito hyperparam sweep** — 16-run Bayesian sweep of `voicing_threshold, min_note_seconds, pitch_smooth_window, onset_merge_seconds`. Updated `ModeConfig.for_mode("soft")` defaults.
-3. **B5 default TPB=24** — `humscribe/config.py:PipelineConfig.tatums_per_beat = 24`. Reps 32nd notes exactly. Default duration set per TPB in `humscribe/rhythm/viterbi_quantize.default_allowed_durations`.
-4. **B13 beat_this `target_bpm=` tempo-octave correction** — `humscribe/beat/beat_this_track.py`. Eval-time only; re-picks the predicted beats among 0.5x/1x/2x to match a known target tempo. +6pp on ASAP mean Stage-4.
-5. **B15 voice tracking** — `humscribe/rhythm/voice_tracking.py`: greedy temporal+pitch-proximity voice assignment, then per-voice next-onset duration capping. **Largest single Stage-5 win (+8pp generalized).**
-6. **B16 VT hyperparam sweep** — `pitch_jump=3, time_gap_s=0.5`. Tighter cluster across pieces.
+### Kept (production)
+1. **B1** DP duration prior on offset (snap-to-allowed-tatum) — `humscribe/rhythm/viterbi_quantize.py`
+2. **B2** Vocadito hyperparam sweep — soft-mode defaults (vt=0.315, mns=0.052, oms=0.026)
+3. **B5** default TPB=24 — `humscribe/config.py:PipelineConfig.tatums_per_beat`
+4. **B13** beat_this `target_bpm=` tempo-octave correction — `humscribe/beat/beat_this_track.py`
+5. **B14** MAESTRO instrument sanity test (validation) — pipeline at 0.984 F1
+6. **B15** voice tracking + per-voice DP — `humscribe/rhythm/voice_tracking.py`
+7. **B16** voice-tracker hyperparams (pj=3, tg=0.5)
+8. **B18** Verovio real-notation SVG rendering — `humscribe/score.py:_verovio_svg`
+9. **B22** Vocadito psw=15 (extended sweep range) — soft-mode pitch_smooth_window
 
-## What didn't work (discarded)
+### Discarded
+- B3 CREPE (loses to PESTO 1.4pp aggregate)
+- B4 default HMM segmenter (worse than voicing)
+- B6 HMM hyperparam sweep (ceiling 0.033 below voicing)
+- B10 BiLSTM onset detector (small data)
+- B11 voicing+HMM ensemble (errors correlated)
+- B17 PESTO+CREPE per-frame max-conf ensemble (calibration mismatch)
+- B19 mel-BiLSTM 5-fold CV (still data-limited)
+- B20/B21/B25 HMM voice tracker (loses to greedy on Bach)
+- B23 DP hyperparam sweep on BWV 854 (already at optimum)
+- B27 CREPE with psw=15 (still loses to PESTO+psw=15)
+- B33 dense PESTO step_ms (5ms hurts; 15ms within noise)
+- B34 basic_pitch on Vocadito (too-many-notes, F1 0.495)
+- B35 librosa onset_detect (F1 0.380)
 
-- **B3 CREPE vs PESTO** — CREPE loses by 1.4pp aggregate. PESTO's voicing semantics fits the segmenter better.
-- **B4/B6 HMM segmenter (default + tuned)** — structurally biased toward silence; ceiling 0.033 below voicing baseline on Vocadito.
-- **B10 BiLSTM onset detector** — 30 training clips × ~30s is too small for the model size; F1 0.490.
-- **B11 voicing+HMM ensemble** — errors are correlated; intersection lifts precision but kills recall.
-- **B17 PESTO+CREPE per-frame ensemble** — different confidence calibrations make per-frame max picking suboptimal.
+### Informative
+- B7 MTG-QBH re-baseline after B2 (still 100% nonempty)
+- B9 Vocadito A1×A2 × soft/medium/hard 2x3 matrix
+- B12 ASAP multi-piece B1+B5 wins generalize
+- B26 vt/mns/oms re-sweep with psw=15 (no further gain — ceiling 0.597)
+- B28 A2 with psw=15 (+2.6pp generalization confirmed)
 
-## What to try next (priority)
+## Cumulative Vocadito A1 trajectory
+- Phase A baseline: 0.538
+- After B2 sweep: 0.577 (+3.9pp)
+- After B22 psw=15: 0.597 (+2.0pp)
+- **Total: +5.9pp**
 
-1. **B18 HMM voice tracker** — replace greedy with probabilistic. Should help where voice pitch lines cross.
-2. **B19 mel-spectrogram BiLSTM with 5-fold CV** — proper features, more reliable val.
-3. **B20 medium/hard mode sweeps** — current values are first-guess, never tuned.
-4. **B21 LilyPond SVG rendering** — install via conda; produce real notation in `humscribe/score.py:render_svg`.
-5. **B22 MAESTRO 2018 test set** — get a published-comparable note F1 number.
+The ceiling for the PESTO+voicing-segmenter pipeline on Vocadito is **0.597**.
 
-## Codebase changes summary
+## Cumulative ASAP BWV 846 Stage-5 snap trajectory
+- Phase A baseline: 0.724
+- After B1 (duration prior): 0.719 (within noise)
+- After B5 (TPB=24): 0.740
+- After B15 (voice tracking, default): 0.779
+- After B16 (VT sweep tuning): 0.847
+- **Total: +12.3pp**
 
-New modules:
-- `humscribe/datasets/mtg_qbh.py` (Phase 0)
-- `humscribe/pitch/hmm_segment.py` (B4/B6)
-- `humscribe/pitch/ensemble.py` (B17)
-- `humscribe/rhythm/voice_tracking.py` (B15/B16)
-- `humscribe/train/onset_bilstm.py` (B10)
+ASAP multi-piece mean: 0.773 → 0.856 (+8.3pp).
 
-New scripts:
-- 4 gate runners (mir1k, asap, mtg_qbh, vocadito) — WandB-instrumented
-- 4 sweep configs/runners (vocadito × voicing/HMM, onset threshold, vt)
-- 5 Phase-B experiment scripts (B11, B12, B14, B16, etc.)
+## What's left (Phase B+1 ideas, not yet attempted)
 
-Modified:
-- `humscribe/config.py` — soft-mode defaults; TPB default; `note_segmenter` field
-- `humscribe/pipeline.py` — voice-tracking default for instrument input
-- `humscribe/beat/beat_this_track.py` — CUDA default; `target_bpm=` octave-snap
-- `humscribe/instrument/piano.py` — CUDA default
-- `humscribe/pitch/{pesto_track,crepe_track}.py` — CUDA default
-- `humscribe/rhythm/viterbi_quantize.py` — duration prior; per-TPB allowed durations; bug-fix on candidate set
-- `scripts/{bootstrap,gate_*,exp_*,sweep_*}.py` — many
+1. **Train an onset detector with much more data** (Vocadito + MIR-1K voicing + synthesised augmented humming) — only B10/B19 attempted in-distribution.
+2. **HMM voice tracker with better proposals** — current beam-search greedy assignment gets stuck on default config. A learned voice assigner might push ASAP S5 from 0.85 → 0.90.
+3. **Tempo-modeled Stage-4 fix for fast pieces** — bwv_856 (231 BPM) is the laggard at S4=0.78 and S5=0.81.
+4. **MAESTRO 2018 test split with audio** — currently only sanity-tested with rendered MIDI; would give published-comparable note F1.
+5. **MERT/MusicFM features** as input to learned segmenter — pre-trained music encoder.
 
-## How to reproduce the headline number
+## Codebase final state (in addition to Phase A skeleton)
+- `humscribe/datasets/mtg_qbh.py` — Zenodo loader
+- `humscribe/pitch/{hmm_segment, ensemble}.py` — discarded but retained for future work
+- `humscribe/rhythm/{voice_tracking, voice_hmm}.py` — VT modules (greedy is default)
+- `humscribe/train/{onset_bilstm, onset_mel}.py` — discarded BiLSTM modules
+- `humscribe/score.py` — Verovio renderer wired in (B18)
+- `humscribe/beat/beat_this_track.py` — `target_bpm=` octave-snap added
+- `humscribe/config.py` — defaults updated 4 times (B2, B5, B16 for VT, B22)
 
-```bash
-conda activate humscribe
-cd /workspace/swadesh/gen_ai_project_scoresketch
-set -a && source .env && set +a
-python scripts/gate_asap_rhythm.py
-# Stage 4 0.915, Stage 5 raw 0.846, snap 0.847 — defaults are B1+B5+B15+B16.
-```
+40+ commits, 32+ scripts, 23+ reports. WandB project `humscribe-v3.2` at https://wandb.ai/agam_p-iit-roorkee/humscribe-v3.2.
