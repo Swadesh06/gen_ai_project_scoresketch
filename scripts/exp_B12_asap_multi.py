@@ -17,6 +17,7 @@ from humscribe.instrument.piano import transcribe_piano
 from humscribe.rhythm.viterbi_quantize import (
     adaptive_tatums_per_beat, viterbi_quantize_rhythm,
 )
+from humscribe.rhythm.voice_tracking import quantize_with_voice_tracking
 
 ASAP = Path("~/datasets/asap").expanduser()
 SF2 = "/home/swadesh/miniconda3/envs/humscribe/lib/python3.11/site-packages/pretty_midi/TimGM6mb.sf2"
@@ -83,7 +84,7 @@ def run_piece(piece_dir: Path, beat_tol: float = 0.07) -> dict:
     onsets = np.array([n.onset_s for n in notes], dtype=np.float64)
     offsets = np.array([n.offset_s for n in notes], dtype=np.float64)
     tpb = 24
-    q_on, q_off = viterbi_quantize_rhythm(onsets, offsets, beats, tatums_per_beat=tpb)
+    q_on, q_off = quantize_with_voice_tracking(notes, beats, tatums_per_beat=tpb)
     pred_durs = (q_off - q_on) / float(tpb)
     gt_iv, gt_p = load_midi_notes(score_mid)
     gt_durs_q = (gt_iv[:, 1] - gt_iv[:, 0]) / avg_beat
