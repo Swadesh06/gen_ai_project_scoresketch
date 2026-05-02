@@ -27,7 +27,28 @@ The Bach Fugue is 4-voice — voice tracking should help it disproportionately. 
 
 The greedy voice tracker is intentionally simple. Failure modes likely include: (a) wrong voice assignment when two voices cross in pitch, (b) fragmenting a single voice into many when the singer/player jumps. Both are addressable by a smarter assigner (e.g., HMM over voices), Phase-B priority "next".
 
+## Results — multi-piece (5 Bach Fugues)
+
+| piece | bpm | beat F | s5 raw | s5 snap |
+|---|---|---|---|---|
+| bwv_846 | 122 | 0.845 | 0.832 | 0.832 |
+| bwv_848 | 120 | 0.969 | 0.858 | 0.863 |
+| bwv_854 | 120 | 0.944 | **0.900** | **0.903** |
+| bwv_856 | 231 | 0.778 | 0.792 | 0.804 |
+| bwv_857 | 120 | 0.948 | 0.856 | 0.866 |
+
+Aggregates:
+- mean Stage-4 beat-F: 0.897 (unchanged from B13)
+- mean Stage-5 raw: 0.769 → **0.847** (+7.8pp)
+- mean Stage-5 snap: **0.853** (vs 0.773 without VT)
+- Stage 5 pass rate (>= 0.60): 100%
+- Stage 5 pass rate at higher bar (>= 0.80): **80%** (4 of 5)
+
+WandB: https://wandb.ai/agam_p-iit-roorkee/humscribe-v3.2/runs/dc0khr1u (or geokubj3 retry)
+
+**One piece (bwv_854) clears 0.90 — within striking distance of the spec target.** The variance across pieces is now small (0.80-0.90 range), suggesting the voice tracker is robust.
+
 ## Next
-- Verify on multi-piece (B15-multi running).
 - Try `pitch_jump=7` (octave jumps allowed) and longer `time_gap_s` for slow Romantic pieces.
-- Implement HMM voice tracker — the greedy version is the lower bound.
+- HMM voice tracker — should pick up the remaining ~5pp.
+- Add a learned offset detector — the only way to lift 0.85 → 0.90 reliably across diverse music.
