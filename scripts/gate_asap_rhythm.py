@@ -110,7 +110,8 @@ def main(asap_dir: str, piece_pattern: str, beat_tol: float, ql_tol: float,
     render_midi(score_midi, score_wav)
 
     score_beats = load_score_beats(score_ann)
-    chosen_tpb = adaptive_tatums_per_beat(score_beats) if tatums_per_beat == 0 else tatums_per_beat
+    # Default TPB=24 (B5+B16 wins). adaptive_tatums_per_beat overrides only when bps<70.
+    chosen_tpb = max(adaptive_tatums_per_beat(score_beats), 24) if tatums_per_beat == 0 else tatums_per_beat
     cfg = {
         "gate": "asap_rhythm",
         "piece": perf_key,
