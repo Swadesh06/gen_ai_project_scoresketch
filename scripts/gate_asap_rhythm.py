@@ -218,8 +218,8 @@ if __name__ == "__main__":
                     help="aligned-snapped quarterLength match floor; current DP delivers ~70%")
     ap.add_argument("--tatums-per-beat", type=int, default=0,
                     help="0 = adaptive (TPB=24 if BPM<70 else 12); set >0 to force")
-    ap.add_argument("--voice-tracking", action="store_true",
-                    help="enable per-voice DP (B15)")
+    ap.add_argument("--voice-tracking", action=argparse.BooleanOptionalAction, default=True,
+                    help="enable per-voice DP (B15); on by default")
     args = ap.parse_args()
     main(args.asap_dir, args.piece_pattern, args.beat_tol, args.ql_tol,
          args.stage5_threshold, args.tatums_per_beat, args.voice_tracking)
