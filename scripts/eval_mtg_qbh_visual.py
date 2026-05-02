@@ -3,7 +3,7 @@ No quantitative gate; you visually inspect the produced scores against the
 melodies you recognize. Run before demo day."""
 import argparse
 from pathlib import Path
-import mirdata
+from humscribe.datasets.mtg_qbh import MTGQBH
 from humscribe.pipeline import transcribe
 from humscribe.config import PipelineConfig
 
@@ -13,7 +13,7 @@ KNOWN_MELODIES = [   # MTG-QBH track IDs you'll recognize from listening
 ]
 
 def main(mtg_dir, modes):
-    d = mirdata.initialize("mtg_qbh", data_home=mtg_dir)
+    d = MTGQBH(data_home=mtg_dir)
     tracks = d.load_tracks()
     chosen = KNOWN_MELODIES or list(tracks.keys())[:10]
     for mode in modes.split(","):

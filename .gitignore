@@ -27,9 +27,9 @@ outputs/
 wandb/
 **/wandb/
 
-# data — never in repo
+# data — never in repo (root-anchored, so humscribe/datasets/ stays tracked)
+/datasets/
 ~/datasets/
-datasets/
 
 # env tarballs
 *.tar.gz

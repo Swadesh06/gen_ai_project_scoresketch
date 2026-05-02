@@ -208,6 +208,33 @@ Properties of this fix that matter going forward:
 - If the project is ever moved off `/workspace/swadesh/gen_ai_project_scoresketch`,
   update the single line in `humscribe.pth` and repack.
 
+## Post-build fix: bootstrap data sources (resolved)
+
+Three more issues surfaced when actually running `scripts/bootstrap.sh` on the
+GPU pod:
+
+- **MAESTRO 3.0.0 not in mirdata 1.0.0.** The spec asked for v3.0.0; the index
+  shipped only knows {default, test, 2.0.0, sample}. Patched the script to use
+  `version="2.0.0"`; MIDI subset is identical for our reference use.
+- **`mtg_qbh` missing from mirdata.** Already covered by the new
+  `humscribe.datasets.mtg_qbh.MTGQBH` Zenodo-direct loader; bootstrap and the
+  visual-eval script were patched to call it.
+- **MIR-1K Zenodo record is metadata-only.** Record `3532216` returns the
+  dataset description but no downloadable files; the human-facing `mirlab.org`
+  mirror it links to (`http://mirlab.org/dataset/public/MIR-1K.rar`) returns
+  404. Patched the script to pull from the HuggingFace mirror
+  `AnhP/Mir-1k-use-DJCM-training` (single `MIR-1K.zip`, ~975 MB) and extract
+  with stdlib `zipfile`. Final layout: `~/datasets/mir1k/MIR-1K/{Wavfile,
+  PitchLabel, ...}` — the `MIR-1K/` subdir means `eval_mir1k_pitch_sanity.py`
+  must be invoked with `--mir1k-dir ~/datasets/mir1k/MIR-1K`.
+
+System packages worth flagging:
+
+- `unzip` is not present in this pod; `bsdtar` is. We avoided the issue
+  entirely by switching to Python's `zipfile`.
+- `conda-pack` was missing from base; reinstalled via
+  `pip install conda-pack` so `/workspace/scripts/pack_env.sh` works again.
+
 ## What's left to run on the GPU phase
 
 The package-install issue (see "Post-build fix" above) is already resolved — do
