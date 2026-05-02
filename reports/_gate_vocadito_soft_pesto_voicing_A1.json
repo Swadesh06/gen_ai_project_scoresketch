@@ -337,7 +337,7 @@
     "onset_tol": 0.05,
     "pitch_tol_cents": 50.0,
     "gate_threshold_f1": 0.4,
-    "git_sha": "534d96c",
+    "git_sha": "bc936f6",
     "pitch_model": "pesto",
     "segmenter": "voicing"
   }
