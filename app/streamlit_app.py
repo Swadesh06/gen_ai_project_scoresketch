@@ -67,8 +67,8 @@ def arrange_tab() -> None:
     with cols[0]:
         preset = st.selectbox("Style preset", list(PROMPT_PRESETS.keys()))
     with cols[1]:
-        size = st.selectbox("Model", ["melody", "melody-large"], index=0,
-                            help="melody = 1.5B (fast), melody-large = 3.3B (highest quality)")
+        size = st.selectbox("Model", ["melody-large", "melody"], index=0,
+                            help="melody-large = 3.3B (peak ~6.25 GB, highest quality, default); melody = 1.5B (peak ~4.31 GB, fast)")
     with cols[2]:
         duration = st.slider("Duration (s)", 8, 30, 15)
     custom = st.text_input("Custom prompt (overrides preset if set)", "")
