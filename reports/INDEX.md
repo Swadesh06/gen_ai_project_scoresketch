@@ -57,15 +57,37 @@
 | exp_B60_auto_piano_verify | +5.2pp Chopin / +1.3pp 4-piece mean (kept temporarily) | reverted by B61 | informative |
 | **exp_B61_auto_piano_diverse** | bp loses on Debussy (-2.4) and Brahms (-14.5pp) — Chopin was idiosyncratic; auto_piano reverted to no-op | informative | informative |
 
-## Final headline numbers (after all kept improvements)
-- MIR-1K mean RPA = 0.988
-- ASAP BWV 846 beat-F = 0.915
-- ASAP BWV 846 Stage-5 snap = **0.847** (Phase A: 0.724, +12.3pp)
-- ASAP mean Stage-5 snap (5 Bach Fugues) = **0.856**
-- ASAP mean Stage-4 (5 Bach Fugues) = **0.897** (Phase A: 0.836, +6.1pp)
-- ASAP mean Stage-5 snap (5 mixed: 1 Bach + 4 Romantic) = **0.590** (B49 with adaptive_pj)
-- **Vocadito A1 soft F1 = 0.665** (Phase A: 0.538, **+12.7pp** = +24% relative)
-- Vocadito A2 soft F1 = **0.630** (Phase A: 0.525, +10.5pp)
-- Vocadito IAA ceiling: **0.740** — pipeline is 7.5–11pp below human agreement
+## Phase B+2 (six demo work items per task_description_v2.md)
+| exp_id | metric | result | status |
+|---|---|---|---|
+| **item-1_rendering** | Bach BWV 854 24-let count: 1 → **0**; 5-Bach mean snap unchanged 0.859 | **keep** | **keep** |
+| **exp_B62_voc_exit_hyst** | offset20 +0.5pp (target +5pp); below decision threshold | discard | discard |
+| **exp_B63_yourmt3_asap** | 9-piece mean snap 0.713 → **0.774 (+6.1pp)**; Beethoven 0.813 → **0.897** | **keep** | **keep** |
+| **item-2_yourmt3plus** | YMT3+ promoted as `auto_piano` default; +12.6pp 3-Romantic mean (ex-Liszt) | **keep** | **keep** |
+| **item-3_musicgen** | end-to-end hum→arrange smoke (Vocadito clip 1, lo-fi preset, 19s wall) | in progress (B64 verify) | in progress |
+| **item-4_voicing_exit_hysteresis** | Vocadito offset20 plateau at vt_exit=0.65 with +0.5pp; below 5pp gate | discard | discard |
+
+## Final headline numbers (after all kept improvements through B+2)
+- MIR-1K mean RPA = 0.988 (unchanged)
+- ASAP BWV 846 beat-F = 0.915 (unchanged)
+- ASAP BWV 846 Stage-5 snap = **0.878** with YMT3+ (Phase A: 0.724, **+15.4pp**); 0.847 with ByteDance
+- ASAP mean Stage-5 snap (5 Bach Fugues) = **0.898** with YMT3+ (Phase B+1: 0.859, **+3.9pp**)
+- ASAP mean Stage-4 (5 Bach Fugues) = **0.897** (unchanged)
+- ASAP Beethoven Sonata 21-1 snap = **0.897** with YMT3+ (Phase B+1: 0.811, **+8.6pp**)
+- ASAP Schumann Toccata snap = **0.846** with YMT3+ (Phase B+1: 0.745, **+10.0pp**)
+- ASAP Chopin Berceuse snap = **0.675** with YMT3+ (Phase B+1: 0.481, **+19.4pp**)
+- ASAP 9-piece overall mean snap = **0.774** with YMT3+ (Phase B+1: 0.713, **+6.1pp**)
+- **Vocadito A1 soft F1 = 0.665** (Phase A: 0.538, **+12.7pp** = +24% relative; unchanged through B+2)
+- Vocadito A2 soft F1 = **0.630** (Phase A: 0.525, +10.5pp; unchanged)
+- Vocadito IAA ceiling: **0.740** — pipeline is 7.5pp below human agreement (no_offset)
 - MAESTRO instrument F1 = **0.984** (sanity)
 - MTG-QBH 10/10 nonempty = 100%
+- **Stage 7 arrangement** (NEW): MusicGen-Melody, 6 style presets, end-to-end hum→arrange working
+
+## Phase C ideas (see PLAN.md for details)
+- MERT/MusicFM features for learned segmenter (instead of HuBERT B52)
+- Transformer voice tracker for Romantic ASAP (greedy ceiling at Liszt 0.078)
+- Soft-IAA scoring as headline (avg of A1/A2 per clip; lower variance)
+- AudioLDM2/MAGNeT alternatives to MusicGen
+- LoRA-fine-tune MusicGen-Melody on a melody→arrangement pair set
+- End-to-end YMT3+ replacing the Stage 2A+4+5 stack on instrument input
