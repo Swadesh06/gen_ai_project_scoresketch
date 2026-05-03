@@ -1,0 +1,16 @@
+{
+  "best_acc": 0.7988268611323478,
+  "per_piece": {
+    "Liszt/Sonata": 0.7617626314848857,
+    "Schumann/Toccata": 0.817548573108679
+  },
+  "config": {
+    "git_sha": "a66f10d",
+    "n_epochs": 30,
+    "d_model": 128,
+    "n_layers": 4,
+    "lr": 0.0003,
+    "chunk_size": 512,
+    "task": "voice tracking 2-class L/R hand"
+  }
+}
