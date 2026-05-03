@@ -72,12 +72,26 @@ def arrange_tab() -> None:
     with cols[2]:
         duration = st.slider("Duration (s)", 8, 30, 15)
     custom = st.text_input("Custom prompt (overrides preset if set)", "")
+    # B77: optional LoRA adapter for fine-tuned style/speaker
+    import os as _os
+    adapter_dir = "checkpoints/musicgen_lora_b77"
+    adapter_choices = ["(none — base model)"]
+    if _os.path.isdir(adapter_dir):
+        for s in sorted(_os.listdir(adapter_dir)):
+            if (_os.path.isdir(_os.path.join(adapter_dir, s))
+                    and _os.path.isfile(_os.path.join(adapter_dir, s, "adapter_model.safetensors"))):
+                adapter_choices.append(s)
+    adapter = st.selectbox("LoRA adapter (B77 fine-tune)", adapter_choices,
+                            help="Pick a saved adapter checkpoint for personalised style.")
+    adapter_path = (None if adapter.startswith("(none")
+                      else _os.path.join(adapter_dir, adapter))
     if not st.button("Arrange", type="secondary"):
         return
     prompt = custom.strip() or PROMPT_PRESETS[preset]
     with st.spinner("Generating arrangement (first call loads weights)…"):
         from humscribe.arrange.musicgen import arrange
-        wav_bytes = arrange(audio_path, prompt, duration_s=duration, model_size=size)
+        wav_bytes = arrange(audio_path, prompt, duration_s=duration,
+                              model_size=size, lora_adapter=adapter_path)
     st.audio(wav_bytes, format="audio/wav")
     st.download_button("Download arrangement WAV", wav_bytes, file_name="arrangement.wav",
                        mime="audio/wav")

@@ -65,6 +65,9 @@ def default_transcriber(kind: InputKind) -> Transcriber:
     raise ValueError(f"unknown input_kind: {kind!r}")
 
 
+PerVoiceDP = Literal["auto", "on", "off"]
+
+
 @dataclass
 class PipelineConfig:
     input_kind: InputKind = "humming"
@@ -77,6 +80,11 @@ class PipelineConfig:
     # while metric path uses tatums_per_beat=24 for snap accuracy.
     render_tpb: int = 12
     estimate_key: bool = True
+    # Phase D B79/B80: independent DP per voice + B76 transformer voice tracker.
+    # auto: detect melody+accomp pieces (pitch IQR + density) and route there.
+    # on: always use per-voice DP (still requires checkpoints/voice_transformer_b76/best.pt).
+    # off: keep production shared-DP / greedy voice tracker behavior.
+    per_voice_dp: PerVoiceDP = "auto"
     sample_rate: int = 22050
     render_svg: bool = True
     musicxml_path: str | None = None

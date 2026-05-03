@@ -39,15 +39,28 @@ _LOADED: dict[str, MusicGen] = {}
 
 def _load(model_size: Literal["melody", "melody-large"] = "melody",
           device: str | None = None,
-          dtype: torch.dtype = torch.float16) -> MusicGen:
-    """Cache-once loader; subsequent calls reuse the model."""
-    key = f"{model_size}:{dtype}"
+          dtype: torch.dtype = torch.float16,
+          lora_adapter: str | None = None) -> MusicGen:
+    """Cache-once loader; subsequent calls reuse the model.
+
+    If `lora_adapter` is set (path to a PEFT adapter checkpoint, e.g.
+    `checkpoints/musicgen_lora_b77/step_300`), the adapter is loaded over
+    the LM. Cached separately per (model_size, dtype, adapter) tuple.
+    """
+    key = f"{model_size}:{dtype}:{lora_adapter or ''}"
     if key in _LOADED:
         return _LOADED[key]
     target = device or ("cuda" if torch.cuda.is_available() else "cpu")
     name = f"facebook/musicgen-{model_size}"
     model = MusicGen.get_pretrained(name, device=target)
-    if dtype == torch.float16 and target == "cuda":
+    if lora_adapter is not None:
+        # PEFT LoRA was trained against fp32 LM (per B74/B77). Cast to fp32
+        # before attaching adapters to keep dtypes consistent.
+        from peft import PeftModel
+        model.lm = model.lm.to(torch.float32)
+        model.lm = PeftModel.from_pretrained(model.lm, str(lora_adapter))
+        model.lm.eval()
+    elif dtype == torch.float16 and target == "cuda":
         for p in model.lm.parameters():
             p.data = p.data.to(dtype)
     _LOADED[key] = model
@@ -72,15 +85,20 @@ def arrange(
     seed: int | None = 0,
     cfg_coef: float = 3.0,
     temperature: float = 1.0,
+    lora_adapter: str | None = None,
 ) -> bytes:
     """Generate a melody-conditioned arrangement.
 
     Returns 32 kHz stereo (or mono on smaller variants) WAV bytes ready for
     `st.audio` / file write.
+
+    If `lora_adapter` is given (path to a PEFT checkpoint, e.g.
+    `checkpoints/musicgen_lora_b77/step_300`), the LM uses that adapter on
+    top of the base weights — fine-tuned style/speaker.
     """
     if seed is not None:
         torch.manual_seed(seed)
-    mg = _load(model_size=model_size)
+    mg = _load(model_size=model_size, lora_adapter=lora_adapter)
     # Bypass torchaudio.load (which now requires torchcodec/ffmpeg). soundfile
     # is already a pipeline dependency.
     audio_np, sr = _sf.read(str(melody_audio_path), always_2d=True)
