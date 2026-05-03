@@ -1,0 +1,76 @@
+{
+  "rows": [
+    {
+      "piece": "Bach/Fugue/bwv_846",
+      "n_notes": 725,
+      "auto_route_pvd": false,
+      "snap_b87": 0.03207810320781032,
+      "n_matched": 717
+    },
+    {
+      "piece": "Bach/Fugue/bwv_848",
+      "n_notes": 1413,
+      "auto_route_pvd": false,
+      "snap_b87": 0.7154065620542083,
+      "n_matched": 1402
+    },
+    {
+      "piece": "Bach/Fugue/bwv_854",
+      "n_notes": 731,
+      "auto_route_pvd": false,
+      "snap_b87": 0.7666666666666667,
+      "n_matched": 720
+    },
+    {
+      "piece": "Bach/Fugue/bwv_856",
+      "n_notes": 747,
+      "auto_route_pvd": false,
+      "snap_b87": 0.03571428571428571,
+      "n_matched": 728
+    },
+    {
+      "piece": "Bach/Fugue/bwv_857",
+      "n_notes": 1368,
+      "auto_route_pvd": false,
+      "snap_b87": 0.8045801526717558,
+      "n_matched": 1310
+    },
+    {
+      "piece": "Beethoven/Piano_Sonatas/21-1",
+      "n_notes": 8485,
+      "auto_route_pvd": false,
+      "snap_b87": 0.6879708383961118,
+      "n_matched": 8230
+    },
+    {
+      "piece": "Schumann/Toccata",
+      "n_notes": 5895,
+      "auto_route_pvd": false,
+      "snap_b87": 0.6111012275395837,
+      "n_matched": 5621
+    },
+    {
+      "piece": "Chopin/Berceuse_op_57",
+      "n_notes": 1637,
+      "auto_route_pvd": true,
+      "snap_b87": 0.5689548546691404,
+      "n_matched": 1617
+    },
+    {
+      "piece": "Liszt/Sonata",
+      "n_notes": 15759,
+      "auto_route_pvd": false,
+      "snap_b87": 0.054090329508086704,
+      "n_matched": 14901
+    }
+  ],
+  "means": {
+    "mean_snap_5bach": 0.47088915406294535,
+    "mean_snap_4romantic": 0.48052931252823067,
+    "mean_snap_9overall": 0.47517366893640556
+  },
+  "config": {
+    "git_sha": "c24a570",
+    "n_pieces": 9
+  }
+}
