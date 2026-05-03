@@ -29,6 +29,26 @@ class VoiceTrackConfig:
     keep_offset_min_dur_s: float = 0.05
 
 
+def adaptive_pitch_jump(notes: Sequence[NoteEvent]) -> float:
+    """Auto-select pitch_jump based on note pitch-spread per second (B48b finding).
+    Bach Fugues (4 voices, narrow ranges) -> tight pj=3.
+    Romantic (wide chordal textures) -> wider pj=12.
+    """
+    if len(notes) < 10:
+        return 3.0
+    span = max(notes[-1].onset_s - notes[0].onset_s, 1e-3)
+    notes_per_sec = len(notes) / span
+    midis = [n.midi() for n in notes if n.midi() > 0]
+    if not midis:
+        return 3.0
+    pitch_iqr = float(np.percentile(midis, 75) - np.percentile(midis, 25))
+    if notes_per_sec > 6.0 and pitch_iqr > 24:
+        return 12.0
+    if notes_per_sec > 4.0 and pitch_iqr > 18:
+        return 7.0
+    return 3.0
+
+
 def assign_voices(notes: Sequence[NoteEvent], cfg: VoiceTrackConfig | None = None) -> list[list[int]]:
     """Return list of voices, each a list of indices into `notes`."""
     cfg = cfg or VoiceTrackConfig()
@@ -82,9 +102,22 @@ def quantize_with_voice_tracking(
     beats: np.ndarray,
     tatums_per_beat: int = 24,
     voice_cfg: VoiceTrackConfig | None = None,
+    adaptive_pj: bool = True,
 ) -> tuple[np.ndarray, np.ndarray]:
+    """If adaptive_pj is True (default after exp_B49), pitch_jump is auto-selected
+    per piece based on note density + pitch IQR. Bach Fugues keep pj=3; Romantic
+    chordal pieces get pj=12.
+    """
     if not notes:
         return np.zeros(0, dtype=np.int64), np.zeros(0, dtype=np.int64)
+    if voice_cfg is None:
+        voice_cfg = VoiceTrackConfig()
+    if adaptive_pj:
+        voice_cfg = VoiceTrackConfig(
+            pitch_jump=adaptive_pitch_jump(notes),
+            time_gap_s=voice_cfg.time_gap_s,
+            keep_offset_min_dur_s=voice_cfg.keep_offset_min_dur_s,
+        )
     voices = assign_voices(notes, voice_cfg)
     onsets, adj_offsets = per_voice_durations(notes, voices)
     return viterbi_quantize_rhythm(

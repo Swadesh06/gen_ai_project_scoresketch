@@ -1,0 +1,148 @@
+{
+  "rows": [
+    {
+      "strategy": "adaptive",
+      "mean_snap": 0.5898429244374268,
+      "per": [
+        {
+          "piece": "Bach/Fugue/bwv_846",
+          "raw": 0.8456284153005464,
+          "snap": 0.8469945355191257,
+          "pj": 3.0
+        },
+        {
+          "piece": "Beethoven/Piano_Sonatas/21-1",
+          "raw": 0.8079741647000372,
+          "snap": 0.8107067445037883,
+          "pj": 12.0
+        },
+        {
+          "piece": "Schumann/Toccata",
+          "raw": 0.7032513023172265,
+          "snap": 0.744745823603377,
+          "pj": 3.0
+        },
+        {
+          "piece": "Chopin/Berceuse_op_57",
+          "raw": 0.5219885277246654,
+          "snap": 0.46908859145952836,
+          "pj": 3.0
+        },
+        {
+          "piece": "Liszt/Sonata",
+          "raw": 0.196853007568716,
+          "snap": 0.07767892710131456,
+          "pj": 7.0
+        }
+      ]
+    },
+    {
+      "strategy": "fixed_7",
+      "mean_snap": 0.5852851574556233,
+      "per": [
+        {
+          "piece": "Bach/Fugue/bwv_846",
+          "raw": 0.837431693989071,
+          "snap": 0.8401639344262295,
+          "pj": 7.0
+        },
+        {
+          "piece": "Beethoven/Piano_Sonatas/21-1",
+          "raw": 0.7584151037138244,
+          "snap": 0.7617687243820643,
+          "pj": 7.0
+        },
+        {
+          "piece": "Schumann/Toccata",
+          "raw": 0.707921681336447,
+          "snap": 0.7433087839051554,
+          "pj": 7.0
+        },
+        {
+          "piece": "Chopin/Berceuse_op_57",
+          "raw": 0.5717017208413002,
+          "snap": 0.5035054174633524,
+          "pj": 7.0
+        },
+        {
+          "piece": "Liszt/Sonata",
+          "raw": 0.196853007568716,
+          "snap": 0.07767892710131456,
+          "pj": 7.0
+        }
+      ]
+    },
+    {
+      "strategy": "fixed_12",
+      "mean_snap": 0.5836274321027032,
+      "per": [
+        {
+          "piece": "Bach/Fugue/bwv_846",
+          "raw": 0.773224043715847,
+          "snap": 0.7773224043715847,
+          "pj": 12.0
+        },
+        {
+          "piece": "Beethoven/Piano_Sonatas/21-1",
+          "raw": 0.8079741647000372,
+          "snap": 0.8107067445037883,
+          "pj": 12.0
+        },
+        {
+          "piece": "Schumann/Toccata",
+          "raw": 0.6879827555236213,
+          "snap": 0.71708280941261,
+          "pj": 12.0
+        },
+        {
+          "piece": "Chopin/Berceuse_op_57",
+          "raw": 0.6035691523263225,
+          "snap": 0.5360101975780752,
+          "pj": 12.0
+        },
+        {
+          "piece": "Liszt/Sonata",
+          "raw": 0.20090293453724606,
+          "snap": 0.07701500464745718,
+          "pj": 12.0
+        }
+      ]
+    },
+    {
+      "strategy": "fixed_3",
+      "mean_snap": 0.5713676093645366,
+      "per": [
+        {
+          "piece": "Bach/Fugue/bwv_846",
+          "raw": 0.8456284153005464,
+          "snap": 0.8469945355191257,
+          "pj": 3.0
+        },
+        {
+          "piece": "Beethoven/Piano_Sonatas/21-1",
+          "raw": 0.7122096633958515,
+          "snap": 0.7177990311762514,
+          "pj": 3.0
+        },
+        {
+          "piece": "Schumann/Toccata",
+          "raw": 0.7032513023172265,
+          "snap": 0.744745823603377,
+          "pj": 3.0
+        },
+        {
+          "piece": "Chopin/Berceuse_op_57",
+          "raw": 0.5219885277246654,
+          "snap": 0.46908859145952836,
+          "pj": 3.0
+        },
+        {
+          "piece": "Liszt/Sonata",
+          "raw": 0.18722613198778382,
+          "snap": 0.07821006506440048,
+          "pj": 3.0
+        }
+      ]
+    }
+  ]
+}
