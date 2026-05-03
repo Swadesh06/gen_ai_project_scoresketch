@@ -1,0 +1,29 @@
+{
+  "rows": [
+    {
+      "piece": "Bach/Fugue/bwv_846",
+      "fixed_bd": 0.02459016393442623,
+      "auto_piano": 0.02459016393442623,
+      "chosen": "bd",
+      "med_dur": 0.23892664909362793
+    },
+    {
+      "piece": "Debussy/Images_Book_1/1_Reflets_dans_lEau",
+      "fixed_bd": 0.19591611479028698,
+      "auto_piano": 0.17173800928313562,
+      "chosen": "bp",
+      "med_dur": 0.48392486572265625
+    },
+    {
+      "piece": "Brahms/Six_Pieces_op_118/2",
+      "fixed_bd": 0.48832807570977915,
+      "auto_piano": 0.34282253179890976,
+      "chosen": "bp",
+      "med_dur": 0.7863044738769531
+    }
+  ],
+  "means": {
+    "fixed_bd": 0.2362781181448308,
+    "auto_piano": 0.17971690167215723
+  }
+}

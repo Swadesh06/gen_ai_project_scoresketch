@@ -92,16 +92,14 @@ def _branch_notes(audio_path: str, audio: np.ndarray, sr: int, cfg: PipelineConf
     if cfg.transcriber == "basic_pitch":
         return transcribe_basic_pitch(audio_path)
     if cfg.transcriber == "auto_piano":
-        # B59/B60b: ByteDance under-segments slow chordal pieces (Chopin Berceuse-style).
-        # Median ByteDance note duration > 0.4s is a clean discriminator (Chopin: 0.517,
-        # all other tested ASAP pieces: <= 0.239). Switch to basic_pitch which handles
-        # long sustained notes better.
-        bd = transcribe_piano(audio_path)
-        if len(bd) >= 50:
-            durs = np.array([n.offset_s - n.onset_s for n in bd])
-            if float(np.median(durs)) > 0.4:
-                return transcribe_basic_pitch(audio_path)
-        return bd
+        # B61 update: the median-dur > 0.4 heuristic from B60 wins on Chopin Berceuse
+        # (+5.2pp) but loses on Debussy Reflets (-2.4pp) and Brahms op 118 (-14.5pp).
+        # The Chopin win was specific to its sparse-rocking-accompaniment texture, not
+        # a general property of slow chordal pieces. Until a more reliable selector is
+        # found (likely needing a tiny classifier on bd output features), auto_piano
+        # falls back to bytedance_piano. Set transcriber="basic_pitch" explicitly when
+        # you know the input is Chopin Berceuse-style.
+        return transcribe_piano(audio_path)
     raise ValueError(f"unknown transcriber: {cfg.transcriber!r}")
 
 
