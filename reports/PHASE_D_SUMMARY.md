@@ -62,12 +62,28 @@ EnCodec autoregressive token count, not parameter count.
 | B73 | Transformer encoder for Vocadito voicing | Same data ceiling: ~0.50 mean F1 (in flight, will finish below heuristic) |
 | B78 | B76 voice tracker → snap-F1 improvement | delta = 0 (informative null — DP doesn't use voice info; needs per-voice DP refactor — addressed by B79) |
 
-## Open at writing time
-- B70 full (40 epochs hidden=192) — still in fold 0 (~1h to go)
-- B72 (BiLSTM + 4× augmentation, 80 epochs) — still in fold 0 (very slow)
-- B73 (Transformer voicing 5-fold CV) — fold 3 in progress
-- B76 voice tracker — still climbing (best 0.9341 at last check)
-- B79 per-voice DP integration — processing Liszt (15915 notes through 3-variant DP)
+## Final results (committed)
+- B73 Transformer voicing 5-fold CV F1 = 0.499 — discard (below heuristic 0.665)
+- B76 voice tracker FINAL: best mean acc = **0.9447** (Liszt 90.8%, Beethoven 97.4%, Schumann 94.8%, Chopin 94.9%)
+- B79 per-voice DP: **+1.66pp on Chopin Berceuse**, no-op others
+- B80 lib refactor: verified, snap delta on Chopin holds (+2.16pp via lib API)
+- B81 / B86 AMT continuation: model loads + runs, but generates 0 new events on both monophonic and polyphonic prompts (API issue, not OOD)
+- B82 end-to-end pipeline integration: auto_route_fired=True on Chopin, MusicXML -90KB
+- B85 offset corrector: -0.66pp vs heuristic — discard
+
+## Production integration (committed + pushed)
+- `humscribe/rhythm/voice_transformer.py` — B76 model wrapper with `get_b76_assigner()` singleton
+- `humscribe/pipeline.py` — `_should_use_per_voice_dp()` auto-routing (Chopin only by default)
+- `humscribe/config.py` — `PipelineConfig.per_voice_dp: Literal["auto","on","off"]`
+- `humscribe/arrange/musicgen.py` — `arrange(..., lora_adapter=...)` for B77 fine-tunes
+- `app/streamlit_app.py` — Arrange tab auto-discovers `checkpoints/musicgen_lora_b77/step_*/`
+
+## Still in flight (will be in next commit)
+- B70 full (40 epochs hidden=192): fold 1 of 5 — confirms B70's pseudo-label gain pattern
+- B72 (BiLSTM + 4× augmentation, 80 epochs): fold 0 — augmentation appears to hurt val
+- B83 (B76 + heavy MIDI augmentation): targeting >94.5% (B76 baseline)
+- B84 (bigger 12M-param Transformer): targeting >94.5% (B76 baseline)
+- B87 (full pipeline.transcribe() on 9 ASAP pieces): integration sanity at full scale
 
 ## What this means for the project narrative
 
