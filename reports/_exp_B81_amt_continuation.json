@@ -1,0 +1,18 @@
+{
+  "summary": {
+    "n_input_notes": 69,
+    "n_input_events": 207,
+    "n_output_events": 207,
+    "generation_wall_s": 0.24262261390686035,
+    "model_params_M": 359.708672,
+    "midi_in_path": "outputs/amt_continuation/vocadito_1_in.mid",
+    "midi_out_path": "outputs/amt_continuation/vocadito_1_continuation.mid",
+    "continuation_seconds": 15.0
+  },
+  "config": {
+    "git_sha": "0c1041e",
+    "model": "stanford-crfm/music-medium-800k",
+    "continuation_seconds": 15.0,
+    "top_p": 0.95
+  }
+}

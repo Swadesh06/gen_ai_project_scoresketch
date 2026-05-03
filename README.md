@@ -44,15 +44,21 @@ audio →  Stage 1   Stage 2A      Stage 4     Stage 5
   older fast path; `basic_pitch` for non-piano polyphony.
 - **Stage 4** — `humscribe.beat.beat_this_track`. beat_this from
   Heidelberg, with a tempo-octave correction (B13: +6pp Stage-4).
-- **Stage 5** — `humscribe.rhythm.{viterbi_quantize, voice_tracking}`.
+- **Stage 5** — `humscribe.rhythm.{viterbi_quantize, voice_tracking, voice_transformer}`.
   Cemgil-Kappen DP at 24 tatums/beat for the snap metric, requantized to
   TPB=12 for SVG render. Voice tracking with adaptive pitch-jump (B49:
-  +1.9pp on mixed ASAP).
+  +1.9pp on mixed ASAP). Phase D: optional **B76 Transformer voice tracker**
+  (94.5% mean acc on Romantic ASAP, Liszt 90.8%, Beethoven 97.4%) +
+  per-voice independent DP, auto-routed for melody+accompaniment pieces
+  (+1.7pp on Chopin Berceuse).
 - **Stage 6** — `humscribe.score`. music21 stream build with
   Krumhansl–Schmuckler key estimation (B+2 item 1.4); Verovio SVG render.
 - **Stage 7** *(optional)* — `humscribe.arrange.musicgen`. MusicGen-Melody
-  1.5B (or 3.3B `melody-large`) with 6 prompt presets. Peak 4.3 GB VRAM
-  (B+2 item 3 / B64).
+  1.5B (or 3.3B `melody-large`, the new Streamlit default) with 6 prompt
+  presets. Peak 4.3 GB VRAM (1.5B) or 6.25 GB (3.3B). Phase D: optional
+  **PEFT LoRA adapter** (B77, 0.34% trainable params, 69% loss decay) —
+  pass `lora_adapter="checkpoints/musicgen_lora_b77/step_300"` for
+  fine-tuned style/speaker behavior.
 
 ## Headline metrics (B+2)
 
@@ -71,6 +77,11 @@ audio →  Stage 1   Stage 2A      Stage 4     Stage 5
 | Vocadito IAA ceiling (no-offset) | 0.740 | reference only |
 | MAESTRO instrument F1 (5-piece sanity) | 0.984 | first-class |
 | MTG-QBH visual nonempty (10 clips) | 100% | unchanged |
+| **B76 voice tracker on held-out Romantic ASAP** | **94.47% mean** | first-class (Phase D) |
+| ↳ Liszt Sonata voice acc | **90.8%** | first-class |
+| ↳ Beethoven 21-1 voice acc | **97.4%** | first-class |
+| **B77 LoRA fine-tune loss decay** (300 steps, real chroma) | **69%** | first-class (Phase D) |
+| **B79/B80 per-voice DP wins on Chopin Berceuse snap-F1** | **+1.66pp** | first-class (Phase D) |
 
 ## Repo layout
 
@@ -132,6 +143,23 @@ python -c "
 from humscribe.arrange.musicgen import arrange_to_file
 arrange_to_file('vocadito_1.wav', 'jazz trio with brushed drums',
                 'out.wav', duration_s=10.0, model_size='melody')
+"
+
+# Arrange with a fine-tuned LoRA adapter (B77)
+python -c "
+from humscribe.arrange.musicgen import arrange_to_file
+arrange_to_file('vocadito_1.wav', 'jazz trio with brushed drums',
+                'out.wav', duration_s=15.0, model_size='melody',
+                lora_adapter='checkpoints/musicgen_lora_b77/step_300')
+"
+
+# Force per-voice DP + B76 transformer voice tracker (Phase D, Chopin-style pieces)
+python -c "
+from humscribe.pipeline import transcribe
+from humscribe.config import PipelineConfig
+r = transcribe('chopin_berceuse.wav',
+               PipelineConfig(input_kind='piano', per_voice_dp='on'))
+print(r.n_notes, 'notes')
 "
 ```
 
@@ -216,10 +244,14 @@ inherit this restriction.
 
 ## Status
 
-Phase B+2 stable. All four spec gates pass. 80+ commits, 80+ WandB runs at
+Phase B+2 stable + **Phase D extensions integrated**. All four spec gates pass.
+100+ commits, 100+ WandB runs at
 [wandb.ai/agam_p-iit-roorkee/humscribe-v3.2](https://wandb.ai/agam_p-iit-roorkee/humscribe-v3.2).
 Per-experiment reports under `reports/exp_B*.md` and `reports/item-*.md`;
 the index of all experiments is at `reports/INDEX.md`.
+
+Phase D summary: `reports/PHASE_D_SUMMARY.md`. Integration details:
+`reports/PHASE_D_INTEGRATION.md`.
 
 For the live plan see `PLAN.md`. For the agent's operating contract see
 `CLAUDE.md`. For the next-steps spec see
