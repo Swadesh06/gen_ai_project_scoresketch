@@ -144,7 +144,10 @@ def _should_use_per_voice_dp(notes: list[NoteEvent], cfg: PipelineConfig) -> boo
         return False
     if len(notes) < 32:
         return False
-    span = max(notes[-1].onset_s - notes[0].onset_s, 1e-3)
+    # Use min/max because some transcribers (ByteDance) return chord notes in
+    # descending-pitch order rather than time order.
+    onsets = [n.onset_s for n in notes]
+    span = max(max(onsets) - min(onsets), 1e-3)
     notes_per_sec = len(notes) / span
     midis = [n.midi() for n in notes if n.midi() > 0]
     if not midis:
