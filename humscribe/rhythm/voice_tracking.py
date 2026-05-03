@@ -103,10 +103,20 @@ def quantize_with_voice_tracking(
     tatums_per_beat: int = 24,
     voice_cfg: VoiceTrackConfig | None = None,
     adaptive_pj: bool = True,
+    per_voice_dp: bool = False,
+    voice_assigner=None,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """If adaptive_pj is True (default after exp_B49), pitch_jump is auto-selected
-    per piece based on note density + pitch IQR. Bach Fugues keep pj=3; Romantic
-    chordal pieces get pj=12.
+    """Voice-track + Cemgil DP, optionally one DP per voice (B79).
+
+    Args:
+        adaptive_pj: auto-select pitch_jump (B49). Default True.
+        per_voice_dp: if True, run viterbi_quantize_rhythm INDEPENDENTLY on each
+            voice and merge — wins +1.7pp on Chopin Berceuse-style pieces with
+            clear melody+accompaniment separation (B79). Default False keeps
+            production behavior (single shared DP on adjusted offsets).
+        voice_assigner: optional callable `(notes) -> list[list[int]]` to use
+            instead of the greedy assigner. Used by B78 / future learned voice
+            trackers (B76 Transformer).
     """
     if not notes:
         return np.zeros(0, dtype=np.int64), np.zeros(0, dtype=np.int64)
@@ -118,9 +128,44 @@ def quantize_with_voice_tracking(
             time_gap_s=voice_cfg.time_gap_s,
             keep_offset_min_dur_s=voice_cfg.keep_offset_min_dur_s,
         )
-    voices = assign_voices(notes, voice_cfg)
+    voices = (voice_assigner(notes) if voice_assigner is not None
+               else assign_voices(notes, voice_cfg))
+    if per_voice_dp:
+        return _per_voice_dp(notes, voices, beats, tatums_per_beat)
     onsets, adj_offsets = per_voice_durations(notes, voices)
     return viterbi_quantize_rhythm(
         onsets, adj_offsets, beats, tatums_per_beat=tatums_per_beat,
         allowed_durations_tatums=default_allowed_durations(tatums_per_beat),
     )
+
+
+def _per_voice_dp(notes, voices, beats, tatums_per_beat):
+    """Run viterbi_quantize_rhythm independently per voice, merge to global order.
+
+    Voice members are quantized in beat-relative time using ALL beats (not just
+    those spanning the voice's notes), so cross-voice tatum positions remain
+    comparable. B79 finding: this wins ~+1.7pp on melody+accompaniment pieces."""
+    n = len(notes)
+    q_on = np.zeros(n, dtype=np.int64)
+    q_off = np.zeros(n, dtype=np.int64)
+    allowed = default_allowed_durations(tatums_per_beat)
+    for v in voices:
+        if not v:
+            continue
+        v_sorted = sorted(v, key=lambda i: notes[i].onset_s)
+        v_on = np.array([notes[i].onset_s for i in v_sorted], dtype=np.float64)
+        v_off = np.array([notes[i].offset_s for i in v_sorted], dtype=np.float64)
+        # Cap each note's offset at gap-to-next-in-voice (same as per_voice_durations)
+        v_off_adj = v_off.copy()
+        for k in range(len(v_sorted) - 1):
+            gap = v_on[k + 1] - v_on[k]
+            if 0.05 <= gap < v_off_adj[k] - v_on[k]:
+                v_off_adj[k] = v_on[k] + gap
+        q_on_v, q_off_v = viterbi_quantize_rhythm(
+            v_on, v_off_adj, beats, tatums_per_beat=tatums_per_beat,
+            allowed_durations_tatums=allowed,
+        )
+        for ki, gi in enumerate(v_sorted):
+            q_on[gi] = q_on_v[ki]
+            q_off[gi] = q_off_v[ki]
+    return q_on, q_off
