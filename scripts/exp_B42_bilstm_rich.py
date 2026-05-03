@@ -99,10 +99,34 @@ def main(epochs: int, hidden: int, k_folds: int, threshold: float):
         va_f = [examples[k][0] for k in va_pairs]
         va_l = [examples[k][1] for k in va_pairs]
         in_dim = tr_f[0].shape[1]
-        cfg2 = MelOnsetConfig(hidden=hidden)
-        cfg2.n_mels = in_dim - 5
-        model, hist = train_loop(tr_f, tr_l, cfg2, va_f, va_l, epochs=epochs,
-                                  batch_size=4, lr=1e-3, device=device)
+        # Build a fresh model with correct in_dim (mel + 5 extra features)
+        cfg2 = MelOnsetConfig(hidden=hidden, n_mels=in_dim - 5)
+        model = MelOnsetBiLSTM(cfg2, in_extra=5).to(device)
+        opt = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
+        from humscribe.train.onset_mel import _pos_weight, _pad_batch, _val_metrics
+        from torch import nn
+        pos_weight = _pos_weight(tr_l).to(device)
+        bce = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+        n = len(tr_f); rng_e = np.random.default_rng(0)
+        hist = []
+        for ep in range(epochs):
+            order = rng_e.permutation(n); model.train(); train_loss = 0.0
+            for i in range(0, n, 4):
+                ids = order[i:i + 4]
+                xs = [torch.from_numpy(tr_f[j]) for j in ids]
+                ys = [torch.from_numpy(tr_l[j]) for j in ids]
+                xb, yb, mask = _pad_batch(xs, ys, device)
+                logits = model(xb)
+                loss = (bce(logits, yb) * mask).sum() / mask.sum()
+                opt.zero_grad(); loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                opt.step()
+                train_loss += float(loss.detach()) * len(ids)
+            train_loss /= n
+            rec = {"epoch": ep, "train_loss": train_loss}
+            vl, vp, vr, vf = _val_metrics(model, va_f, va_l, device)
+            rec.update({"val_loss": vl, "val_p": vp, "val_r": vr, "val_f1": vf})
+            hist.append(rec)
         for h in hist: wandb.log({f"fold{fi+1}/{k}": v for k, v in h.items()})
         f1s = []
         for (cid, ann) in va_pairs:
