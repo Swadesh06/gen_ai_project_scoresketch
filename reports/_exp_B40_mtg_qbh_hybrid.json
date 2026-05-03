@@ -1,0 +1,124 @@
+{
+  "rows": [
+    {
+      "track_id": "q1",
+      "pitch_model": "pesto",
+      "n_notes": 41,
+      "bpm": 100.00000000000006
+    },
+    {
+      "track_id": "q10",
+      "pitch_model": "pesto",
+      "n_notes": 35,
+      "bpm": 85.71428571428581
+    },
+    {
+      "track_id": "q100",
+      "pitch_model": "pesto",
+      "n_notes": 51,
+      "bpm": 125.0
+    },
+    {
+      "track_id": "q101",
+      "pitch_model": "pesto",
+      "n_notes": 73,
+      "bpm": 61.22448979591834
+    },
+    {
+      "track_id": "q102",
+      "pitch_model": "pesto",
+      "n_notes": 88,
+      "bpm": 46.153846153846146
+    },
+    {
+      "track_id": "q103",
+      "pitch_model": "pesto",
+      "n_notes": 46,
+      "bpm": 136.36363636363623
+    },
+    {
+      "track_id": "q104",
+      "pitch_model": "pesto",
+      "n_notes": 39,
+      "bpm": 103.44827586206927
+    },
+    {
+      "track_id": "q105",
+      "pitch_model": "pesto",
+      "n_notes": 85,
+      "bpm": 157.89473684210495
+    },
+    {
+      "track_id": "q106",
+      "pitch_model": "pesto",
+      "n_notes": 75,
+      "bpm": 58.82352941176473
+    },
+    {
+      "track_id": "q107",
+      "pitch_model": "pesto",
+      "n_notes": 116,
+      "bpm": 100.00000000000003
+    },
+    {
+      "track_id": "q1",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 37,
+      "bpm": 100.00000000000006
+    },
+    {
+      "track_id": "q10",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 35,
+      "bpm": 85.71428571428581
+    },
+    {
+      "track_id": "q100",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 32,
+      "bpm": 125.0
+    },
+    {
+      "track_id": "q101",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 74,
+      "bpm": 61.22448979591834
+    },
+    {
+      "track_id": "q102",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 92,
+      "bpm": 46.153846153846146
+    },
+    {
+      "track_id": "q103",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 43,
+      "bpm": 136.36363636363623
+    },
+    {
+      "track_id": "q104",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 42,
+      "bpm": 103.44827586206927
+    },
+    {
+      "track_id": "q105",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 83,
+      "bpm": 157.89473684210495
+    },
+    {
+      "track_id": "q106",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 70,
+      "bpm": 58.82352941176473
+    },
+    {
+      "track_id": "q107",
+      "pitch_model": "pesto_crepevoicing",
+      "n_notes": 115,
+      "bpm": 100.00000000000003
+    }
+  ]
+}
