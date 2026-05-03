@@ -93,15 +93,23 @@ def _branch_notes(audio_path: str, audio: np.ndarray, sr: int, cfg: PipelineConf
         return transcribe_piano(audio_path)
     if cfg.transcriber == "basic_pitch":
         return transcribe_basic_pitch(audio_path)
+    if cfg.transcriber == "yourmt3plus":
+        # B+2 item 2: T5 seq2seq, broadest generalization.
+        from humscribe.instrument.yourmt3plus import transcribe_yourmt3plus
+        return transcribe_yourmt3plus(audio_path)
     if cfg.transcriber == "auto_piano":
-        # B61 update: the median-dur > 0.4 heuristic from B60 wins on Chopin Berceuse
-        # (+5.2pp) but loses on Debussy Reflets (-2.4pp) and Brahms op 118 (-14.5pp).
-        # The Chopin win was specific to its sparse-rocking-accompaniment texture, not
-        # a general property of slow chordal pieces. Until a more reliable selector is
-        # found (likely needing a tiny classifier on bd output features), auto_piano
-        # falls back to bytedance_piano. Set transcriber="basic_pitch" explicitly when
-        # you know the input is Chopin Berceuse-style.
-        return transcribe_piano(audio_path)
+        # B+2 item 2 update: route Romantic-style content to YourMT3+ (B58 oracle showed
+        # ByteDance under-performs on Romantic by 18.8pp; YourMT3+ generalizes better).
+        # Heuristic: median ByteDance note duration > 0.4 s + median IOI > 0.3 s = slow
+        # chordal Romantic-like. ByteDance keeps the default for MAESTRO/Bach.
+        bd = transcribe_piano(audio_path)
+        if len(bd) >= 50:
+            durs = np.array([n.offset_s - n.onset_s for n in bd])
+            iois = np.diff(sorted(n.onset_s for n in bd))
+            if iois.size and float(np.median(durs)) > 0.4 and float(np.median(iois)) > 0.3:
+                from humscribe.instrument.yourmt3plus import transcribe_yourmt3plus
+                return transcribe_yourmt3plus(audio_path)
+        return bd
     raise ValueError(f"unknown transcriber: {cfg.transcriber!r}")
 
 
