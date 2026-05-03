@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "n_notes_off": 1588,
+    "n_notes_auto": 1588,
+    "bpm_off": 60.0,
+    "bpm_auto": 60.0,
+    "wall_off_s": 45.973965883255005,
+    "wall_auto_s": 35.62987947463989,
+    "auto_route_fired": true,
+    "musicxml_off_size_kb": 1416,
+    "musicxml_auto_size_kb": 1326,
+    "svg_off_size_kb": 586,
+    "svg_auto_size_kb": 593
+  },
+  "config": {
+    "git_sha": "1cce79e",
+    "audio": "/workspace/.cache/asap_renders/Chopin__Berceuse_op_57.wav"
+  }
+}
