@@ -44,11 +44,15 @@
 | exp_B45b_a2_verify | HMM+hybrid +0.6pp A1 / -0.4pp A2 | discard | discard |
 | exp_B48_hdbscan_romantic | -0.4pp on Romantic ASAP | discard | discard |
 | **exp_B49_adaptive_pj** | mixed-ASAP 0.571 → **0.590** | **keep** | **keep** |
-| exp_B50_bilstm_aug | training (5x augmented) | in_progress | tbd |
+| exp_B50_bilstm_aug | aug 5x → BiLSTM 0.619 vs voicing 0.648 | discard | discard |
 | **exp_B51_vocadito_iaa** | A1<->A2 IAA F1 = **0.740** ceiling | informative | informative |
-| exp_B52_hubert_bilstm | training | in_progress | tbd |
+| exp_B52_hubert_bilstm | HuBERT BiLSTM 0.592 vs voicing 0.648 | discard | discard |
 | **exp_B53_oracle_dp** | oracle Liszt = 0.132 (DP-bound!) | informative | informative |
-| exp_B54_liszt_dp_sweep | running (TPB×pj×durations) | in_progress | tbd |
+| exp_B54_liszt_dp_sweep | TPB=48 +2.3pp; Liszt unsalvageable | discard | discard |
+| **exp_B55_offset_f1** | offset20 F1 = 0.439 vs IAA 0.642 (-20pp) | informative | informative |
+| exp_B56_voc_dursnap | tempo-snap durations: flat or worse | discard | discard |
+| exp_B57_oms_sweep | current default IS optimum | discard | discard |
+| **exp_B58_disambig** | 18.8pp ASAP loss = 100% from ByteDance | informative | informative |
 
 ## Final headline numbers (after all kept improvements)
 - MIR-1K mean RPA = 0.988
