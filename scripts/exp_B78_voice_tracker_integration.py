@@ -133,19 +133,37 @@ def predict_voices_chunked(model, notes, chunk_size: int = 512):
 
 
 def transcribe_via_cache(piece: str, backend: str = "yourmt3plus") -> list[NoteEvent]:
-    """Load cached transcription from B63 (saved per piece). Falls back to recomputing."""
+    """Load cached transcription from B63 (saved per piece). Falls back to recomputing.
+
+    B63 cache stores notes as dicts: {on, off, midi, hz, vel, conf}. Convert
+    to NoteEvent here so downstream voice-tracking + DP code works.
+    """
     safe = piece.replace("/", "__")
     if backend == "yourmt3plus":
         cache_dir = CACHE_YMT
     else:
         cache_dir = CACHE_BD
     cache = cache_dir / f"{safe}.pkl"
-    if cache.exists():
-        import pickle
-        d = pickle.loads(cache.read_bytes())
-        notes = d.get("notes", [])
-        return notes
-    raise FileNotFoundError(f"no B63 cache for {piece}; run B63 first")
+    if not cache.exists():
+        raise FileNotFoundError(f"no B63 cache for {piece}; run B63 first")
+    import pickle
+    d = pickle.loads(cache.read_bytes())
+    notes = []
+    for x in d.get("notes", []):
+        if isinstance(x, NoteEvent):
+            notes.append(x); continue
+        # Dict from B63 cache
+        hz = x.get("hz")
+        mid = x.get("midi")
+        if hz is None and mid is not None:
+            hz = 440.0 * 2 ** ((mid - 69) / 12)
+        if hz is None or mid is None:
+            continue
+        notes.append(NoteEvent(onset_s=x["on"], offset_s=x["off"],
+                                pitch_midi=mid, pitch_hz=hz,
+                                velocity=x.get("vel", 80),
+                                confidence=x.get("conf", 1.0)))
+    return notes
 
 
 def quantize_with_baseline_tracker(notes, beats):
@@ -156,9 +174,16 @@ def quantize_with_baseline_tracker(notes, beats):
 
 
 def quantize_with_b76_tracker(notes, beats, model):
-    """Use B76 Transformer to assign voices, then per-voice DP."""
-    voices = predict_voices_chunked(model, notes)
-    on_v, off_v = per_voice_durations(notes, voices)
+    """Use B76 Transformer to assign voices, then per-voice DP.
+
+    `predict_voices_chunked` returns a flat array of per-note voice ids;
+    `per_voice_durations` expects list[list[int]] of indices per voice.
+    """
+    voice_ids = predict_voices_chunked(model, notes)
+    voices_grouped: list[list[int]] = [[], []]
+    for i, vid in enumerate(voice_ids):
+        voices_grouped[int(vid)].append(i)
+    on_v, off_v = per_voice_durations(notes, voices_grouped)
     return viterbi_quantize_rhythm(on_v, off_v, beats, tatums_per_beat=24)
 
 

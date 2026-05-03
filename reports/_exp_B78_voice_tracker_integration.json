@@ -1,0 +1,39 @@
+{
+  "rows": [
+    {
+      "piece": "Liszt/Sonata",
+      "f1_baseline": 0.02229179711959925,
+      "f1_b78": 0.02229179711959925,
+      "delta": 0.0,
+      "n_notes": 15915
+    },
+    {
+      "piece": "Schumann/Toccata",
+      "f1_baseline": 0.9386155129274395,
+      "f1_b78": 0.9386155129274395,
+      "delta": 0.0,
+      "n_notes": 5924
+    },
+    {
+      "piece": "Chopin/Berceuse_op_57",
+      "f1_baseline": 0.9667365897512735,
+      "f1_b78": 0.9667365897512735,
+      "delta": 0.0,
+      "n_notes": 1646
+    },
+    {
+      "piece": "Beethoven/Piano_Sonatas/21-1",
+      "f1_baseline": 0.21097144181196778,
+      "f1_b78": 0.21097144181196778,
+      "delta": 0.0,
+      "n_notes": 8586
+    }
+  ],
+  "mean_baseline_f1": 0.53465383540257,
+  "mean_b78_f1": 0.53465383540257,
+  "mean_delta": 0.0,
+  "config": {
+    "phase": "D",
+    "tracker_ckpt": "checkpoints/voice_transformer_b76/best.pt"
+  }
+}
