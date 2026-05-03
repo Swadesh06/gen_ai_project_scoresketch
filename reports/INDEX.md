@@ -40,6 +40,15 @@
 | exp_B37_asap_diverse | non-Bach mean snap 0.571 | informative | informative |
 | **exp_B36_hybrid_voicing** | **Vocadito 0.597 → 0.650** | **keep** | **keep** |
 | **exp_B36b_higher_vt** | **vt=0.75 psw=19 → 0.665** | **keep** | **keep** |
+| exp_B38..B47 batch | many, see batch md | mixed | informative |
+| exp_B45b_a2_verify | HMM+hybrid +0.6pp A1 / -0.4pp A2 | discard | discard |
+| exp_B48_hdbscan_romantic | -0.4pp on Romantic ASAP | discard | discard |
+| **exp_B49_adaptive_pj** | mixed-ASAP 0.571 → **0.590** | **keep** | **keep** |
+| exp_B50_bilstm_aug | training (5x augmented) | in_progress | tbd |
+| **exp_B51_vocadito_iaa** | A1<->A2 IAA F1 = **0.740** ceiling | informative | informative |
+| exp_B52_hubert_bilstm | training | in_progress | tbd |
+| **exp_B53_oracle_dp** | oracle Liszt = 0.132 (DP-bound!) | informative | informative |
+| exp_B54_liszt_dp_sweep | running (TPB×pj×durations) | in_progress | tbd |
 
 ## Final headline numbers (after all kept improvements)
 - MIR-1K mean RPA = 0.988
@@ -47,7 +56,9 @@
 - ASAP BWV 846 Stage-5 snap = **0.847** (Phase A: 0.724, +12.3pp)
 - ASAP mean Stage-5 snap (5 Bach Fugues) = **0.856**
 - ASAP mean Stage-4 (5 Bach Fugues) = **0.897** (Phase A: 0.836, +6.1pp)
+- ASAP mean Stage-5 snap (5 mixed: 1 Bach + 4 Romantic) = **0.590** (B49 with adaptive_pj)
 - **Vocadito A1 soft F1 = 0.665** (Phase A: 0.538, **+12.7pp** = +24% relative)
-- Vocadito A2 soft F1 ≥ 0.621 (B36b A2 in flight; Phase A: 0.525)
+- Vocadito A2 soft F1 = **0.630** (Phase A: 0.525, +10.5pp)
+- Vocadito IAA ceiling: **0.740** — pipeline is 7.5–11pp below human agreement
 - MAESTRO instrument F1 = **0.984** (sanity)
 - MTG-QBH 10/10 nonempty = 100%
