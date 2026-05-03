@@ -1,0 +1,32 @@
+{
+  "rows": [
+    {
+      "piece": "Bach/Fugue/bwv_846",
+      "fixed_bd": 0.8469945355191257,
+      "auto_piano": 0.8469945355191257,
+      "chosen": "bd"
+    },
+    {
+      "piece": "Beethoven/Piano_Sonatas/21-1",
+      "fixed_bd": 0.8107067445037883,
+      "auto_piano": 0.8107067445037883,
+      "chosen": "bd"
+    },
+    {
+      "piece": "Schumann/Toccata",
+      "fixed_bd": 0.744745823603377,
+      "auto_piano": 0.744745823603377,
+      "chosen": "bd"
+    },
+    {
+      "piece": "Chopin/Berceuse_op_57",
+      "fixed_bd": 0.46908859145952836,
+      "auto_piano": 0.5214030915576694,
+      "chosen": "bp"
+    }
+  ],
+  "means": {
+    "fixed_bd": 0.7178839237714548,
+    "auto_piano": 0.7309625487959901
+  }
+}

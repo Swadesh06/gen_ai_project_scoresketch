@@ -92,11 +92,14 @@ def _branch_notes(audio_path: str, audio: np.ndarray, sr: int, cfg: PipelineConf
     if cfg.transcriber == "basic_pitch":
         return transcribe_basic_pitch(audio_path)
     if cfg.transcriber == "auto_piano":
+        # B59/B60b: ByteDance under-segments slow chordal pieces (Chopin Berceuse-style).
+        # Median ByteDance note duration > 0.4s is a clean discriminator (Chopin: 0.517,
+        # all other tested ASAP pieces: <= 0.239). Switch to basic_pitch which handles
+        # long sustained notes better.
         bd = transcribe_piano(audio_path)
         if len(bd) >= 50:
-            iois = np.diff(sorted(n.onset_s for n in bd))
             durs = np.array([n.offset_s - n.onset_s for n in bd])
-            if iois.size and float(np.median(iois)) > 0.6 and float(np.median(durs)) > 0.4:
+            if float(np.median(durs)) > 0.4:
                 return transcribe_basic_pitch(audio_path)
         return bd
     raise ValueError(f"unknown transcriber: {cfg.transcriber!r}")
