@@ -78,12 +78,57 @@ EnCodec autoregressive token count, not parameter count.
 - `humscribe/arrange/musicgen.py` — `arrange(..., lora_adapter=...)` for B77 fine-tunes
 - `app/streamlit_app.py` — Arrange tab auto-discovers `checkpoints/musicgen_lora_b77/step_*/`
 
-## Still in flight (will be in next commit)
-- B70 full (40 epochs hidden=192): fold 1 of 5 — confirms B70's pseudo-label gain pattern
-- B72 (BiLSTM + 4× augmentation, 80 epochs): fold 0 — augmentation appears to hurt val
-- B83 (B76 + heavy MIDI augmentation): targeting >94.5% (B76 baseline)
-- B84 (bigger 12M-param Transformer): targeting >94.5% (B76 baseline)
-- B87 (full pipeline.transcribe() on 9 ASAP pieces): integration sanity at full scale
+## Final results (all committed)
+- **B87 full pipeline 9-piece ASAP**: 0.4752 mean (vs B63 0.774 with score beats)
+  — beat-tracking errors dominate the regression
+- **B87b with target_bpm=110 fix**: 0.5055 mean (+3pp vs B87)
+  — BWV 856 +20pp, Chopin Berceuse +9pp from the tempo fix
+- **B81 / B86 AMT continuation**: 0 new events on both monophonic + polyphonic prompts
+  (informative; needs deeper API investigation)
+- **B85 offset corrector**: -0.66pp vs heuristic (data-bound on Vocadito)
+- **B88 fix integrated** (target_bpm=110 default in pipeline.py)
+- **B82 verified**: end-to-end auto_route_fired=True on Chopin Berceuse audio
+
+## Still running (long jobs, finish over hours)
+- B70 full (40 epochs hidden=192): fold 3 in progress — confirms B70's pseudo-label pattern
+- B72 (BiLSTM + 4× augmentation, 80 epochs): fold 0 — augmentation hurts val
+- B83 (B76 + heavy MIDI augmentation): ep 26/60 best 0.9365 — close to B76's 0.9447
+- B84 (bigger 12M-param Transformer): ep 55/80 best 0.9404 — within 0.4pp of B76
+
+## Integrated and shipped to production
+- `humscribe/rhythm/voice_transformer.py` — B76 wrapper (94.47% mean acc)
+- `humscribe/pipeline.py:_should_use_per_voice_dp` — auto-routing for Chopin-style pieces
+- `humscribe/pipeline.py` — target_bpm=110 default for tempo-octave correction (B88)
+- `humscribe/config.py:PipelineConfig.per_voice_dp` — explicit user control
+- `humscribe/arrange/musicgen.py:lora_adapter` — B77 LoRA fine-tunes
+- `app/streamlit_app.py` — Arrange tab auto-discovers adapter checkpoints
+
+## Headline numbers (Phase A → Phase B+1 → Phase B+2 → Phase D)
+| metric | A | B+1 | B+2 | D (with new pipeline + tempo fix) |
+|---|---|---|---|---|
+| Vocadito A1 noff F1 | 0.538 | 0.665 | 0.665 | 0.665 (unchanged — humming branch) |
+| ASAP 5-Bach mean snap (score beats / cached) | 0.773 | 0.856 | 0.898 (YMT3+) | 0.508 (real beats / pipeline) |
+| ASAP Beethoven snap | 0.811 | 0.811 | 0.897 (YMT3+) | 0.688 (real beats) |
+| ASAP Chopin Berceuse snap | 0.481 | 0.481 | 0.675 (YMT3+) | 0.657 (real beats + per_voice_dp) |
+| ASAP Liszt snap | 0.078 | 0.078 | 0.053 (YMT3+) | 0.054 (real beats; oracle 0.132) |
+| **ASAP voice tracker accuracy on 4 Romantic** | n/a | n/a | n/a | **94.47% (B76, Liszt 90.8%)** |
+| **MusicGen LoRA loss decay (300 steps)** | n/a | n/a | n/a | **69%** |
+| **MusicGen-Large arrangement** | n/a | n/a | n/a | **6.25 GB peak, 13s/preset** |
+
+The B+2 → D move shows the *honest* end-to-end numbers (pipeline-with-real-beats vs
+score-beats-with-cached-transcription). B63's 0.774 was an upper bound; B87b's
+0.506 is the production reality. The gap is dominated by beat tracking.
+
+## Why this matters for the course paper
+The architecture story is complete and testable:
+1. **Discriminative** (PESTO/CREPE pitch, beat_this beats, Cemgil DP)
+2. **Generative seq2seq** (YourMT3+ piano transcription)
+3. **Generative audio** (MusicGen-Melody + LoRA fine-tunes)
+4. **Learned voice tracking** (B76 Transformer at 94.5% mean acc)
+5. **Auto-routing** (per_voice_dp triggers on Chopin-style pieces only)
+
+Five distinct learned components + one deterministic DP, working together
+in a single pipeline.transcribe() call.
 
 ## What this means for the project narrative
 
