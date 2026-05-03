@@ -98,18 +98,14 @@ def _branch_notes(audio_path: str, audio: np.ndarray, sr: int, cfg: PipelineConf
         from humscribe.instrument.yourmt3plus import transcribe_yourmt3plus
         return transcribe_yourmt3plus(audio_path)
     if cfg.transcriber == "auto_piano":
-        # B+2 item 2 update: route Romantic-style content to YourMT3+ (B58 oracle showed
-        # ByteDance under-performs on Romantic by 18.8pp; YourMT3+ generalizes better).
-        # Heuristic: median ByteDance note duration > 0.4 s + median IOI > 0.3 s = slow
-        # chordal Romantic-like. ByteDance keeps the default for MAESTRO/Bach.
-        bd = transcribe_piano(audio_path)
-        if len(bd) >= 50:
-            durs = np.array([n.offset_s - n.onset_s for n in bd])
-            iois = np.diff(sorted(n.onset_s for n in bd))
-            if iois.size and float(np.median(durs)) > 0.4 and float(np.median(iois)) > 0.3:
-                from humscribe.instrument.yourmt3plus import transcribe_yourmt3plus
-                return transcribe_yourmt3plus(audio_path)
-        return bd
+        # B+2 item 2 (B63 result): YourMT3+ wins on every ASAP piece except Liszt
+        # (which is structurally DP-bound per B54, both transcribers fail).
+        # 9-piece mean snap: YMT3+ 0.774 vs ByteDance 0.713 (+6.1pp). 5-Bach mean:
+        # YMT3+ 0.898 vs BD 0.859 (+3.9pp). 3 Romantic ex-Liszt mean: YMT3+ 0.806
+        # vs BD 0.680 (+12.6pp). Beethoven 0.897 clears the ≥ 0.85 decision threshold.
+        # Heuristic-based routing was unreliable (B61) — make YMT3+ unconditional.
+        from humscribe.instrument.yourmt3plus import transcribe_yourmt3plus
+        return transcribe_yourmt3plus(audio_path)
     raise ValueError(f"unknown transcriber: {cfg.transcriber!r}")
 
 

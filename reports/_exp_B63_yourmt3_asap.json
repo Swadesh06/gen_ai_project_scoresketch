@@ -1,0 +1,99 @@
+{
+  "rows": [
+    {
+      "piece": "Bach/Fugue/bwv_846",
+      "bd_snap": 0.8469945355191257,
+      "ymt3_snap": 0.8781163434903048,
+      "delta": 0.031121807971179027,
+      "bd_n": 736,
+      "ymt3_n": 735
+    },
+    {
+      "piece": "Bach/Fugue/bwv_848",
+      "bd_snap": 0.8513037350246653,
+      "ymt3_snap": 0.927246790299572,
+      "delta": 0.07594305527490675,
+      "bd_n": 1427,
+      "ymt3_n": 1423
+    },
+    {
+      "piece": "Bach/Fugue/bwv_854",
+      "bd_snap": 0.9039780521262003,
+      "ymt3_snap": 0.9388888888888889,
+      "delta": 0.03491083676268858,
+      "bd_n": 740,
+      "ymt3_n": 736
+    },
+    {
+      "piece": "Bach/Fugue/bwv_856",
+      "bd_snap": 0.8200270635994588,
+      "ymt3_snap": 0.8623978201634878,
+      "delta": 0.042370756564029,
+      "bd_n": 749,
+      "ymt3_n": 762
+    },
+    {
+      "piece": "Bach/Fugue/bwv_857",
+      "bd_snap": 0.8729071537290716,
+      "ymt3_snap": 0.8849085365853658,
+      "delta": 0.012001382856294263,
+      "bd_n": 1327,
+      "ymt3_n": 1380
+    },
+    {
+      "piece": "Beethoven/Piano_Sonatas/21-1",
+      "bd_snap": 0.8126940752701528,
+      "ymt3_snap": 0.8967889908256881,
+      "delta": 0.08409491555553528,
+      "bd_n": 8192,
+      "ymt3_n": 8586
+    },
+    {
+      "piece": "Schumann/Toccata",
+      "bd_snap": 0.7461828633015987,
+      "ymt3_snap": 0.8462768793317932,
+      "delta": 0.10009401603019452,
+      "bd_n": 5731,
+      "ymt3_n": 5924
+    },
+    {
+      "piece": "Chopin/Berceuse_op_57",
+      "bd_snap": 0.48119821542383684,
+      "ymt3_snap": 0.6750924784217016,
+      "delta": 0.19389426299786477,
+      "bd_n": 1603,
+      "ymt3_n": 1646
+    },
+    {
+      "piece": "Liszt/Sonata",
+      "bd_snap": 0.07747975036515735,
+      "ymt3_snap": 0.05328798185941043,
+      "delta": -0.02419176850574692,
+      "bd_n": 15435,
+      "ymt3_n": 15915
+    }
+  ],
+  "summary": {
+    "bd_overall_mean": 0.7125294938176964,
+    "ymt3_overall_mean": 0.7736671899851347,
+    "bd_bach_mean": 0.8590421079997043,
+    "ymt3_bach_mean": 0.8983116758855239,
+    "bd_romantic_mean": 0.6800250513318629,
+    "ymt3_romantic_mean": 0.8060527828597276,
+    "n_pieces": 9
+  },
+  "config": {
+    "git_sha": "4c50b80",
+    "pieces": [
+      "Bach/Fugue/bwv_846",
+      "Bach/Fugue/bwv_848",
+      "Bach/Fugue/bwv_854",
+      "Bach/Fugue/bwv_856",
+      "Bach/Fugue/bwv_857",
+      "Beethoven/Piano_Sonatas/21-1",
+      "Schumann/Toccata",
+      "Chopin/Berceuse_op_57",
+      "Liszt/Sonata"
+    ]
+  }
+}

@@ -56,7 +56,10 @@ def default_transcriber(kind: InputKind) -> Transcriber:
     if kind == "instrument":
         return "basic_pitch"
     if kind == "piano":
-        return "bytedance_piano"
+        # B+2 item 2 (B63): YourMT3+ via auto_piano wins +3.9pp on Bach Fugues and
+        # +12.6pp on 3-Romantic mean (ex-Liszt) vs ByteDance. Default to it.
+        # Set transcriber="bytedance_piano" explicitly for the older fast path.
+        return "auto_piano"
     if kind == "guitar":
         return "basic_pitch"
     raise ValueError(f"unknown input_kind: {kind!r}")
