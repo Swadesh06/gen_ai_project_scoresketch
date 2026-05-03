@@ -75,9 +75,21 @@
 | **exp_B65_softiaa_voc** | Vocadito noff_a1 0.665 / a2 0.628 / **soft 0.6466** (new headline metric) | **keep** | **keep** |
 | **exp_B66_ymt3_vocadito** | YMT3+ on humming: noff_a1 = 0.497 (-17pp vs PESTO+CRP) | discard | discard |
 | **exp_B67_musicgen_large** | 6/6 presets at 3.3B, peak 6.25 GB, 13s/preset same as 1.5B | **keep** | **keep** |
-| **exp_B68b_musicgen_lora** | LoRA path validated end-to-end; loss-NaN due to delay-pattern plumbing | partial | keep |
-| **exp_B69_mert_bilstm** | MERT-features BiLSTM 5-fold CV on Vocadito | in flight | in flight |
-| **exp_B70_mtgqbh_pseudo** | MTG-QBH pseudo-label + train (item 5 substitute) | in flight | in flight |
+| **exp_B68b_musicgen_lora** | LoRA path attached, loss=NaN (delay pattern unmasked); save+reload OK | partial keep | partial keep |
+| **exp_B69_mert_bilstm** | MERT BiLSTM 5-fold CV F1 = 0.517 (overfit; below heuristic 0.665) | discard | discard |
+| **exp_B70_mtgqbh_pseudo** (v2) | combined 0.371 / voconly 0.347 / **+2.4pp pseudo gain**, both far below heuristic | discard | discard |
+
+## Phase D (post-spec extensions, ambitious)
+| exp_id | metric | result | status |
+|---|---|---|---|
+| **exp_B70full_mtgqbh_pseudo** | Same as B70 with hidden=192 + 40 epochs (orig aggressive config) | running | running |
+| **exp_B72_aug_bilstm** | BiLSTM + 4× augmentation (pitch shift, time stretch, SpecAug, noise), 80 epochs | running | running |
+| **exp_B73_transformer** | Transformer encoder for Vocadito voicing, fold 0 best 0.529 (below heuristic) | running | running |
+| **exp_B74_musicgen_lora_proper** | LoRA + delay-pattern mask, 200 steps, loss 3.5→2.55, **27% decay**, peak 8.5 GB | **keep** | **keep** |
+| **exp_B75_voice_transformer** | Voice tracker on 12 ASAP pieces, **80% mean acc** on Liszt+Schumann | **keep** | **keep** |
+| **exp_B76_voice_transformer_scaled** | Voice tracker on 237 ASAP, **93%+ best mean acc** (Liszt 88.7%, Schumann 94%, Chopin 91%, Beethoven 96%) | **keep** | running (ep 13/50) |
+| **exp_B77_musicgen_lora_melody** | LoRA + REAL melody chroma + r=32, 300 steps, loss **3.4→0.73, 69% decay** (2.5× vs B74) | **keep** | **keep** |
+| **exp_B78_voice_tracker_integration** | B76 vs greedy on snap-F1: delta=0 (informative null - DP doesn't use voice info) | informative | informative |
 
 ## Final headline numbers (after all kept improvements through B+2)
 - MIR-1K mean RPA = 0.988 (unchanged)
