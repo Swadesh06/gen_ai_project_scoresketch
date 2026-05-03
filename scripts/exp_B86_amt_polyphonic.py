@@ -102,11 +102,15 @@ def main(model_name: str = "stanford-crfm/music-medium-800k",
     print(f"  generated {len(out_events) - len(in_events)} new events in {gen_wall:.1f}s")
 
     midi_out = OUT_DIR / "bach_854_continuation.mid"
-    events_to_midi(out_events, str(midi_out))
-    pm_out = pretty_midi.PrettyMIDI(str(midi_out))
-    new_notes = [n for inst in pm_out.instruments for n in inst.notes
-                  if n.start > prompt_notes[-1].offset_s]
-    print(f"  new notes in continuation MIDI: {len(new_notes)}")
+    try:
+        events_to_midi(out_events, str(midi_out))
+        pm_out = pretty_midi.PrettyMIDI(str(midi_out))
+        new_notes = [n for inst in pm_out.instruments for n in inst.notes
+                      if n.start > prompt_notes[-1].offset_s]
+        print(f"  new notes in continuation MIDI: {len(new_notes)}")
+    except Exception as e:
+        print(f"  midi write/read failed: {e}")
+        new_notes = []
 
     summary = {
         "n_input_notes": len(prompt_notes),
