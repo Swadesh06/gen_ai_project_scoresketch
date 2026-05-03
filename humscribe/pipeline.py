@@ -63,6 +63,8 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
         tatum_onsets=q_on if len(onsets) > 0 else None,
         tatum_offsets=q_off if len(onsets) > 0 else None,
         tatums_per_beat=cfg.tatums_per_beat,
+        render_tpb=cfg.render_tpb,
+        estimate_key=cfg.estimate_key,
     )
     musicxml = write_musicxml(s, cfg.musicxml_path)
     svg = render_svg(s, notes, bpm) if cfg.render_svg else ""

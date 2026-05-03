@@ -4,9 +4,22 @@ Onsets are quantized via Viterbi DP (Gaussian observation cost + off-grid
 transition penalty). Offsets are quantized by snapping the observed duration to
 the nearest *musically allowed* tatum count — which dramatically reduces the
 "7/12 quarter" type artefacts that pure rounding produces (Phase B Exp B1).
+
+B+2 item 1.2: candidate states are filtered to positions whose Fraction(s, tpb)
+maps via limit_denominator(16) to a denominator in ALLOWED_RENDER_DENOMS. This
+prunes 24-let / 48-let positions before they enter the lattice. Default-on; pass
+`prune_unreadable=False` to disable.
 """
 from __future__ import annotations
+from fractions import Fraction
 import numpy as np
+
+
+ALLOWED_RENDER_DENOMS = frozenset({1, 2, 3, 4, 6, 8, 12, 16})
+
+
+def _denom_ok(s: int, tpb: int) -> bool:
+    return Fraction(int(s), int(tpb)).limit_denominator(16).denominator in ALLOWED_RENDER_DENOMS
 
 # Allowed durations in tatums for common rhythmic values. Built per-TPB so 32nd
 # notes are exactly representable when TPB allows it.
@@ -48,6 +61,7 @@ def viterbi_quantize_rhythm(
     offgrid_penalty: float = 1.0,
     search_window_tatums: int = 6,
     allowed_durations_tatums: np.ndarray | None = None,
+    prune_unreadable: bool = True,
 ) -> tuple[np.ndarray, np.ndarray]:
     onsets = np.asarray(onsets, dtype=np.float64)
     offsets = np.asarray(offsets, dtype=np.float64)
@@ -62,6 +76,8 @@ def viterbi_quantize_rhythm(
     off_tatum_f = _to_tatum_floats(offsets, beats, tatums_per_beat)
 
     cands = _candidate_states(on_tatum_f, search_window_tatums)
+    if prune_unreadable:
+        cands = _prune_unreadable_candidates(cands, tatums_per_beat)
     n_states = max(len(c) for c in cands)
     inf = np.float64(1e18)
     dp = np.full((n, n_states), inf)
@@ -140,6 +156,19 @@ def _candidate_states(on_tatum_f: np.ndarray, window: int) -> list[np.ndarray]:
         lo = max(center - window, 0)
         hi = max(center + window + 1, lo + 1)
         out.append(np.arange(lo, hi, dtype=np.int64))
+    return out
+
+
+def _prune_unreadable_candidates(cands: list[np.ndarray], tpb: int) -> list[np.ndarray]:
+    """Per-note: keep only candidates whose Fraction(s, tpb) maps to a denominator
+    in ALLOWED_RENDER_DENOMS. If pruning leaves a note empty, fall back to the
+    unpruned set so DP doesn't crash."""
+    out: list[np.ndarray] = []
+    for arr in cands:
+        keep = np.array([s for s in arr if _denom_ok(int(s), int(tpb))], dtype=np.int64)
+        if keep.size == 0:
+            keep = arr
+        out.append(keep)
     return out
 
 

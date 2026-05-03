@@ -70,6 +70,10 @@ class PipelineConfig:
     transcriber: Transcriber | None = None
     note_segmenter: NoteSegmenter = "voicing"
     tatums_per_beat: int = 24
+    # B+2 item 1.3: render path requantizes to TPB=12 to keep SVGs free of 24/48-lets
+    # while metric path uses tatums_per_beat=24 for snap accuracy.
+    render_tpb: int = 12
+    estimate_key: bool = True
     sample_rate: int = 22050
     render_svg: bool = True
     musicxml_path: str | None = None

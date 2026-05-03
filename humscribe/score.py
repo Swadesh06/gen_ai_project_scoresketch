@@ -1,5 +1,12 @@
 """MusicXML + SVG rendering. SVG falls back to a piano-roll string if music21
-cannot find an external renderer (LilyPond/MuseScore)."""
+cannot find an external renderer (LilyPond/MuseScore).
+
+B+2 item 1 fixes (per results_v1_evalution.md):
+- 1.1: round MetronomeMark BPM to integer.
+- 1.3: distinct render_tpb (default 12) requantizes ql away from 24/48-let positions
+  while the metric path still uses tatums_per_beat=24 internally.
+- 1.4: Krumhansl-Schmuckler key insertion when key_signature is None.
+"""
 from __future__ import annotations
 from collections.abc import Sequence
 from pathlib import Path
@@ -8,7 +15,8 @@ import math
 import xml.sax.saxutils as sx
 
 import numpy as np
-from music21 import stream, note as m21note, meter, tempo as m21tempo, duration as m21dur
+from music21 import stream, note as m21note, meter, tempo as m21tempo, duration as m21dur, key as m21key
+from music21.analysis.discrete import KrumhanslSchmuckler
 
 from humscribe.notes import NoteEvent
 
@@ -20,10 +28,21 @@ def build_stream(
     tatum_onsets: np.ndarray | None = None,
     tatum_offsets: np.ndarray | None = None,
     tatums_per_beat: int = 12,
+    render_tpb: int | None = None,
+    estimate_key: bool = True,
 ) -> stream.Stream:
+    """Build a music21 Stream from notes.
+
+    `tatums_per_beat` is the metric-path resolution used by upstream DP.
+    `render_tpb` (default = `tatums_per_beat` when None) is the resolution
+    the rendered durations are snapped to; pass 12 to keep the SVG free of
+    24-lets/48-lets while preserving 32nd-note metric accuracy upstream.
+    """
+    rtpb = int(render_tpb) if render_tpb else int(tatums_per_beat)
     s = stream.Stream()
     s.append(meter.TimeSignature(time_sig))
-    s.append(m21tempo.MetronomeMark(number=float(bpm) if bpm > 0 else 120.0))
+    bpm_int = int(round(float(bpm))) if bpm > 0 else 120
+    s.append(m21tempo.MetronomeMark(number=bpm_int))
     n_notes = len(notes)
     use_tatum = tatum_onsets is not None and tatum_offsets is not None and len(tatum_onsets) == n_notes
     for i, ev in enumerate(notes):
@@ -35,12 +54,26 @@ def build_stream(
             n = m21note.Note(midi=midi_pitch)
             n.volume.velocity = ev.velocity
             if use_tatum:
-                ql = (tatum_offsets[i] - tatum_onsets[i]) / float(tatums_per_beat)
+                if rtpb != int(tatums_per_beat):
+                    on_r = int(round(float(tatum_onsets[i]) * rtpb / float(tatums_per_beat)))
+                    off_r = int(round(float(tatum_offsets[i]) * rtpb / float(tatums_per_beat)))
+                    if off_r <= on_r: off_r = on_r + 1
+                    ql = (off_r - on_r) / float(rtpb)
+                else:
+                    ql = (tatum_offsets[i] - tatum_onsets[i]) / float(tatums_per_beat)
             else:
                 ql = ev.duration_s * (bpm / 60.0) if bpm > 0 else 1.0
-        ql = max(float(ql), 1.0 / tatums_per_beat)
+        ql = max(float(ql), 1.0 / float(rtpb))
         n.duration = m21dur.Duration(ql)
         s.append(n)
+    if estimate_key:
+        try:
+            k = KrumhanslSchmuckler().getSolution(s)
+            if k is not None:
+                ks = m21key.KeySignature(k.sharps)
+                s.insert(0, ks)
+        except Exception:
+            pass
     return s
 
 
