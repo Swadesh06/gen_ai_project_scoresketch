@@ -1,0 +1,53 @@
+{
+  "rows": [
+    {
+      "preset": "lo-fi hip hop",
+      "wall_s": 38.471447706222534,
+      "size_kb": 625,
+      "vram_peak_gb": 6.253172874450684,
+      "out": "outputs/musicgen_presets/vocadito_1_lo-fi_hip_hop.wav"
+    },
+    {
+      "preset": "jazz trio",
+      "wall_s": 13.1392343044281,
+      "size_kb": 625,
+      "vram_peak_gb": 6.253199100494385,
+      "out": "outputs/musicgen_presets/vocadito_1_jazz_trio.wav"
+    },
+    {
+      "preset": "EDM",
+      "wall_s": 13.174644470214844,
+      "size_kb": 625,
+      "vram_peak_gb": 6.253214359283447,
+      "out": "outputs/musicgen_presets/vocadito_1_EDM.wav"
+    },
+    {
+      "preset": "orchestral cinematic",
+      "wall_s": 12.814733505249023,
+      "size_kb": 625,
+      "vram_peak_gb": 6.25319766998291,
+      "out": "outputs/musicgen_presets/vocadito_1_orchestral_cinematic.wav"
+    },
+    {
+      "preset": "indie folk",
+      "wall_s": 12.966164112091064,
+      "size_kb": 625,
+      "vram_peak_gb": 6.2529401779174805,
+      "out": "outputs/musicgen_presets/vocadito_1_indie_folk.wav"
+    },
+    {
+      "preset": "bossa nova",
+      "wall_s": 13.67257046699524,
+      "size_kb": 625,
+      "vram_peak_gb": 6.252773761749268,
+      "out": "outputs/musicgen_presets/vocadito_1_bossa_nova.wav"
+    }
+  ],
+  "config": {
+    "model_size": "melody-large",
+    "duration": 10.0,
+    "git_sha": "66f99b2",
+    "clip": "vocadito_1",
+    "n_presets": 6
+  }
+}

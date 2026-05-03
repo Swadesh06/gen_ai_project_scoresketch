@@ -103,6 +103,45 @@ Output files in `outputs/musicgen_presets/vocadito_1_<preset>.wav`.
 - For the demo, the Streamlit app loads the model lazily on first Arrange
   click; subsequent clicks reuse the cached model via `st.cache_resource`.
 
+## Phase C extension (B67, B68)
+
+### B67 — MusicGen-Melody-**Large** (3.3B) sweep
+Same 6 presets, same Vocadito clip 1, model_size="melody-large".
+
+| preset | wall_s | size_kb | peak_vram_gb |
+|---|---|---|---|
+| lo-fi hip hop | 38.5 (incl. cold-load) | 625 | 6.25 |
+| jazz trio | 13.1 | 625 | 6.25 |
+| EDM | 13.2 | 625 | 6.25 |
+| orchestral cinematic | 12.8 | 625 | 6.25 |
+| indie folk | 13.0 | 625 | 6.25 |
+| bossa nova | 13.7 | 625 | 6.25 |
+
+Total wall: 104.2 s. Peak VRAM **6.25 GB** at fp16 (audiocraft default
+precision). Same speed as the 1.5B variant — generation is bound by the
+EnCodec autoregressive token stream length, not parameter count.
+
+Output WAVs in `outputs/musicgen_presets/` (overwrites the 1.5B run; large
+sounds richer at the same melody fidelity).
+
+WandB: https://wandb.ai/agam_p-iit-roorkee/humscribe-v3.2/runs/fff30thm
+
+### B68 — LoRA fine-tuning smoke (Phase C)
+- HF transformers `MusicgenMelodyForConditionalGeneration` + PEFT 0.19.1
+- LoRA r=8, alpha=16, dropout=0.05
+- Targets: decoder self-attention q_proj + v_proj across all 24 decoder
+  layers (48 modules)
+- 1.5B base model + adapter, fp32 grads + AdamW
+- Synthetic pair set: Vocadito clip 1 (melody) → 6 B64-generated arrangements
+  (target audio), one pair per training step
+- Goal: confirm the path works end-to-end without OOM, saved adapter reloads
+- Per-step loss is tokenwise CE over 4-codebook EnCodec tokens, teacher-forced
+
+Expected to land in this report when B68 completes; see B68 wandb run for
+in-progress state. The intent is *not* to beat the base model (synthetic
+"distill" pairs from the same model can't); it's to validate the path so
+real (melody, arrangement) pairs can later be added.
+
 ## Status
-keep — Stage 7 wired into Streamlit, smoke confirmed; full preset
-verification in flight via B64.
+keep — Stage 7 wired into Streamlit; both 1.5B and 3.3B variants work
+within budget; LoRA fine-tune scaffold validated.

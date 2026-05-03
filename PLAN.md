@@ -172,7 +172,48 @@ at all times.
 
 ### Phase-C ideas saved for after item 6 lands
 1. MERT/MusicFM features → small Transformer voice tracker (combo move)
-2. Soft-IAA scoring as headline (B51 followup)
+2. Soft-IAA scoring as headline (B51 followup) — **DONE B65: 0.6466** (kept)
 3. AudioLDM2/MAGNeT as MusicGen alternatives (ablation)
 4. Anticipatory Music Transformer for score continuation (demo flourish)
-5. LoRA fine-tune MusicGen-Melody on hum→arrangement pairs
+5. LoRA fine-tune MusicGen-Melody on hum→arrangement pairs — **smoke DONE B68**
+
+## Phase B+2 results (final, 2026-05-03)
+
+### Six work items
+| item | status | result |
+|---|---|---|
+| 1. Rendering polish | ✓ keep | 24-let removed from BWV 854 SVG; snap unchanged 0.847 |
+| 2. YourMT3+ Romantic-piano | ✓ keep | +6.1pp 9-piece ASAP mean (0.713 → 0.774); promoted as default piano transcriber |
+| 3. MusicGen-Melody Stage 7 | ✓ keep | 6 presets all work, 4.31 GB peak (1.5B) / 6.25 GB (3.3B "large") |
+| 4. Voicing exit-side hysteresis | ✗ discard | offset20 +0.5pp only, below 5pp gate |
+| 5. MedleyDB pseudo-labels | skipped | dataset requires registration; deferred to Phase D |
+| 6. Final demo polish | ✓ partial | gates re-verified, README written, demo SVGs regenerated; manual screencast still TODO |
+
+### Phase C extensions (this session)
+| exp | result | status |
+|---|---|---|
+| B62 voicing exit hysteresis | offset20 +0.5pp (target +5pp) | discard |
+| B63 YMT3+ on 9 ASAP pieces | mean snap +6.1pp; Beethoven 0.811 → 0.897 | keep |
+| B64 MusicGen 1.5B preset sweep | 6/6 nonempty, peak 4.31 GB | keep |
+| B65 Vocadito soft-IAA scoring | A1 0.665 / A2 0.628 / **soft 0.6466** | keep |
+| B66 YMT3+ on Vocadito (humming) | A1 noff 0.497 (vs PESTO+CRP 0.665) | discard — YMT3+ underperforms on monophonic vocal |
+| B67 MusicGen-Large 3.3B sweep | 6/6 nonempty, peak 6.25 GB, same 13s/preset | keep |
+| B68 LoRA fine-tune smoke | trainable 2.36M / 1.56B = 0.151%; in flight | smoke |
+
+### Headline numbers vs Phase A
+- ASAP BWV 846 Stage-5 snap: 0.724 → **0.878** (+15.4pp via YMT3+)
+- ASAP 5-Bach mean snap: 0.773 → **0.898** (+12.5pp via YMT3+)
+- ASAP Beethoven Sonata 21-1 snap: 0.811 → **0.897** (+8.6pp)
+- ASAP Schumann Toccata snap: 0.745 → **0.846** (+10.1pp)
+- ASAP Chopin Berceuse snap: 0.481 → **0.675** (+19.4pp)
+- ASAP 9-piece overall mean snap: 0.713 → **0.774** (+6.1pp)
+- Vocadito A1 noff F1: 0.538 → **0.665** (Phase B+1; unchanged in B+2)
+- Vocadito **soft-IAA noff F1: 0.6466** (new headline metric, B65)
+- Stage 7 arrangement: ✓ end-to-end, both 1.5B and 3.3B variants verified
+
+### What's left (post item 6)
+- Manual screen recording of Streamlit UI doing humming → score → arrangement
+- LoRA full training run (B68 is smoke only) on a real (melody, arrangement) pair set
+- Phase D: MedleyDB pseudo-label training for Vocadito offset20 push
+- Phase D: end-to-end YMT3+ replacing the modular pipeline (complement to its modular use)
+- Phase D: MERT features into a learned voice tracker (replacing greedy on dense Romantic textures)
