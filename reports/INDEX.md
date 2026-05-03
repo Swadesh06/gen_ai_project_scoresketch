@@ -64,8 +64,20 @@
 | **exp_B62_voc_exit_hyst** | offset20 +0.5pp (target +5pp); below decision threshold | discard | discard |
 | **exp_B63_yourmt3_asap** | 9-piece mean snap 0.713 → **0.774 (+6.1pp)**; Beethoven 0.813 → **0.897** | **keep** | **keep** |
 | **item-2_yourmt3plus** | YMT3+ promoted as `auto_piano` default; +12.6pp 3-Romantic mean (ex-Liszt) | **keep** | **keep** |
-| **item-3_musicgen** | end-to-end hum→arrange smoke (Vocadito clip 1, lo-fi preset, 19s wall) | in progress (B64 verify) | in progress |
+| **exp_B64_musicgen_presets** | 6/6 presets (1.5B), peak 4.31 GB (4.6× headroom) | **keep** | **keep** |
+| **item-3_musicgen** | end-to-end hum→arrange, 6 styles, 1.5B + 3.3B variants both work | **keep** | **keep** |
 | **item-4_voicing_exit_hysteresis** | Vocadito offset20 plateau at vt_exit=0.65 with +0.5pp; below 5pp gate | discard | discard |
+| **item-6_final_polish** | gates re-validated, README written, demo SVGs regenerated; screencast manual | partial | keep |
+
+## Phase C (Phase B+2 extensions, beyond v2 spec)
+| exp_id | metric | result | status |
+|---|---|---|---|
+| **exp_B65_softiaa_voc** | Vocadito noff_a1 0.665 / a2 0.628 / **soft 0.6466** (new headline metric) | **keep** | **keep** |
+| **exp_B66_ymt3_vocadito** | YMT3+ on humming: noff_a1 = 0.497 (-17pp vs PESTO+CRP) | discard | discard |
+| **exp_B67_musicgen_large** | 6/6 presets at 3.3B, peak 6.25 GB, 13s/preset same as 1.5B | **keep** | **keep** |
+| **exp_B68b_musicgen_lora** | LoRA path validated end-to-end; loss-NaN due to delay-pattern plumbing | partial | keep |
+| **exp_B69_mert_bilstm** | MERT-features BiLSTM 5-fold CV on Vocadito | in flight | in flight |
+| **exp_B70_mtgqbh_pseudo** | MTG-QBH pseudo-label + train (item 5 substitute) | in flight | in flight |
 
 ## Final headline numbers (after all kept improvements through B+2)
 - MIR-1K mean RPA = 0.988 (unchanged)
