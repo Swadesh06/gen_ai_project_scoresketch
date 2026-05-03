@@ -53,6 +53,8 @@
 | exp_B56_voc_dursnap | tempo-snap durations: flat or worse | discard | discard |
 | exp_B57_oms_sweep | current default IS optimum | discard | discard |
 | **exp_B58_disambig** | 18.8pp ASAP loss = 100% from ByteDance | informative | informative |
+| exp_B59_basicpitch_romantic | -25pp avg vs bd, +9.3pp on Chopin only | informative | informative |
+| **exp_B60_auto_piano_verify** | auto_piano: +5.2pp Chopin / +1.3pp 4-piece mean | **keep** | **keep** |
 
 ## Final headline numbers (after all kept improvements)
 - MIR-1K mean RPA = 0.988
