@@ -70,10 +70,29 @@ def render_audio(piece_rel: str) -> Path:
     return dst
 
 
+def load_score_beats(piece_rel: str) -> np.ndarray:
+    """ASAP annotation file = beat positions (first col), one per line.
+    Match what gate_asap_rhythm.py uses so B63 numbers compare to the gate."""
+    ann = ASAP / piece_rel / "midi_score_annotations.txt"
+    beats = []
+    for line in ann.read_text().splitlines():
+        parts = line.split()
+        if len(parts) >= 2:
+            try:
+                beats.append(float(parts[0]))
+            except ValueError:
+                continue
+    return np.array(sorted(set(beats)), dtype=np.float64)
+
+
 def cached_transcribe(piece_rel: str, backend: str) -> tuple[list[NoteEvent], np.ndarray, float]:
+    """Returns (notes, beats, bpm) for a given piece+backend.
+    Beats come from the ASAP annotation file (the official validation source) — same
+    as gate_asap_rhythm.py, so B63 numbers compare directly to the existing gates."""
     cache_dir = Path(f"/workspace/.cache/asap_{backend}")
     cache_dir.mkdir(parents=True, exist_ok=True)
     cp = cache_dir / f"{piece_key(piece_rel)}.pkl"
+    score_beats = load_score_beats(piece_rel)
     if cp.exists():
         with cp.open("rb") as f:
             d = pickle.load(f)
@@ -89,7 +108,8 @@ def cached_transcribe(piece_rel: str, backend: str) -> tuple[list[NoteEvent], np
                                    pitch_midi=mid, pitch_hz=hz,
                                    velocity=x.get("vel", 80),
                                    confidence=x.get("conf", 1.0)))
-        return notes, np.asarray(d["beats"]), float(d.get("bpm", 120.0))
+        bpm = 60.0 / float(np.diff(score_beats).mean()) if len(score_beats) >= 2 else 120.0
+        return notes, score_beats, bpm
     wav = render_audio(piece_rel)
     if backend == "bytedance":
         notes = transcribe_piano(str(wav))
@@ -98,7 +118,7 @@ def cached_transcribe(piece_rel: str, backend: str) -> tuple[list[NoteEvent], np
         notes = transcribe_yourmt3plus(str(wav))
     else:
         raise ValueError(backend)
-    beats, _, bpm = track_beats_beat_this(str(wav))
+    bpm = 60.0 / float(np.diff(score_beats).mean()) if len(score_beats) >= 2 else 120.0
     notes_data = []
     for n in notes:
         hz = getattr(n, "pitch_hz", None)
@@ -113,10 +133,9 @@ def cached_transcribe(piece_rel: str, backend: str) -> tuple[list[NoteEvent], np
             "conf": float(getattr(n, "confidence", 1.0)),
         })
     with cp.open("wb") as f:
-        pickle.dump({"notes": notes_data, "beats": np.asarray(beats), "bpm": float(bpm)}, f)
-    # rewrite without None pitch_hz to match downstream expectations
+        pickle.dump({"notes": notes_data, "beats": np.asarray(score_beats), "bpm": float(bpm)}, f)
     cleaned = [n for n in notes if (n.pitch_hz is not None or n.pitch_midi is not None)]
-    return cleaned, np.asarray(beats), float(bpm)
+    return cleaned, score_beats, float(bpm)
 
 
 def load_midi_notes(mid: Path) -> tuple[np.ndarray, np.ndarray]:
