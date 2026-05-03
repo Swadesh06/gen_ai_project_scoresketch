@@ -41,7 +41,13 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
     audio, sr = load_audio(audio_path, target_sr=cfg.sample_rate)
     notes = _branch_notes(audio_path, audio, sr, cfg)
     notes = _filter_short_notes(notes, cfg.mode_config.min_note_seconds)
-    beats, downbeats, bpm = track_beats_beat_this(audio_path)
+    # B88 fix for B87 finding: beat_this without target_bpm hits half/double
+    # tempo octaves on ~40% of pieces (BWV 846 → 60 instead of 120; BWV 856
+    # → 230 instead of 115). Target 110 is a reasonable median for piano (B13
+    # used per-piece score-derived targets in benchmarks). Pieces with truly
+    # extreme tempos (Liszt fast passages) keep their detected octave because
+    # the log2 distance to 110 is minimised in the correct octave.
+    beats, downbeats, bpm = track_beats_beat_this(audio_path, target_bpm=110.0)
     onsets = np.array([n.onset_s for n in notes], dtype=np.float64)
     offsets = np.array([n.offset_s for n in notes], dtype=np.float64)
     if len(onsets) > 0 and len(beats) >= 2:
