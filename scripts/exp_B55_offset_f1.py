@@ -9,7 +9,7 @@ import mir_eval, numpy as np, wandb
 from humscribe.audio_io import load_audio
 from humscribe.config import PipelineConfig
 from humscribe.notes import NoteEvent, midi_to_hz
-from humscribe.pipeline import transcribe_humming
+from humscribe.pipeline import transcribe
 
 
 VOC = Path("~/datasets/vocadito").expanduser()
@@ -32,10 +32,9 @@ def score_pair(ref_iv, ref_p, est_iv, est_p, offset_ratio):
     return float(p), float(r), float(f)
 
 
-def transcribe(wav: Path):
-    audio, sr = load_audio(str(wav), target_sr=22050)
+def transcribe_clip(wav: Path):
     cfg = PipelineConfig(mode="soft", input_kind="humming", pitch_model="pesto_crepevoicing")
-    res = transcribe_humming(audio, sr, cfg=cfg)
+    res = transcribe(str(wav), cfg=cfg)
     return res.notes
 
 
@@ -56,7 +55,7 @@ def main():
         wav = audio_dir / f"{cid}.wav"
         if not wav.exists(): continue
         gt_iv, gt_p = load_notes(nf)
-        notes = transcribe(wav)
+        notes = transcribe_clip(wav)
         if not notes:
             rows.append({"clip": cid, "f_no_offset": 0.0, "f_offset20": 0.0, "f_offset50": 0.0})
             continue
