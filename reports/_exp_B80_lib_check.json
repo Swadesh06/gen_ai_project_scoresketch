@@ -1,0 +1,42 @@
+{
+  "rows": [
+    {
+      "piece": "Liszt/Sonata",
+      "snap_lib_default": 0.007202881152460984,
+      "snap_lib_pvd_greedy": 0.007202881152460984,
+      "snap_lib_pvd_b76": 0.006535947712418301,
+      "delta_b76_minus_default": -0.0006669334400426835
+    },
+    {
+      "piece": "Schumann/Toccata",
+      "snap_lib_default": 0.8452105917895859,
+      "snap_lib_pvd_greedy": 0.8452105917895859,
+      "snap_lib_pvd_b76": 0.8066465256797583,
+      "delta_b76_minus_default": -0.038564066109827655
+    },
+    {
+      "piece": "Chopin/Berceuse_op_57",
+      "snap_lib_default": 0.42355117139334153,
+      "snap_lib_pvd_greedy": 0.42355117139334153,
+      "snap_lib_pvd_b76": 0.44512946979038226,
+      "delta_b76_minus_default": 0.02157829839704073
+    },
+    {
+      "piece": "Beethoven/Piano_Sonatas/21-1",
+      "snap_lib_default": 0.8849589570255915,
+      "snap_lib_pvd_greedy": 0.8849589570255915,
+      "snap_lib_pvd_b76": 0.8816996619990343,
+      "delta_b76_minus_default": -0.0032592950265571963
+    }
+  ],
+  "means": {
+    "snap_lib_default": 0.540230900340245,
+    "snap_lib_pvd_greedy": 0.540230900340245,
+    "snap_lib_pvd_b76": 0.5350029012953983,
+    "delta_b76_minus_default": -0.0052279990448467015
+  },
+  "config": {
+    "phase": "D",
+    "tracker_ckpt": "checkpoints/voice_transformer_b76/best.pt"
+  }
+}
