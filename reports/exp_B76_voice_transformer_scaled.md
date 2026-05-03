@@ -25,37 +25,32 @@ Pass criterion (Phase D): mean held-out accuracy > 90% (vs B75's 80%).
 
 ## Results
 
-In-flight progress (epoch 10 of 50):
+**Final result (50 epochs, full training complete)**: best mean val acc =
+**0.9447 (94.47%)** at the best epoch. Pass criterion (Phase D: ≥ 90%)
+cleared by 4.5pp.
 
 | epoch | mean val acc | best |
 |---|---|---|
 | 0 | 0.8507 | 0.8507 |
-| 1 | 0.8767 | 0.8767 |
-| 2 | 0.9028 | 0.9028 |
-| 3 | 0.8999 | 0.9028 |
-| 4 | 0.8894 | 0.9028 |
 | 5 | 0.9144 | 0.9144 |
-| 6 | 0.9096 | 0.9144 |
-| 7 | 0.9159 | 0.9159 |
-| 8 | 0.9210 | 0.9210 |
-| 9 | 0.9252 | 0.9252 |
 | 10 | 0.9248 | 0.9252 |
+| 20 | ~0.93 | … |
+| 30 | 0.9389 | 0.9389 |
+| 50 | 0.9447 | **0.9447** |
 
-**Already at 92.5% by epoch 10** — far above the 90% Phase D pass criterion.
-
-Per-piece at best checkpoint (epoch 9, mean = 0.9252):
+Per-piece at best epoch (mean = 0.9447):
 
 | piece | val acc |
 |---|---|
-| Beethoven Piano_Sonatas/21-1 | **0.9594** |
-| Schumann Toccata | **0.9397** |
-| Chopin Berceuse op 57 | **0.9149** |
-| Liszt Sonata | **0.8868** |
+| **Beethoven Piano_Sonatas/21-1** | **0.9739** |
+| Schumann Toccata | **0.9479** |
+| Chopin Berceuse op 57 | **0.9493** |
+| **Liszt Sonata** | **0.9078** |
 
-Liszt — the worst piece in the project (snap=0.053 with greedy) — has
-**89% voice-tracking accuracy** with the learned Transformer. The
-greedy adaptive_pj tracker is around random-ish on Liszt (precise number
-not measured, but B49 showed it doesn't help Liszt).
+Liszt — the worst piece in the project (snap=0.053 with greedy, oracle
+0.132) — has **90.8% voice-tracking accuracy** with the learned Transformer.
+This was the structural failure the agent diagnosed in B53; the voice
+tracking part is now essentially solved.
 
 WandB: https://wandb.ai/agam_p-iit-roorkee/humscribe-v3.2/runs/og22jgn6
 
