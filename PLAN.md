@@ -71,10 +71,43 @@ Discarded ideas with rationale documented in `reports/exp_B*.md`:
 ## Phase B+1 unfinished work (next agent)
 
 1. **Fix Romantic ASAP**: B37 showed Liszt Sonata at snap=0.078, Chopin Berceuse at 0.469. Voice tracker needs a learned variant for dense chordal textures.
-2. **Slow-tempo beat tracking**: beat_this fails below 50 BPM.
+2. **Slow-tempo beat tracking**: beat_this fails below 50 BPM. (B58: actually beat_this is fine; the upstream loss is 100% in ByteDance.)
 3. **Train onset detector with more data**: combine Vocadito with synthesized humming + MIR-1K voicing labels. Push Vocadito above 0.70.
 4. **MAESTRO 2018 test split**: get a published-comparable note F1 (currently sanity-only).
 5. **Pre-trained music encoder (MERT/MusicFM)**: as input to learned segmenter to unlock data-bound BiLSTM result.
+
+## Phase B+2 results (B49–B59) — diagnostic phase
+
+Headline numbers after all kept improvements:
+- Vocadito A1: 0.665 / A2: 0.630 / cross-mean: 0.648 (no_offset F1)
+- **Vocadito IAA ceiling = 0.740** (B51) — pipeline is 7.5–11pp below human agreement
+- **Vocadito offset20 F1: 0.439** vs IAA offset20 = 0.642 (-20pp duration gap)
+- ASAP 5-Bach mean snap: 0.856 (locked from B12)
+- ASAP 5-mixed mean snap: 0.590 (B49 with adaptive_pj — was 0.571 with fixed pj=3)
+- ASAP Liszt: 0.078 (B54: structurally unsalvageable; oracle 0.155)
+- **ASAP upstream loss = 18.8pp = 100% from ByteDance** (B58: beat_this is fine)
+
+Negative results from B+2 (all discarded, see reports):
+- B50 BiLSTM ±2 semi aug: 0.619 (still below voicing 0.648)
+- B52 HuBERT BiLSTM: 0.592 (worse than B50)
+- B54 TPB=48 + extended durations on Liszt: 0.155 oracle
+- B56 tempo-snap durations: flat or worse
+- B57 oms+vt sweep: current default is the optimum
+- B59 basic_pitch as drop-in: -25pp on average
+
+Production changes from B+2:
+- **`auto_piano` transcriber** (humscribe.config.Transcriber). ByteDance default, switches to
+  basic_pitch for slow chordal pieces (median IOI > 0.6s + median duration > 0.4s).
+  +9.3pp on Chopin Berceuse, +2.3pp on the 4-piece mean.
+- **`adaptive_pj=True` default** (B49) — voice tracking pitch_jump auto-selected per piece.
+
+## Where the next non-trivial wins are (B60+)
+
+1. **YourMT3+ integration** as the piano transcriber backend. ByteDance is the current
+   bottleneck on Romantic ASAP (B58); replacing it could net +15-20pp on the 5-mixed mean.
+2. **Larger Vocadito-style training set**: combine Vocadito (40 clips) + MedleyDB-Melody (108
+   clips), pseudo-label MedleyDB onsets with the heuristic. Then train BiLSTM at scale.
+3. **Romantic-specific DP variant** for Liszt: rubato modeling, time-warped beats. Hard.
 
 ## Operational notes
 - TF 2.15 cuDNN-register warnings on import — cosmetic, ignore.
