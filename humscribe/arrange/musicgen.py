@@ -29,7 +29,8 @@ class _Stub:
 for _m in ("spacy", "spacy.lang.en", "thinc", "thinc.util"):
     sys.modules.setdefault(_m, _Stub())
 
-import torchaudio  # type: ignore
+import soundfile as _sf
+import torchaudio.functional as _F  # type: ignore
 from audiocraft.models import MusicGen
 
 
@@ -80,9 +81,12 @@ def arrange(
     if seed is not None:
         torch.manual_seed(seed)
     mg = _load(model_size=model_size)
-    melody, sr = torchaudio.load(uri=str(melody_audio_path))
+    # Bypass torchaudio.load (which now requires torchcodec/ffmpeg). soundfile
+    # is already a pipeline dependency.
+    audio_np, sr = _sf.read(str(melody_audio_path), always_2d=True)
+    melody = torch.from_numpy(audio_np.T.astype("float32"))  # (channels, T)
     if sr != 32000:
-        melody = torchaudio.functional.resample(melody, sr, 32000)
+        melody = _F.resample(melody, sr, 32000)
     if melody.shape[0] > 1:
         melody = melody.mean(0, keepdim=True)
     if melody.shape[-1] < 32000:  # too short

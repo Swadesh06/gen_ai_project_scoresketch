@@ -149,10 +149,20 @@ def evaluate(notes: list[NoteEvent], beats: np.ndarray,
     )
     pred_durs = (q_off - q_on) / TPB
     gt_durs_q = (gt_iv[:, 1] - gt_iv[:, 0]) / avg_beat
-    onsets = np.array([n.onset_s for n in notes])
-    offsets = np.array([n.offset_s for n in notes])
+    def _hz(n: NoteEvent) -> float | None:
+        if n.pitch_hz is not None and n.pitch_hz > 0:
+            return float(n.pitch_hz)
+        if n.pitch_midi is not None:
+            return 440.0 * 2 ** ((int(n.pitch_midi) - 69) / 12)
+        return None
+    valid_idx = [i for i, n in enumerate(notes) if _hz(n) is not None]
+    if not valid_idx:
+        return {"snap": 0.0, "raw": 0.0, "n_pred": len(notes), "n_matched": 0}
+    onsets = np.array([notes[i].onset_s for i in valid_idx])
+    offsets = np.array([notes[i].offset_s for i in valid_idx])
     est_iv = np.column_stack([onsets, np.maximum(offsets, onsets + 1e-3)])
-    est_p = np.array([n.pitch_hz for n in notes])
+    est_p = np.array([_hz(notes[i]) for i in valid_idx])
+    pred_durs = pred_durs[valid_idx]
     matched = mir_eval.transcription.match_notes(
         gt_iv, gt_p, est_iv, est_p,
         onset_tolerance=0.05, pitch_tolerance=50.0, offset_ratio=None,
