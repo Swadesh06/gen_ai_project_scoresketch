@@ -1,0 +1,49 @@
+{
+  "rows": [
+    {
+      "piece": "Liszt/Sonata",
+      "snap_shared_greedy": 0.007202881152460984,
+      "n_matched_a": 14994,
+      "snap_pervoice_greedy": 0.006335867680405495,
+      "n_matched_b": 14994,
+      "snap_pervoice_b76": 0.006469254368414033,
+      "n_matched_c": 14994
+    },
+    {
+      "piece": "Schumann/Toccata",
+      "snap_shared_greedy": 0.8452105917895859,
+      "n_matched_a": 5627,
+      "snap_pervoice_greedy": 0.8038030922338724,
+      "n_matched_b": 5627,
+      "snap_pervoice_b76": 0.8038030922338724,
+      "n_matched_c": 5627
+    },
+    {
+      "piece": "Chopin/Berceuse_op_57",
+      "snap_shared_greedy": 0.42355117139334153,
+      "n_matched_a": 1622,
+      "snap_pervoice_greedy": 0.407521578298397,
+      "n_matched_b": 1622,
+      "snap_pervoice_b76": 0.4401972872996301,
+      "n_matched_c": 1622
+    },
+    {
+      "piece": "Beethoven/Piano_Sonatas/21-1",
+      "snap_shared_greedy": 0.8849589570255915,
+      "n_matched_a": 8284,
+      "snap_pervoice_greedy": 0.8759053597295993,
+      "n_matched_b": 8284,
+      "snap_pervoice_b76": 0.8813375181071946,
+      "n_matched_c": 8284
+    }
+  ],
+  "means": {
+    "snap_shared_greedy": 0.540230900340245,
+    "snap_pervoice_greedy": 0.5233914744855686,
+    "snap_pervoice_b76": 0.5329517880022778
+  },
+  "config": {
+    "phase": "D",
+    "tracker_ckpt": "checkpoints/voice_transformer_b76/best.pt"
+  }
+}
