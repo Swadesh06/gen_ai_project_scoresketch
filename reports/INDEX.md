@@ -82,14 +82,30 @@
 ## Phase D (post-spec extensions, ambitious)
 | exp_id | metric | result | status |
 |---|---|---|---|
-| **exp_B70full_mtgqbh_pseudo** | Same as B70 with hidden=192 + 40 epochs (orig aggressive config) | running | running |
+| **exp_B70full_mtgqbh_pseudo** | hidden=192 + 40 epochs aggressive config | running | running |
 | **exp_B72_aug_bilstm** | BiLSTM + 4× augmentation (pitch shift, time stretch, SpecAug, noise), 80 epochs | running | running |
-| **exp_B73_transformer** | Transformer encoder for Vocadito voicing, fold 0 best 0.529 (below heuristic) | running | running |
+| **exp_B73_transformer** | Transformer encoder for Vocadito voicing, 5-fold mean F1 = 0.499 (below heuristic 0.665) | discard | discard |
 | **exp_B74_musicgen_lora_proper** | LoRA + delay-pattern mask, 200 steps, loss 3.5→2.55, **27% decay**, peak 8.5 GB | **keep** | **keep** |
-| **exp_B75_voice_transformer** | Voice tracker on 12 ASAP pieces, **80% mean acc** on Liszt+Schumann | **keep** | **keep** |
-| **exp_B76_voice_transformer_scaled** | Voice tracker on 237 ASAP, **93%+ best mean acc** (Liszt 88.7%, Schumann 94%, Chopin 91%, Beethoven 96%) | **keep** | running (ep 13/50) |
+| **exp_B75_voice_transformer** | Voice tracker on 12 ASAP, **80% mean acc** on Liszt+Schumann | **keep** | **keep** |
+| **exp_B76_voice_transformer_scaled** | Voice tracker on 237 ASAP, **94.47% best mean acc** (Liszt 90.8%, Schumann 94.8%, Chopin 94.9%, Beethoven 97.4%) | **keep** | **keep** |
 | **exp_B77_musicgen_lora_melody** | LoRA + REAL melody chroma + r=32, 300 steps, loss **3.4→0.73, 69% decay** (2.5× vs B74) | **keep** | **keep** |
-| **exp_B78_voice_tracker_integration** | B76 vs greedy on snap-F1: delta=0 (informative null - DP doesn't use voice info) | informative | informative |
+| **exp_B78_voice_tracker_integration** | B76 vs greedy on snap-F1: delta=0 (informative null - DP didn't use voice info) | informative | informative |
+| **exp_B79_per_voice_dp** | Per-voice DP + B76: **+1.66pp on Chopin Berceuse**, no-op on others | partial keep | keep (Chopin) |
+| **exp_B80_lib_check** | Verifies B79 result via library API (per_voice_dp + voice_assigner) | keep | keep |
+| **exp_B81_amt_continuation** | AMT (Thickstun stanford-crfm) on monophonic prompt: 0 new events | informative | informative |
+| **exp_B82_integration_smoke** | end-to-end pipeline + auto-routing on Chopin Berceuse: **auto_route_fired=True**, MusicXML -90KB | **keep** | **keep** |
+| **exp_B83_voice_transformer_aug** | B76 + heavy MIDI augmentation (pitch/time/noise/dropout), 60 epochs | running | running |
+| **exp_B84_voice_transformer_big** | Bigger Transformer (d=384, 10 layers, 12M params), 80 epochs | running | running |
+| **exp_B85_offset_corrector** | Per-note MLP for Vocadito offset20: -0.66pp vs heuristic | discard | discard |
+| **exp_B86_amt_polyphonic** | AMT on polyphonic Bach prompt: 0 new events (rules out OOD; API issue) | informative | informative |
+| **exp_B87_pipeline_full_asap** | End-to-end pipeline integration on 9 ASAP pieces | running | running |
+
+## Phase D Production Integration (`humscribe/rhythm/voice_transformer.py`, `pipeline.py:_should_use_per_voice_dp`, `arrange/musicgen.py:lora_adapter`)
+- `PipelineConfig(per_voice_dp="auto"|"on"|"off")` — default "auto", routes Chopin-style pieces (nps<10, iqr<24) to B76 + per-voice DP
+- `arrange(..., lora_adapter="checkpoints/musicgen_lora_b77/step_300")` — fine-tuned arrangement
+- Streamlit Arrange tab auto-discovers saved adapter checkpoints
+- Verified end-to-end on Chopin Berceuse (B82): MusicXML -90KB, auto_route fires correctly
+- Doc: `reports/PHASE_D_INTEGRATION.md`
 
 ## Final headline numbers (after all kept improvements through B+2)
 - MIR-1K mean RPA = 0.988 (unchanged)
