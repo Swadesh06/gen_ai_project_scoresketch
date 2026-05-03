@@ -117,3 +117,62 @@ Production changes from B+2:
 - spec verbatim eval_asap_rhythm.py reports the index-paired metric (~28%, broken methodology); realistic gate is gate_asap_rhythm.py with VT default-on.
 - humscribe.pipeline.transcribe() now uses voice tracking for instrument input by default.
 - Verovio renders real notation SVGs (B18). Demo outputs in `outputs/demos/`.
+
+## Phase B+2 — session start (2026-05-03 ~04:00 UTC)
+
+### What's already done
+- All Phase A gates pass; Phase B+1 wins live in production defaults
+  (TPB=24 metric path, hybrid voicing pesto_crepevoicing vt=0.75 psw=19,
+  voice tracking with adaptive_pj=True, auto_piano enum present but no-op
+  per B61). 60+ commits, 60+ WandB runs.
+- Two biggest unfixed weaknesses (per evaluation):
+  - Rendered-SVG over-complexity: 24-lets, 48-lets in Bach BWV 854 SVG.
+    Metric (snap = 0.847) doesn't reflect this — it scored well because
+    we measure tatum-snap accuracy, not human-readability.
+  - Vocadito offset20 F1 = 0.439 vs IAA 0.642 → 20pp gap; B47 tested
+    *entry-side* hysteresis and lost; *exit-side* hysteresis untested.
+- B58 finding: 100% of remaining ASAP loss is in ByteDance.
+  beat_this and DP are essentially perfect on ASAP. So fixing
+  the transcriber (item 2: YourMT3+) is the path to Romantic ASAP wins.
+- Vocadito IAA ceiling = 0.740 — do not chase above it.
+
+### Six work items (per `reports/results_v1_evalution.md` §Work item 1-6)
+1. Rendering polish (CPU)
+2. YourMT3+ Romantic-piano backend (GPU inference, ~5 GB VRAM)
+3. MusicGen-Melody arrangement (GPU inference, ~13 GB VRAM at fp16)
+4. Voicing exit-side hysteresis sweep (CPU)
+5. MedleyDB pseudo-label training (speculative, skip if pressed)
+6. Final polish: gate re-runs + figures + screencast + README
+
+### Co-scheduling plan (Phase B+2 wave 1)
+
+Per CLAUDE.md hardware-utilization rule: ≥ 1 GPU job + ≥ 1 CPU job + monitor
+at all times.
+
+**Wave 1 (parallel):**
+- `monitor`: nvidia-smi dmon stream to logs/gpu_monitor.log
+- `cpu-render`: item 1 — rendering polish (CPU only, music21 + Verovio)
+- `gpu-yourmt3-fetch`: item 2 — clone YourMT3 repo, download checkpoint,
+  smoke test
+- `cpu-hysteresis`: item 4 — voicing exit-side sweep (CPU only, uses
+  cached PESTO+CREPE pitch traces; if no cache, re-extract once)
+
+**Wave 2 (after item 1 lands and item 2 smoke test passes):**
+- Re-run gate_asap_rhythm, exp_B12_asap_multi with new rendering
+- Run YourMT3+ on the 5 Bach Fugues + 4 Romantic ASAP set
+  (both cached predictions saved to /workspace/.cache/asap_yourmt3/)
+- In parallel on CPU: render before/after SVGs for item 1 verification
+
+**Wave 3 (item 3):**
+- Once items 1, 2, 4 land, do item 3 alone on GPU (MusicGen-Large is
+  ~13 GB so co-locate only with CPU render/eval, not with another GPU model).
+
+**Wave 4 (item 6):**
+- Final gate re-runs + report figures + screencast + README.
+
+### Phase-C ideas saved for after item 6 lands
+1. MERT/MusicFM features → small Transformer voice tracker (combo move)
+2. Soft-IAA scoring as headline (B51 followup)
+3. AudioLDM2/MAGNeT as MusicGen alternatives (ablation)
+4. Anticipatory Music Transformer for score continuation (demo flourish)
+5. LoRA fine-tune MusicGen-Melody on hum→arrangement pairs
