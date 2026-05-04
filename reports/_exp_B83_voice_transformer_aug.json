@@ -1,0 +1,18 @@
+{
+  "best_acc": 0.9447511726152612,
+  "best_per_piece": {
+    "Beethoven/Piano_Sonatas/21-1": 0.9705816024863554,
+    "Chopin/Berceuse_op_57": 0.9448966733870967,
+    "Liszt/Sonata": 0.9032122044781454,
+    "Schumann/Toccata": 0.9603142101094471
+  },
+  "config": {
+    "git_sha": "2708494",
+    "n_epochs": 60,
+    "d_model": 192,
+    "n_layers": 6,
+    "lr": 0.0003,
+    "chunk_size": 512,
+    "n_aug_per_chunk": 2
+  }
+}
