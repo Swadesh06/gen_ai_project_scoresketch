@@ -131,3 +131,34 @@
 - AudioLDM2/MAGNeT alternatives to MusicGen
 - LoRA-fine-tune MusicGen-Melody on a melody→arrangement pair set
 - End-to-end YMT3+ replacing the Stage 2A+4+5 stack on instrument input
+
+## Phase E (this session, 2026-05-12)
+
+| exp_id | metric | result | status |
+|---|---|---|---|
+| item-1_mv2h_metric | end-to-end MV2H wrapper (Java jar) | shipped + 3 baselines | **keep** |
+| item-4_docker_hf | Dockerfile + audiocraft→HF swap | shipped, build deferred | **keep** |
+| item-6_mv2h_sweep | Bayesian sweep, 122 runs | top +0.022, tpb=12 promoted | **keep** |
+| item-7_ensemble_members | 5/14 members evaluated | mixed (see per-ME) | partial |
+| item-8_maestro_demo_regen | rendering polish on chamber clip | integer BPM, key sig, 0×48-lets | **keep** |
+| item-3_ddsp_partial | DDSP install attempt | dep chain, deferred | deferred |
+| exp_C5_jsb_lora | r=32, 1000 steps | test loss 1.39, plateau | keep (flag) |
+| exp_C5b_jsb_lora_r64 | r=64, 1500 steps | step ~250 loss 1.04 (in flight) | running |
+| **exp_ME1_pyin** | pYIN diversifier on Vocadito | mean Δ −0.007 | discard |
+| **exp_ME4_tonal_prior** | tonal-meter prior on DP | mean Δ −0.006 on ASAP | discard |
+| **exp_ME7_anacrusis** | pickup-note detector | 9/9 no-false-positive | keep |
+| **exp_ME9_spelling** | line-of-fifths spelling | pitches preserved, accidentals +4.6% | discard |
+| **exp_ME10_meter_template** | time-signature ensemble | 1/9 correct | discard |
+| **exp_ME14_mv2h_ensemble** | 4-config oracle selection | oracle 0.5494; tpb=12 universal | **keep** |
+| **phase_f_F1_octave_sanity** | rule-based beat-octave corrector | **+0.0101 mean MV2H, +0.088 BWV 856** | **keep production** |
+| phase_f_F2_formant | formant-band offset detector | fold 1/5 val F1=0.542 (in flight) | running |
+
+## Phase E Production Integration (`humscribe/beat/octave_sanity.py`, `humscribe/eval/`, `humscribe/ensemble/*`)
+- `PipelineConfig.tatums_per_beat = 12` (default switched from 24 per ME-14 finding)
+- `PipelineConfig.octave_sanity = "auto"` — F-1 rule-based corrector
+  (humscribe/pipeline.py applies after beat_this)
+- `humscribe/eval/mv2h.py` + `mv2h_io.py` — Java-jar wrapper with text-format converters
+- Verified production ASAP 9-piece MV2H = **0.5492** (up from 0.5277 = +0.022)
+- Bach BWV 856 single-piece +0.100 from octave-double correction
+
+Doc: `reports/PHASE_E_SESSION_SUMMARY.md`, `reports/PHASE_F_IDEAS.md`
