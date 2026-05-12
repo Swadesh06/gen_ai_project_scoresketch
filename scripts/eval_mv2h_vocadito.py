@@ -27,7 +27,7 @@ from humscribe.pipeline import transcribe
 
 
 VOC = Path("/home/swadesh/datasets/vocadito")
-OUT_JSON = Path("reports/_metric_mv2h_vocadito.json")
+OUT_JSON_DEFAULT = Path("reports/_metric_mv2h_vocadito.json")
 
 
 def _hz_to_midi(hz: float) -> int:
@@ -164,14 +164,21 @@ def main():
               f"harmony={mean['harmony']:.3f}")
         if run is not None:
             run.log({f"mean/{k}": v for k, v in mean.items()})
-    OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    OUT_JSON.write_text(json.dumps({
+    # Suffix the output by annotator so A1 and A2 don't overwrite each other.
+    out_json = OUT_JSON_DEFAULT.with_name(
+        OUT_JSON_DEFAULT.stem + f"_{args.annotator}" + OUT_JSON_DEFAULT.suffix
+    )
+    out_json.parent.mkdir(parents=True, exist_ok=True)
+    out_json.write_text(json.dumps({
         "annotator": args.annotator, "pitch_model": args.pitch_model,
         "alignment": args.align, "eval_seconds": eval_sec,
         "rows": rows, "mean": mean, "skipped": skipped,
         "wall_s": time.time() - t0,
     }, indent=2))
-    print(f"wrote {OUT_JSON}")
+    # Also keep the canonical A1 location for backwards compat.
+    if args.annotator == "A1":
+        OUT_JSON_DEFAULT.write_text(out_json.read_text())
+    print(f"wrote {out_json}")
     if run is not None:
         run.finish()
 
