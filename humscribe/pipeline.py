@@ -41,6 +41,12 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
     audio, sr = load_audio(audio_path, target_sr=cfg.sample_rate)
     notes = _branch_notes(audio_path, audio, sr, cfg)
     notes = _filter_short_notes(notes, cfg.mode_config.min_note_seconds)
+    # Phase F-2e: snap heuristic offsets to BiLSTM peaks when the model is
+    # confident. Vocadito offset20 F1 0.343 → 0.370 at min_prob=0.30,
+    # search_ms=50. Only applies to humming branch.
+    if cfg.is_humming() and cfg.formant_offset_corrector == "auto":
+        from humscribe.pitch.formant_corrector import correct_offsets
+        notes = correct_offsets(notes, audio, sr)
     # B88 fix for B87 finding: beat_this without target_bpm hits half/double
     # tempo octaves on ~40% of pieces (BWV 846 → 60 instead of 120; BWV 856
     # → 230 instead of 115). Target 110 is a reasonable median for piano (B13

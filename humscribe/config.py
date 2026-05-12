@@ -67,6 +67,7 @@ def default_transcriber(kind: InputKind) -> Transcriber:
 
 PerVoiceDP = Literal["auto", "on", "off"]
 OctaveSanity = Literal["auto", "off"]
+FormantOffsetCorrector = Literal["auto", "off"]
 
 
 @dataclass
@@ -102,6 +103,14 @@ class PipelineConfig:
     # the octave is clearly wrong. +0.088 MV2H on Bach BWV 856, +0.002 on
     # Chopin Berceuse, no change on the other 7 ASAP pieces. "off" disables.
     octave_sanity: OctaveSanity = "auto"
+    # Phase F-2e: BiLSTM-based offset corrector for humming. When "auto",
+    # the formant_offset_vocadito fold-0 checkpoint is loaded once and snaps
+    # heuristic offsets to BiLSTM peaks within ±50 ms when the BiLSTM prob
+    # ≥ 0.30. Lifts Vocadito offset20 F1 by +0.027 (0.343 → 0.370). Only
+    # applied on humming input (not piano/instrument). Default "off" — the
+    # checkpoint is Vocadito-trained and the per-piece worst-case
+    # regression (-0.135 on voc_38) is too risky for default-on.
+    formant_offset_corrector: FormantOffsetCorrector = "off"
     sample_rate: int = 22050
     render_svg: bool = True
     musicxml_path: str | None = None
