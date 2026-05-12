@@ -15,6 +15,7 @@ Members:
 - ME-11 Formant-band onset detector (planned)
 - ME-14 MV2H system-level ensemble selection (planned)
 """
+from humscribe.ensemble.me1_pyin import track_pitch_pyin, vote_with_pesto_crepe
 from humscribe.ensemble.me4_tonal_meter_prior import (
     load_or_build_prior,
     tonal_meter_log_prior,
@@ -29,6 +30,7 @@ from humscribe.ensemble.me9_line_of_fifths import (
 )
 
 __all__ = [
+    "track_pitch_pyin", "vote_with_pesto_crepe",
     "load_or_build_prior", "tonal_meter_log_prior",
     "detect_anacrusis", "shift_beats_for_pickup",
     "spell_with_line_of_fifths", "spell_notes_with_line_of_fifths",
