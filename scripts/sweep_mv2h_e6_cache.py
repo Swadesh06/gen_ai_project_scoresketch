@@ -51,6 +51,10 @@ VOC_IDS = list(range(1, 11))  # vocadito_1..vocadito_10
 ASAP_REPO = Path("/workspace/.cache/asap_score_midis/asap-repo")
 ASAP_PIECES = {
     "Bach__Fugue__bwv_854": "Bach/Fugue/bwv_854",
+    "Bach__Fugue__bwv_846": "Bach/Fugue/bwv_846",
+    "Bach__Fugue__bwv_848": "Bach/Fugue/bwv_848",
+    "Bach__Fugue__bwv_856": "Bach/Fugue/bwv_856",
+    "Bach__Fugue__bwv_857": "Bach/Fugue/bwv_857",
     "Beethoven__Piano_Sonatas__21-1": "Beethoven/Piano_Sonatas/21-1",
     "Chopin__Berceuse_op_57": "Chopin/Berceuse_op_57",
     "Liszt__Sonata": "Liszt/Sonata",
