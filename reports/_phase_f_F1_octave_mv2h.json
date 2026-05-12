@@ -1,0 +1,88 @@
+{
+  "rows": [
+    {
+      "piece": "asap_Bach__Fugue__bwv_854",
+      "recommend": "keep",
+      "mv2h_base": 0.5895093827120895,
+      "mv2h_corr": 0.5895093827120895,
+      "delta": 0.0,
+      "bpm_base": 120.0,
+      "bpm_corr": 120.0
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_846",
+      "recommend": "keep",
+      "mv2h_base": 0.5472829148609831,
+      "mv2h_corr": 0.5472829148609831,
+      "delta": 0.0,
+      "bpm_base": 122.44897959183713,
+      "bpm_corr": 122.44897959183646
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_848",
+      "recommend": "keep",
+      "mv2h_base": 0.5262621879476773,
+      "mv2h_corr": 0.5262621879476773,
+      "delta": 0.0,
+      "bpm_base": 120.0,
+      "bpm_corr": 120.0
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_856",
+      "recommend": "double",
+      "mv2h_base": 0.4588781025038875,
+      "mv2h_corr": 0.5469748069736171,
+      "delta": 0.08809670446972961,
+      "bpm_base": 115.38461538461549,
+      "bpm_corr": 162.1621621621621
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_857",
+      "recommend": "keep",
+      "mv2h_base": 0.616966559743585,
+      "mv2h_corr": 0.616966559743585,
+      "delta": 0.0,
+      "bpm_base": 120.0,
+      "bpm_corr": 120.0
+    },
+    {
+      "piece": "asap_Beethoven__Piano_Sonatas__21-1",
+      "recommend": "keep",
+      "mv2h_base": 0.5045810667252326,
+      "mv2h_corr": 0.5045810667252326,
+      "delta": 0.0,
+      "bpm_base": 150.00000000000853,
+      "bpm_corr": 150.00000000000853
+    },
+    {
+      "piece": "asap_Chopin__Berceuse_op_57",
+      "recommend": "halve",
+      "mv2h_base": 0.53340913849465,
+      "mv2h_corr": 0.5358330656370857,
+      "delta": 0.0024239271424356668,
+      "bpm_base": 120.0,
+      "bpm_corr": 60.0
+    },
+    {
+      "piece": "asap_Liszt__Sonata",
+      "recommend": "keep",
+      "mv2h_base": 0.4752375973564796,
+      "mv2h_corr": 0.4752375973564796,
+      "delta": 0.0,
+      "bpm_base": 115.38461538461942,
+      "bpm_corr": 115.38461538461942
+    },
+    {
+      "piece": "asap_Schumann__Toccata",
+      "recommend": "keep",
+      "mv2h_base": 0.49701331245464864,
+      "mv2h_corr": 0.49701331245464864,
+      "delta": 0.0,
+      "bpm_base": 124.99999999999896,
+      "bpm_corr": 124.99999999999896
+    }
+  ],
+  "mean_base": 0.5276822514221371,
+  "mean_corr": 0.5377400993790443,
+  "mean_delta": 0.010057847956907253
+}

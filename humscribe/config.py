@@ -66,6 +66,7 @@ def default_transcriber(kind: InputKind) -> Transcriber:
 
 
 PerVoiceDP = Literal["auto", "on", "off"]
+OctaveSanity = Literal["auto", "off"]
 
 
 @dataclass
@@ -90,6 +91,11 @@ class PipelineConfig:
     # on: always use per-voice DP (still requires checkpoints/voice_transformer_b76/best.pt).
     # off: keep production shared-DP / greedy voice tracker behavior.
     per_voice_dp: PerVoiceDP = "auto"
+    # Phase F-1: beat-tempo octave sanity check. "auto" runs the notes-per-
+    # beat + fast-tempo/slow-note heuristic and halves/doubles beats when
+    # the octave is clearly wrong. +0.088 MV2H on Bach BWV 856, +0.002 on
+    # Chopin Berceuse, no change on the other 7 ASAP pieces. "off" disables.
+    octave_sanity: OctaveSanity = "auto"
     sample_rate: int = 22050
     render_svg: bool = True
     musicxml_path: str | None = None

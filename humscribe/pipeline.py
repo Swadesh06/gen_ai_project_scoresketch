@@ -48,6 +48,24 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
     # extreme tempos (Liszt fast passages) keep their detected octave because
     # the log2 distance to 110 is minimised in the correct octave.
     beats, downbeats, bpm = track_beats_beat_this(audio_path, target_bpm=110.0)
+    # Phase F-1: octave sanity check. Beat_this's target_bpm=110 covers most
+    # cases but mis-octaves on slow pieces (Chopin Berceuse: detected 120
+    # vs true 40) and dense fast pieces (Bach 856: detected 81 vs true
+    # 240). The notes-per-beat heuristic catches both.
+    if cfg.octave_sanity != "off" and not cfg.is_humming():
+        from humscribe.beat.octave_sanity import (
+            detect_octave_misalignment, apply_octave_correction,
+        )
+        diag = detect_octave_misalignment(beats, notes)
+        if diag["recommend"] != "keep":
+            beats, downbeats = apply_octave_correction(
+                beats, downbeats, diag["recommend"]
+            )
+            if len(beats) >= 2:
+                ibis = np.diff(beats)
+                ibis = ibis[(ibis > 0.01) & (ibis < 5.0)]
+                if len(ibis) > 0:
+                    bpm = 60.0 / float(np.median(ibis))
     onsets = np.array([n.onset_s for n in notes], dtype=np.float64)
     offsets = np.array([n.offset_s for n in notes], dtype=np.float64)
     if len(onsets) > 0 and len(beats) >= 2:
