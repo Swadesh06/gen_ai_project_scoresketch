@@ -151,3 +151,53 @@ normalization biases toward small numerators.
 | MusicGen LoRA train infra | B77 distill only | C5 real-pair pipeline + C5b r=64 |
 | MV2H metric | not built | shipped (humscribe/eval/) |
 | Beat-tempo octave corrector | not built | shipped (humscribe/beat/octave_sanity.py) |
+
+## What landed in the codebase
+
+New packages (importable from `humscribe.*`):
+- `humscribe/eval/` — MV2H Java jar wrapper + IO converters (mid, mxl, music21)
+- `humscribe/ensemble/` — ME-1 pYIN, ME-4 tonal prior, ME-7 anacrusis,
+  ME-9 line-of-fifths, ME-10 meter template, ME-12 phase onset
+- `humscribe/beat/octave_sanity.py` — Phase F-1 rule-based octave corrector
+- `humscribe/train/formant_offset.py` — Phase F-2 BiLSTM offset detector
+
+New eval scripts:
+- `scripts/eval_mv2h_{asap,maestro,vocadito,correlate}.py`
+- `scripts/sweep_mv2h_e6_cache.py`, `sweep_mv2h_e6.py`, `sweep_mv2h_e6.yaml`
+- `scripts/eval_me{1,4,7,9,10,12,14}*.py`
+- `scripts/eval_octave_sanity{,_mv2h}.py`
+- `scripts/eval_me14_extended.py` — 8-tpb-config sweep on 9 ASAP
+
+New training scripts:
+- `scripts/exp_C5_jsb_lora.py` (r=32 base; r=64 via --lora-r flag)
+- `scripts/prep_jsb_pairs.py` — 371 JSB pairs (10 s each, ~700 MB)
+- `scripts/prep_formant_features.py` — Vocadito formant cache
+- `scripts/train_formant_offset.py` + `_deep.py` — F-2 trainers
+- `scripts/prep_mirst500_partial.py` — F-2b 84 / 100 songs
+- `scripts/prep_beat_corrector_data.py` — F-1 data analysis
+
+New reports:
+- `item-{1,4,6,7,8}_*.md` — Phase E work item reports
+- `exp_ME{1,4,7,9,10,12,14}_*.md` — ensemble member reports
+- `exp_C5_jsb_lora.md` — JSB LoRA result + r=64 plan
+- `phase_f_F{1,2}_*.md` — Phase F notes
+- `item-3_ddsp_partial.md` — deferred-DDSP rationale
+- `PHASE_E_SESSION_SUMMARY.md` (this file)
+- `PHASE_F_IDEAS.md` — 10 Phase F priorities
+
+## In flight at session close
+
+- **C5b LoRA r=64**: step 675/1500 (45% done). Mean loss 1.05 (vs r=32
+  final test loss = 1.39). ~25 min wall remaining.
+- **Formant deep trainer (h=128, l=3)**: fold 3/5. Base trainer
+  (h=96, l=2) completed: 5-fold F1 = 0.4652.
+- **ME-14 extended sweep**: 3/9 pieces done. Tests 8 tpb configurations.
+- **MIR-ST500 partial DL**: 84/100 complete (16 unavailable). PoC for
+  item-2 path validated.
+
+## Final commit count
+
+~70 commits this session, all pushed to origin/main cleanly. WandB
+project `humscribe-v3.2`, sweep id `kunnj3ze` (closed, 122 runs).
+Phase E ledger in `reports/INDEX.md`. Live PLAN.md tracks next-session
+priorities.
