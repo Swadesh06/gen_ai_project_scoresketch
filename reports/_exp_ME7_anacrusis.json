@@ -1,0 +1,44 @@
+{
+  "rows": [
+    {
+      "piece": "asap_Bach__Fugue__bwv_854",
+      "detected_pickup": false,
+      "pickup_dur": 0.25,
+      "next4_mean": 0.21500000000000002,
+      "reason": "not short enough (0.250 vs 0.129 threshold)",
+      "gt_first_note_beats": 3.0
+    },
+    {
+      "piece": "asap_Beethoven__Piano_Sonatas__21-1",
+      "detected_pickup": false,
+      "pickup_dur": 0.19,
+      "next4_mean": 0.2,
+      "reason": "not short enough (0.190 vs 0.120 threshold)",
+      "gt_first_note_beats": 0.0
+    },
+    {
+      "piece": "asap_Chopin__Berceuse_op_57",
+      "detected_pickup": false,
+      "pickup_dur": 0.5,
+      "next4_mean": 0.511984375,
+      "reason": "not short enough (0.500 vs 0.307 threshold)",
+      "gt_first_note_beats": 0.0
+    },
+    {
+      "piece": "asap_Liszt__Sonata",
+      "detected_pickup": false,
+      "pickup_dur": 0.24,
+      "next4_mean": 0.24,
+      "reason": "not short enough (0.240 vs 0.144 threshold)",
+      "gt_first_note_beats": 1.7520894419809223
+    },
+    {
+      "piece": "asap_Schumann__Toccata",
+      "detected_pickup": false,
+      "pickup_dur": 0.45999999999999996,
+      "next4_mean": 0.45999999999999996,
+      "reason": "not short enough (0.460 vs 0.276 threshold)",
+      "gt_first_note_beats": 0.0
+    }
+  ]
+}
