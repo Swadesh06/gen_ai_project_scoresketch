@@ -74,9 +74,11 @@ def _gt_text(csv_path: Path, eval_seconds: float | None) -> tuple[str, int]:
             len(notes))
 
 
-def _pred_text(wav_path: Path, pitch_model: str, eval_seconds: float | None) -> tuple[str, int, float]:
+def _pred_text(wav_path: Path, pitch_model: str, eval_seconds: float | None,
+               formant_offset_corrector: str = "off") -> tuple[str, int, float]:
     cfg = PipelineConfig(input_kind="humming", mode="soft",
-                          pitch_model=pitch_model, render_svg=False)
+                          pitch_model=pitch_model, render_svg=False,
+                          formant_offset_corrector=formant_offset_corrector)
     r = transcribe(str(wav_path), cfg)
     notes = list(r.notes)
     if eval_seconds is not None:
@@ -113,6 +115,9 @@ def main():
     ap.add_argument("--align", choices=["non_aligned", "aligned"], default="non_aligned")
     ap.add_argument("--limit", type=int, default=40,
                     help="how many clips (Vocadito has 40)")
+    ap.add_argument("--formant-offset-corrector",
+                    choices=["auto", "off"], default="off",
+                    help="F-2e/F-2f BiLSTM confidence head on offsets")
     args = ap.parse_args()
 
     eval_sec = None if args.eval_seconds <= 0 else float(args.eval_seconds)
@@ -131,7 +136,10 @@ def main():
             print(f"skip {clip_id}: no A{args.annotator} annotation"); continue
         try:
             gt_text, n_gt = _gt_text(ann, eval_sec)
-            pred_text, n_pred, bpm_pred = _pred_text(wav, args.pitch_model, eval_sec)
+            pred_text, n_pred, bpm_pred = _pred_text(
+                wav, args.pitch_model, eval_sec,
+                formant_offset_corrector=args.formant_offset_corrector,
+            )
         except Exception as e:
             skipped.append({"clip": clip_id, "reason": f"prep_failed: {e}"})
             print(f"skip {clip_id}: prep failed -- {e}"); continue

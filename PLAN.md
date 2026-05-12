@@ -351,3 +351,25 @@ Skip ME-3, ME-6, ME-13.
 - ME-10 (meter template): 1/9 correct (naive normalization biases small num)
 - MV2H quantise-to-tatum: -0.34 mean MV2H (DTW collapses on tatum buckets)
 
+
+
+## Phase F continuation (2026-05-12, late session)
+
+### Ships after the "session end" line above
+- **F-1 octave sanity** (BWV 856 specifically +0.088 MV2H) — `humscribe/beat/octave_sanity.py`. Default `octave_sanity="auto"`.
+- **F-2 formant detector** trained on Vocadito 5-fold: mean offset-event F1 = 0.4652 (h=96, l=2), 0.4697 (h=128, l=3) — small data ceiling at 32 train clips/fold.
+- **F-2b MIR-ST500 pretrain** of the same architecture: test F1 = 0.30 — pop with backing music swamps formant offsets in the 1.5-3.5 kHz band. Negative result documented.
+- **F-2c, F-2d**: tried using the trained weights as drop-in offset replacement (Δ -0.25, Δ -0.14 respectively). Both negative — the BiLSTM offset is too coarse for the off20-relative-duration metric.
+- **F-2e/F-2f confidence-head pattern (SHIPPED)**: snap heuristic offsets to BiLSTM peaks within ±50 ms only when prob ≥ 0.30. Sweep showed +0.0269 on Vocadito off20-F1; **production module-path verification on all 40 clips showed +0.0508 (28 wins / 7 losses / 5 same)**. Default is `formant_offset_corrector="off"` until F-2g tightens per-piece worst case (voc_8 at -0.053 violates the strict v3 -0.02 cap).
+- **C5b r=64 LoRA** finished training at step 1500: test loss 0.983 vs C5 r=32's 1.388 (capacity hypothesis confirmed end-to-end). Test arrangement on held-out bwv85.6: base chroma sim 0.570 → C5b 0.716 (+0.146).
+  - Unblocked F-4 by patching `humscribe/arrange/musicgen.py` to keep fp16 when LoRA is attached (was casting to fp32 → 13 GB OOM on 16 GB GPU).
+
+### In-flight at this point (waiting)
+- `scripts/eval_mv2h_vocadito.py --formant-offset-corrector off` (~30 min) — baseline MV2H without F-2e.
+- `scripts/eval_mv2h_vocadito.py --formant-offset-corrector auto` (~30 min) — MV2H with F-2e enabled. Will tell us whether the +0.0508 off20 lift translates to MV2H.
+- `scripts/eval_f2g_tighten.py` — 5×4 grid over min_prob ∈ {0.30..0.50} × search_ms ∈ {25..50} measuring per-piece worst case.
+
+### Next-up after these land
+- F-7 multi-chorale C5b distribution (deferred — collided with CREPE on GPU; queue after MV2H done)
+- F-2g threshold ship (depends on tighten sweep result)
+- F-5: Lakh MIDI corpus LoRA training (much larger than 349 JSB pairs)
