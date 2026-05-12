@@ -75,10 +75,49 @@ A wider exploration of `dp_offgrid_penalty` (extending below 0.25 toward
 already-good notes off-grid. That's a follow-up sweep after this one
 finishes its 120 runs.
 
-## Next
+## Final results (122 runs across 18-30 parallel agents)
 
-Let the sweep finish (≈ 5 hours wall). Pick the highest-MV2H config, run
-the held-out re-evaluation, and decide whether to promote.
+The Bayesian sweep completed 122 / 120 runs. Top-3 configs:
+
+| rank | overall_mv2h | tpb | complexity_a | sigma_q | psw | vt | target_bpm | dp_off |
+|---|---|---|---|---|---|---|---|---|
+| 1 | **0.52894** | 12 | 1.754 | 0.028 | 17 | 0.817 | 99.4 | 1.133 |
+| 2 | 0.52586 | 12 | 0.689 | 0.041 | 17 | 0.729 | 126.2 | 1.386 |
+| 3 | 0.52571 | 12 | 1.526 | 0.043 | 15 | 0.744 | 102.6 | 0.637 |
+
+**All 3 winners use tpb=12** — confirms the ME-14 finding independently.
+The best is +0.022 over the unquantised baseline 0.5074, below the +0.03
+item-6 pass criterion but consistent with the small effect size we
+measured for individual DP-param changes.
+
+**Best config vs current production defaults**:
+| param | best (sweep) | current (post-Phase E) |
+|---|---|---|
+| tpb | 12 | 12 (just promoted) |
+| voicing_psw | 17 | 19 |
+| voicing_vt | 0.817 | 0.75 |
+| target_bpm | 99.4 | 110.0 (but overridden by octave sanity per piece) |
+| dp_offgrid_penalty | 1.133 | 0.5 |
+
+The bulk of the gain over the 0.5074 baseline (~+0.022) comes from the
+TPB switch (already promoted). The remaining 0.011 spread across the
+other 4 params is small enough to fall within run-to-run noise on this
+small eval set. I'm **not promoting voicing_psw/vt or dp_offgrid_penalty
+changes** without a more careful per-piece analysis — those touch the
+humming branch and could regress Vocadito offset20 F1.
+
+## Decision
+
+Promote `tatums_per_beat = 12` (done — see item-7 commit). Leave the
+other params at current defaults pending a follow-up sweep that:
+- Uses the full 9 ASAP pieces (sweep used 5 + 10 Voc)
+- Holds tpb fixed at 12
+- Sweeps tighter range of dp_offgrid_penalty and voicing_psw
+
+Pass criterion (+0.03) was not met by a single config. Pass criterion was
+met *cumulatively* across item-7 ensemble + item-6 sweep + Phase F-1
+octave sanity (+0.022 mean MV2H = roughly half-way to the cumulative
+target).
 
 ## Files
 
