@@ -71,7 +71,7 @@ def _run_mv2h_jar(gt_path: str, pred_path: str, *,
                   jar_dir: Path = _DEFAULT_JAR_DIR,
                   align: Literal["aligned", "non_aligned", "verbose"] = "non_aligned",
                   alignment_penalty: float = 1.0,
-                  timeout_s: float = 120.0) -> tuple[MV2HResult, str]:
+                  timeout_s: float = 300.0) -> tuple[MV2HResult, str]:
     """Run the MV2H jar; return (result, raw_stdout)."""
     java = os.environ.get("MV2H_JAVA", "java")
     cmd = [java, "-cp", str(jar_dir), "mv2h.Main",
@@ -91,6 +91,7 @@ def _run_mv2h_jar(gt_path: str, pred_path: str, *,
 def compute_mv2h(predicted_text: str, reference_text: str, *,
                  align: Literal["aligned", "non_aligned", "verbose"] = "non_aligned",
                  alignment_penalty: float = 1.0,
+                 timeout_s: float = 300.0,
                  jar_dir: Path = _DEFAULT_JAR_DIR) -> MV2HResult:
     """Run MV2H on two MV2H-format strings."""
     with tempfile.TemporaryDirectory() as td:
@@ -99,7 +100,8 @@ def compute_mv2h(predicted_text: str, reference_text: str, *,
         gt_p.write_text(reference_text)
         pr_p.write_text(predicted_text)
         res, _ = _run_mv2h_jar(str(gt_p), str(pr_p), jar_dir=jar_dir,
-                               align=align, alignment_penalty=alignment_penalty)
+                               align=align, alignment_penalty=alignment_penalty,
+                               timeout_s=timeout_s)
     return res
 
 

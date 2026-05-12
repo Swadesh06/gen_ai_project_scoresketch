@@ -1,0 +1,76 @@
+{
+  "alignment": "aligned",
+  "eval_seconds": 15.0,
+  "rows": [
+    {
+      "clip": "MIDI-Unprocessed_Chamber1_MID--AUDIO_07_R3_2018_wav--2_30s.wav",
+      "multi_pitch": 0.7853403141361257,
+      "voice": 0.726027397260274,
+      "meter": 0.008438818565400843,
+      "value": 0.875,
+      "harmony": 0.0,
+      "mv2h": 0.47896130599236014,
+      "n_notes_gt": 116,
+      "n_notes_pred": 75,
+      "bpm_pred": 78.94736842105284
+    },
+    {
+      "clip": "MIDI-Unprocessed_Chamber2_MID--AUDIO_09_R3_2018_wav--1_30s.wav",
+      "multi_pitch": 0.96875,
+      "voice": 0.2481481481481481,
+      "meter": 0.13468013468013468,
+      "value": 0.7980129877344639,
+      "harmony": 0.0,
+      "mv2h": 0.4299182541125493,
+      "n_notes_gt": 96,
+      "n_notes_pred": 96,
+      "bpm_pred": 130.43478260869554
+    },
+    {
+      "clip": "MIDI-Unprocessed_Chamber2_MID--AUDIO_09_R3_2018_wav--3_30s.wav",
+      "multi_pitch": 0.9012345679012346,
+      "voice": 0.4930069930069931,
+      "meter": 0.02459016393442623,
+      "value": 0.9399599642236406,
+      "harmony": 0.0,
+      "mv2h": 0.4717583378132589,
+      "n_notes_gt": 177,
+      "n_notes_pred": 147,
+      "bpm_pred": 83.33333333333326
+    },
+    {
+      "clip": "MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--1_30s.wav",
+      "multi_pitch": 0.9855072463768115,
+      "voice": 0.5454545454545454,
+      "meter": 0.23448275862068965,
+      "value": 0.5567163709243121,
+      "harmony": 0.0,
+      "mv2h": 0.4644321842752717,
+      "n_notes_gt": 34,
+      "n_notes_pred": 35,
+      "bpm_pred": 153.8461538461537
+    },
+    {
+      "clip": "MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--2_30s.wav",
+      "multi_pitch": 1.0,
+      "voice": 0.303030303030303,
+      "meter": 0.2857142857142857,
+      "value": 0.6523473749461939,
+      "harmony": 0.0,
+      "mv2h": 0.44821839273815656,
+      "n_notes_gt": 57,
+      "n_notes_pred": 57,
+      "bpm_pred": 146.3414634146341
+    }
+  ],
+  "mean": {
+    "mv2h": 0.45865769498631936,
+    "multi_pitch": 0.9281664256828343,
+    "voice": 0.46313347738005267,
+    "meter": 0.1375812323029874,
+    "value": 0.7644073395657222,
+    "harmony": 0.0
+  },
+  "skipped": [],
+  "wall_s": 28.148521900177002
+}

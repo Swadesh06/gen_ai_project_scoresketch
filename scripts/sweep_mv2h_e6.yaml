@@ -1,0 +1,30 @@
+program: scripts/sweep_mv2h_e6.py
+method: bayes
+metric:
+  name: overall_mv2h
+  goal: maximize
+parameters:
+  tpb:
+    values: [6, 12, 24]
+  complexity_alpha:
+    min: 0.5
+    max: 3.0
+  sigma_quant:
+    min: 0.02
+    max: 0.06
+  voicing_psw:
+    values: [13, 15, 17, 19, 21]
+  voicing_vt:
+    min: 0.65
+    max: 0.85
+  target_bpm:
+    min: 80.0
+    max: 130.0
+  dp_offgrid_penalty:
+    min: 0.25
+    max: 1.5
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args}

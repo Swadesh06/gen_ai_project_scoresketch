@@ -48,9 +48,10 @@ def _gt_text(mid_path: Path, eval_seconds: float | None) -> tuple[str, int]:
     return notes_to_mv2h_format(notes, bpm=bpm, time_sig=ts, voices=voices), len(notes)
 
 
-def _pred_text(wav_path: Path, eval_seconds: float | None) -> tuple[str, int, float]:
+def _pred_text(wav_path: Path, eval_seconds: float | None,
+                transcriber: str = "bytedance_piano") -> tuple[str, int, float]:
     cfg = PipelineConfig(input_kind="piano", mode="medium", render_svg=False,
-                          per_voice_dp="off")
+                          per_voice_dp="off", transcriber=transcriber)
     r = transcribe(str(wav_path), cfg)
     notes = list(r.notes)
     if eval_seconds is not None:
@@ -78,6 +79,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--eval-seconds", type=float, default=30.0)
     ap.add_argument("--align", choices=["non_aligned", "aligned"], default="non_aligned")
+    ap.add_argument("--transcriber", choices=["bytedance_piano", "yourmt3plus", "auto_piano"],
+                    default="bytedance_piano",
+                    help="bytedance_piano is fast (~3 GB VRAM); yourmt3plus is the "
+                         "production default but ~5 GB and slow first-load.")
     args = ap.parse_args()
 
     eval_sec = None if args.eval_seconds <= 0 else float(args.eval_seconds)
@@ -94,13 +99,14 @@ def main():
             skipped.append({"clip": wav.name, "reason": "no_gt"}); continue
         try:
             gt_text, n_gt = _gt_text(mid, eval_sec)
-            pred_text, n_pred, bpm_pred = _pred_text(wav, eval_sec)
+            pred_text, n_pred, bpm_pred = _pred_text(wav, eval_sec, args.transcriber)
         except Exception as e:
             skipped.append({"clip": wav.name, "reason": f"prep_failed: {e}"})
             print(f"skip {wav.name}: {e}")
             continue
         try:
-            res = compute_mv2h(pred_text, gt_text, align=args.align)
+            res = compute_mv2h(pred_text, gt_text, align=args.align,
+                                jar_dir=Path("third_party/MV2H/bin").resolve())
         except Exception as e:
             skipped.append({"clip": wav.name, "reason": f"mv2h_failed: {e}"})
             print(f"skip {wav.name}: {e}")

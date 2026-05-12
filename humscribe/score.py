@@ -30,6 +30,7 @@ def build_stream(
     tatums_per_beat: int = 12,
     render_tpb: int | None = None,
     estimate_key: bool = True,
+    enharmonic_spelling: bool = False,
 ) -> stream.Stream:
     """Build a music21 Stream from notes.
 
@@ -66,12 +67,20 @@ def build_stream(
         ql = max(float(ql), 1.0 / float(rtpb))
         n.duration = m21dur.Duration(ql)
         s.append(n)
+    inferred_key = None
     if estimate_key:
         try:
             k = KrumhanslSchmuckler().getSolution(s)
             if k is not None:
                 ks = m21key.KeySignature(k.sharps)
                 s.insert(0, ks)
+                inferred_key = k
+        except Exception:
+            pass
+    if enharmonic_spelling:
+        try:
+            from humscribe.ensemble.me9_line_of_fifths import spell_with_line_of_fifths
+            spell_with_line_of_fifths(s, key=inferred_key)
         except Exception:
             pass
     return s

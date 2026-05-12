@@ -80,6 +80,11 @@ class PipelineConfig:
     # while metric path uses tatums_per_beat=24 for snap accuracy.
     render_tpb: int = 12
     estimate_key: bool = True
+    # Phase E item 7 ME-9: line-of-fifths enharmonic spelling on the rendered
+    # score. Renderer-side polish only — does not change pitches or durations,
+    # so no F1/snap risk. Default off for now; flip to True after ME-9
+    # validation in `reports/me9_line_of_fifths.md` shows no regressions.
+    enharmonic_spelling: bool = False
     # Phase D B79/B80: independent DP per voice + B76 transformer voice tracker.
     # auto: detect melody+accomp pieces (pitch IQR + density) and route there.
     # on: always use per-voice DP (still requires checkpoints/voice_transformer_b76/best.pt).
