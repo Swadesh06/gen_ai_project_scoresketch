@@ -78,5 +78,6 @@ into the segmenter and `gate_vocadito_conp.py` re-run.
 - `scripts/prep_formant_features.py`
 - `scripts/train_formant_offset.py` (5-fold CV)
 - `scripts/train_formant_offset_deep.py` (hidden=128, layers=3)
-- `reports/_phase_f_F2_formant.json` (will land when CV completes)
+- `reports/_phase_f_F2_formant.json` (5-fold base results; mean F1 0.4652)
+- `reports/_phase_f_F2_formant_deep.json` (5-fold deep results; mean F1 0.4697)
 - `/workspace/.cache/voc_formant/` (40-clip feature cache)
