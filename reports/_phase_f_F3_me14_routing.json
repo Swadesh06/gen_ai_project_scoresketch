@@ -1,0 +1,101 @@
+[
+  {
+    "piece": "asap_Bach__Fugue__bwv_854",
+    "best_tpb": "tpb8_sanity",
+    "nps": 12.84,
+    "median_ioi": 0.12,
+    "notes_per_beat": 4.17,
+    "pred_bpm": 120.0,
+    "midi_iqr": 16.0,
+    "n_notes": 374,
+    "best_mv2h": 0.6054033478651688
+  },
+  {
+    "piece": "asap_Bach__Fugue__bwv_846",
+    "best_tpb": "tpb16_sanity",
+    "nps": 12.99,
+    "median_ioi": 0.07,
+    "notes_per_beat": 7.0,
+    "pred_bpm": 122.4,
+    "midi_iqr": 14.0,
+    "n_notes": 383,
+    "best_mv2h": 0.5594103318737357
+  },
+  {
+    "piece": "asap_Bach__Fugue__bwv_848",
+    "best_tpb": "tpb8_sanity",
+    "nps": 11.92,
+    "median_ioi": 0.12,
+    "notes_per_beat": 4.17,
+    "pred_bpm": 120.0,
+    "midi_iqr": 13.0,
+    "n_notes": 347,
+    "best_mv2h": 0.5538021470582527
+  },
+  {
+    "piece": "asap_Bach__Fugue__bwv_856",
+    "best_tpb": "tpb6_sanity",
+    "nps": 14.72,
+    "median_ioi": 0.06,
+    "notes_per_beat": 8.67,
+    "pred_bpm": 115.4,
+    "midi_iqr": 13.0,
+    "n_notes": 436,
+    "best_mv2h": 0.5685087682149772
+  },
+  {
+    "piece": "asap_Bach__Fugue__bwv_857",
+    "best_tpb": "tpb8_sanity",
+    "nps": 8.55,
+    "median_ioi": 0.12,
+    "notes_per_beat": 4.17,
+    "pred_bpm": 120.0,
+    "midi_iqr": 10.0,
+    "n_notes": 251,
+    "best_mv2h": 0.6273095336376546
+  },
+  {
+    "piece": "asap_Beethoven__Piano_Sonatas__21-1",
+    "best_tpb": "tpb6_sanity",
+    "nps": 16.71,
+    "median_ioi": 0.0,
+    "notes_per_beat": 400.0,
+    "pred_bpm": 150.0,
+    "midi_iqr": 19.0,
+    "n_notes": 501,
+    "best_mv2h": 0.5303800628944694
+  },
+  {
+    "piece": "asap_Chopin__Berceuse_op_57",
+    "best_tpb": "tpb6_sanity",
+    "nps": 4.52,
+    "median_ioi": 0.0,
+    "notes_per_beat": 500.0,
+    "pred_bpm": 120.0,
+    "midi_iqr": 13.0,
+    "n_notes": 131,
+    "best_mv2h": 0.5380746231960333
+  },
+  {
+    "piece": "asap_Liszt__Sonata",
+    "best_tpb": "tpb16_sanity",
+    "nps": 4.82,
+    "median_ioi": 0.0,
+    "notes_per_beat": 520.0,
+    "pred_bpm": 115.4,
+    "midi_iqr": 21.0,
+    "n_notes": 142,
+    "best_mv2h": 0.5049356367054135
+  },
+  {
+    "piece": "asap_Schumann__Toccata",
+    "best_tpb": "tpb6_sanity",
+    "nps": 24.38,
+    "median_ioi": 0.0,
+    "notes_per_beat": 480.0,
+    "pred_bpm": 125.0,
+    "midi_iqr": 15.8,
+    "n_notes": 722,
+    "best_mv2h": 0.5236496112790402
+  }
+]
