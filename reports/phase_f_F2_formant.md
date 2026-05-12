@@ -30,13 +30,15 @@ offsets. Targets the 22pp Vocadito offset20 gap (current 0.439 vs IAA
 | 4 | 0.453 | 0.386 | 0.548 | 251 | 399 | 207 |
 | 5 | 0.430 | 0.374 | 0.506 | 207 | 347 | 202 |
 
-**5-fold mean offset F1 = 0.4652**. High variance (0.41–0.54) reflects
-the small-data regime (32 train clips per fold). Recall consistently
-0.5–0.6, precision 0.35–0.5 (more false positives than misses) —
-threshold tuning would help marginally.
+**Base (h=96, l=2): 5-fold mean offset F1 = 0.4652.** High variance
+(0.41–0.54) reflects the small-data regime (32 train clips per fold).
 
-A parallel deeper variant (hidden=128, layers=3) fold 1: val F1 = 0.501.
-Slightly worse than base (0.542), supporting the over-fit hypothesis.
+**Deep (h=128, l=3): 5-fold mean offset F1 = 0.4697** (+0.005 over base).
+Within noise; bigger model doesn't help meaningfully. Confirms the
+small-data ceiling.
+
+Both at recall 0.5–0.6, precision 0.35–0.5 (more false positives than
+misses) — threshold tuning would help marginally.
 
 These are **offset-event** F1 (no pitch requirement, ±50 ms frame
 tolerance) — not directly
