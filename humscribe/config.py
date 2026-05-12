@@ -76,12 +76,15 @@ class PipelineConfig:
     pitch_model: PitchModel = "pesto"
     transcriber: Transcriber | None = None
     note_segmenter: NoteSegmenter = "voicing"
-    # Phase E item 7 ME-14 finding: TPB=12 with octave_sanity beats TPB=24
-    # on MV2H end-to-end across 7/7 ASAP pieces (mean +0.011 over TPB=24).
-    # Switched from 24 to 12. Snap-F1 backwards-compat callers can override
-    # via cfg.tatums_per_beat=24 explicitly.
+    # Phase E item 7 ME-14 + ME-14-ext findings:
+    # - tpb=24 (original):           mean MV2H 0.5377 (with octave_sanity)
+    # - tpb=12 (production):         mean MV2H 0.5492 (+0.0115 over tpb=24)
+    # - tpb=8 (ME-14-ext winner):    mean MV2H 0.5517 (+0.0025 over tpb=12)
+    # - tpb=16 (ME-14-ext runner-up):mean MV2H 0.5515
+    # tpb=12 is the production default — keeps integer ratio to render_tpb=12
+    # (no resampling) at the cost of 0.0025 MV2H below the tpb=8 optimum.
+    # Snap-F1 backwards-compat callers can override to 24 explicitly.
     tatums_per_beat: int = 12
-    # Render TPB has matched metric TPB since Phase E (avoid resampling).
     render_tpb: int = 12
     estimate_key: bool = True
     # Phase E item 7 ME-9: line-of-fifths enharmonic spelling on the rendered

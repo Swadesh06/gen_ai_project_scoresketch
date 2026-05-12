@@ -1,0 +1,131 @@
+{
+  "rows": [
+    {
+      "piece": "asap_Bach__Fugue__bwv_854",
+      "tpb6_sanity": 0.6023156044061155,
+      "tpb8_sanity": 0.6054033478651688,
+      "tpb12_sanity": 0.5988461972256596,
+      "tpb16_sanity": 0.5951379511155985,
+      "tpb18_sanity": 0.5547667113622723,
+      "tpb24_sanity": 0.5895093827120895,
+      "tpb12_no_sanity": 0.5988461972256596,
+      "tpb24_no_sanity": 0.5895093827120895,
+      "best": "tpb8_sanity",
+      "best_mv2h": 0.6054033478651688
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_846",
+      "tpb6_sanity": 0.5506700054598525,
+      "tpb8_sanity": 0.5543661164233551,
+      "tpb12_sanity": 0.5494569083465255,
+      "tpb16_sanity": 0.5594103318737357,
+      "tpb18_sanity": 0.5418316709236894,
+      "tpb24_sanity": 0.5472829148609831,
+      "tpb12_no_sanity": 0.5494569083465255,
+      "tpb24_no_sanity": 0.5472829148609831,
+      "best": "tpb16_sanity",
+      "best_mv2h": 0.5594103318737357
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_848",
+      "tpb6_sanity": 0.5466901041407681,
+      "tpb8_sanity": 0.5538021470582527,
+      "tpb12_sanity": 0.5489924197789615,
+      "tpb16_sanity": 0.5513730949994369,
+      "tpb18_sanity": 0.5048722548796205,
+      "tpb24_sanity": 0.5262621879476773,
+      "tpb12_no_sanity": 0.5489924197789615,
+      "tpb24_no_sanity": 0.5262621879476773,
+      "best": "tpb8_sanity",
+      "best_mv2h": 0.5538021470582527
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_856",
+      "tpb6_sanity": 0.5685087682149772,
+      "tpb8_sanity": 0.5543055383558483,
+      "tpb12_sanity": 0.5588320679008503,
+      "tpb16_sanity": 0.545338349962123,
+      "tpb18_sanity": 0.5537318779140726,
+      "tpb24_sanity": 0.5469748069736171,
+      "tpb12_no_sanity": 0.5214794956617469,
+      "tpb24_no_sanity": 0.4588781025038875,
+      "best": "tpb6_sanity",
+      "best_mv2h": 0.5685087682149772
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_857",
+      "tpb6_sanity": 0.6255466769256556,
+      "tpb8_sanity": 0.6273095336376546,
+      "tpb12_sanity": 0.6237753208988538,
+      "tpb16_sanity": 0.6265359220737577,
+      "tpb18_sanity": 0.5949089429724184,
+      "tpb24_sanity": 0.616966559743585,
+      "tpb12_no_sanity": 0.6237753208988538,
+      "tpb24_no_sanity": 0.616966559743585,
+      "best": "tpb8_sanity",
+      "best_mv2h": 0.6273095336376546
+    },
+    {
+      "piece": "asap_Beethoven__Piano_Sonatas__21-1",
+      "tpb6_sanity": 0.5303800628944694,
+      "tpb8_sanity": 0.5278024109562148,
+      "tpb12_sanity": 0.5147476164809157,
+      "tpb16_sanity": 0.5253351939269414,
+      "tpb18_sanity": 0.500937771214954,
+      "tpb24_sanity": 0.5045810667252326,
+      "tpb12_no_sanity": 0.5147476164809157,
+      "tpb24_no_sanity": 0.5045810667252326,
+      "best": "tpb6_sanity",
+      "best_mv2h": 0.5303800628944694
+    },
+    {
+      "piece": "asap_Chopin__Berceuse_op_57",
+      "tpb6_sanity": 0.5380746231960333,
+      "tpb8_sanity": 0.5380746231960333,
+      "tpb12_sanity": 0.5380746231960333,
+      "tpb16_sanity": 0.5358330656370857,
+      "tpb18_sanity": 0.5295410429448318,
+      "tpb24_sanity": 0.5358330656370857,
+      "tpb12_no_sanity": 0.5322110637585343,
+      "tpb24_no_sanity": 0.53340913849465,
+      "best": "tpb6_sanity",
+      "best_mv2h": 0.5380746231960333
+    },
+    {
+      "piece": "asap_Liszt__Sonata",
+      "tpb6_sanity": 0.45209082270998424,
+      "tpb8_sanity": 0.48489393440578016,
+      "tpb12_sanity": 0.49865713563187564,
+      "tpb16_sanity": 0.5049356367054135,
+      "tpb18_sanity": 0.4764474546131671,
+      "tpb24_sanity": 0.4752375973564796,
+      "tpb12_no_sanity": 0.49865713563187564,
+      "tpb24_no_sanity": 0.4752375973564796,
+      "best": "tpb16_sanity",
+      "best_mv2h": 0.5049356367054135
+    },
+    {
+      "piece": "asap_Schumann__Toccata",
+      "tpb6_sanity": 0.5236496112790402,
+      "tpb8_sanity": 0.5195443957825099,
+      "tpb12_sanity": 0.5116946770046883,
+      "tpb16_sanity": 0.5196315748732933,
+      "tpb18_sanity": 0.48805737235874797,
+      "tpb24_sanity": 0.49701331245464864,
+      "tpb12_no_sanity": 0.5116946770046883,
+      "tpb24_no_sanity": 0.49701331245464864,
+      "best": "tpb6_sanity",
+      "best_mv2h": 0.5236496112790402
+    }
+  ],
+  "means": {
+    "tpb6_sanity": 0.5486584754696552,
+    "tpb8_sanity": 0.551722449742313,
+    "tpb12_sanity": 0.5492307740515959,
+    "tpb16_sanity": 0.5515034579074873,
+    "tpb18_sanity": 0.527232788798197,
+    "tpb24_sanity": 0.5377400993790443,
+    "tpb12_no_sanity": 0.5444289816430845,
+    "tpb24_no_sanity": 0.5276822514221371
+  }
+}
