@@ -292,3 +292,62 @@ Skip ME-3, ME-6, ME-13.
 - Always-on `monitor` tmux + `cpu-worker` tmux. Default state = ≥ 1 GPU + ≥ 1 CPU job + monitor.
 - Cite ASAP numbers with beat source ("score beats" or "real beats from beat_this").
 
+
+
+## Phase E — session end (2026-05-12, ~3h working time)
+
+### Items closed
+- Item 1 (MV2H metric): ASAP 9-piece baseline 0.5277 (DP tpb=24 no corr), 
+  MAESTRO 5-clip 0.4587, Vocadito 40-clip A1 0.5087. Java jar wrapper + 
+  music21/MIDI/MusicXML converters in `humscribe/eval/`.
+- Item 3 (DDSP): deferred — dep chain too deep on shared env. Path 
+  documented in `reports/item-3_ddsp_partial.md`.
+- Item 4 (Docker + HF backend): Dockerfile shipped, MusicgenMelody HF
+  backend in `humscribe/arrange/musicgen_hf.py`, env switch via 
+  `HUMSCRIBE_MUSICGEN_BACKEND=hf`.
+- Item 5 (JSB Chorales LoRA): 371 pairs rendered. C5 r=32: train min 1.07,
+  test mean 1.39 (capacity-limited). C5b r=64 in flight — already at 
+  step ~525 with mean loss 1.05 (vs C5 r=32 1.39 at same point).
+- Item 6 (MV2H sweep): 122 runs Bayesian. Top 0.5289 (+0.022 vs baseline).
+  All top 3 configs use tpb=12. **tpb=12 promoted as production default.**
+- Item 8 (MAESTRO chamber demo regen): done — integer BPM, key sig D major,
+  0×48-lets, 2×24-lets (down from 9+3).
+
+### Items in progress at session close
+- C5b r=64 LoRA training: ~step 525/1500 (50 min remaining).
+- F-2 formant offset detector base: fold 5/5 in flight.
+- F-2 deep variant: fold 2/5 in flight.
+- MIR-ST500 partial DL: ~46/100 songs (4-5 min remaining).
+
+### Production defaults after session
+- `tatums_per_beat = 12` (was 24)
+- `render_tpb = 12`
+- `octave_sanity = "auto"` (new, F-1)
+- `enharmonic_spelling = False` (default off, ME-9 flag)
+- `per_voice_dp = "auto"` (B79, unchanged)
+- `target_bpm = 110` in beat_this (unchanged, overridden by F-1 octave sanity)
+
+### Production headline (9-piece ASAP MV2H)
+- raw YMT3 (no DP, no corrector):           0.5515
+- DP tpb=24 (original Phase E start):       0.5277  
+- DP tpb=24 + octave sanity:                0.5377  (+0.010 from sanity)
+- **DP tpb=12 + octave sanity (new prod):  0.5492**  (+0.022 from start)
+- Bach BWV 856 alone:                       0.4589 → 0.5588  (+0.100!)
+
+### Phase F priorities (per PHASE_F_IDEAS.md, ranked after this session)
+1. F-2 follow-through: wire trained formant detector into segmenter, 
+   re-run gate_vocadito_conp.py for offset20-F1 measurement
+2. F-2b: MIR-ST500 pretrain of the formant detector (12× data lift)
+3. F-1 follow-up: Chopin Berceuse still off by 1.5x after halve — needs 
+   3-tier (halve, halve again, or 3x reduction) detector
+4. F-4: Lakh MIDI LoRA (after C5b r=64 result)
+5. F-3 ME-14 productionization: route-best-config-per-piece based on 
+   piece features
+
+### Negative results documented
+- ME-1 (pYIN diversifier): -0.007 mean MV2H (voicing damping too aggressive)
+- ME-4 (tonal prior on DP): -0.006 mean MV2H (cached YMT3 already accurate)
+- ME-9 (line-of-fifths spelling): +4.6% accidentals (wrong key estimate)
+- ME-10 (meter template): 1/9 correct (naive normalization biases small num)
+- MV2H quantise-to-tatum: -0.34 mean MV2H (DTW collapses on tatum buckets)
+
