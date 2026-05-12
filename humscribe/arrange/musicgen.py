@@ -79,10 +79,16 @@ def _load(model_size: Literal["melody", "melody-large"] = "melody",
     name = f"facebook/musicgen-{model_size}"
     model = MusicGen.get_pretrained(name, device=target)
     if lora_adapter is not None:
-        # PEFT LoRA was trained against fp32 LM (per B74/B77). Cast to fp32
-        # before attaching adapters to keep dtypes consistent.
         from peft import PeftModel
-        model.lm = model.lm.to(torch.float32)
+        # Training (B74/B77/C5/C5b) used fp32 LM to keep optimizer state
+        # numerics stable. Inference doesn't need fp32 — for melody-large
+        # (3.3B) fp32 is ~13 GB just for weights and OOMs on 16 GB GPUs.
+        # Use the requested dtype here; with dtype=float16, base + LoRA fit
+        # in ~6.5 GB.
+        if dtype == torch.float16 and target == "cuda":
+            model.lm = model.lm.to(torch.float16)
+        else:
+            model.lm = model.lm.to(torch.float32)
         model.lm = PeftModel.from_pretrained(model.lm, str(lora_adapter))
         model.lm.eval()
     elif dtype == torch.float16 and target == "cuda":

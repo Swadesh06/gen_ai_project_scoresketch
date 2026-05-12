@@ -85,11 +85,37 @@ For Phase F-2f the integration steps are:
    (the highest-val-F1 fold) at first call, cache in module state.
 4. Verify gate_vocadito_conp.py passes at off20 ≥ 0.36.
 
+## Production verification (F-2f addendum)
+
+`scripts/verify_f2e_production.py` runs the full production module
+path (`humscribe.pitch.formant_corrector.correct_offsets`) on all 40
+Vocadito clips:
+
+- mean prod off20 = 0.3433
+- mean f2e  off20 = 0.3941
+- **delta            = +0.0508** (vs sweep's +0.0269)
+- win/lose/same      = 28 / 7 / 5
+- worst regression: voc_8 (0.747 → 0.693, Δ −0.053)
+
+The production-path delta is nearly **2× the sweep delta** because the
+production path uses `track_pitch_hybrid_voicing` (PESTO pitch + CREPE
+voicing) while the sweep used raw PESTO outputs — the BiLSTM-snap
+correction lifts hybrid offsets more than it lifted PESTO-only.
+
+The sweep's worst-case clip (voc_38, Δ −0.135) sees no change at all
+in the production path. The new worst case is voc_8 at −0.053, on a
+clip that still lands at 0.693 (high). All other regressions are in
+[−0.04, −0.02]. See `reports/phase_f_F2_FINAL.md` for the full
+storyline.
+
 ## Files
 
 - `humscribe/train/formant_offset.py` (model arch — unchanged from F-2)
+- `humscribe/pitch/formant_corrector.py` (production module, F-2f)
 - `scripts/eval_f2e_confidence_head.py` (single-config eval)
 - `scripts/eval_f2e_threshold_sweep.py` (5×5 sweep)
+- `scripts/verify_f2e_production.py` (40-clip production verify)
 - `reports/_phase_f_F2e_offset.json`
 - `reports/_phase_f_F2e_threshold_sweep.json`
+- `reports/_phase_f_F2e_production_verify.json` (per-clip dump)
 - `checkpoints/formant_offset_vocadito/fold{0..4}.pt`
