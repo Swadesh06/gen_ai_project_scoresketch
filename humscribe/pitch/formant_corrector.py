@@ -103,6 +103,16 @@ def correct_offsets(
     n_frames = len(probs)
 
     out: list[NoteEvent] = []
+    # F-6 fix: the BiLSTM peak can land *after* the next note's onset,
+    # which extends a corrected offset past the next note. In MV2H this
+    # registers as polyphony and drops the "voice" component by ~0.034
+    # in monophonic humming (the off20 win in "value" is +0.011, net
+    # MV2H -0.005). Clip each corrected offset to a small epsilon
+    # before the next note's onset.
+    sorted_notes = sorted(notes, key=lambda n: n.onset_s)
+    next_onset = {id(n): float("inf") for n in sorted_notes}
+    for i in range(len(sorted_notes) - 1):
+        next_onset[id(sorted_notes[i])] = sorted_notes[i + 1].onset_s
     for n in notes:
         center = int(n.offset_s / hop_s)
         lo = max(0, center - window)
@@ -114,9 +124,13 @@ def correct_offsets(
         if sub[idx] < min_prob:
             out.append(n); continue
         new_off = (lo + idx) * hop_s
-        # Sanity: keep min duration 50ms
+        # Keep min duration 50ms.
         if new_off - n.onset_s < 0.05:
             new_off = n.onset_s + 0.05
+        # F-6 fix: do not extend past the next note's onset.
+        cap = next_onset[id(n)] - 1e-3
+        if new_off > cap:
+            new_off = max(cap, n.offset_s)
         new = NoteEvent(
             onset_s=n.onset_s,
             offset_s=new_off,

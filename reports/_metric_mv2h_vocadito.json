@@ -137,6 +137,18 @@
       "bpm_pred": 117.64705882352925
     },
     {
+      "clip": "vocadito_13",
+      "multi_pitch": 0.6808510638297873,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8005007517232762,
+      "harmony": 0.0,
+      "mv2h": 0.4962703631106127,
+      "n_notes_gt": 74,
+      "n_notes_pred": 67,
+      "bpm_pred": 0.0
+    },
+    {
       "clip": "vocadito_14",
       "multi_pitch": 0.6865671641791046,
       "voice": 1.0,
@@ -353,6 +365,18 @@
       "bpm_pred": 124.99999999999989
     },
     {
+      "clip": "vocadito_33",
+      "multi_pitch": 0.6785714285714285,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7812292161557108,
+      "harmony": 0.0,
+      "mv2h": 0.49196012894542784,
+      "n_notes_gt": 80,
+      "n_notes_pred": 88,
+      "bpm_pred": 0.0
+    },
+    {
       "clip": "vocadito_35",
       "multi_pitch": 0.7000000000000001,
       "voice": 1.0,
@@ -414,38 +438,30 @@
     }
   ],
   "mean": {
-    "mv2h": 0.5087464685775357,
-    "multi_pitch": 0.7471922276879144,
+    "mv2h": 0.5079336228803404,
+    "multi_pitch": 0.7434432842719529,
     "voice": 1.0,
-    "meter": 0.003811333235561834,
-    "value": 0.7927287819642022,
+    "meter": 0.0035995925002528426,
+    "value": 0.7926252376294962,
     "harmony": 0.0
   },
   "skipped": [
     {
       "clip": "vocadito_2",
-      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmppan0vror/gt.txt', '-t', '/tmp/tmppan0vror/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
-    },
-    {
-      "clip": "vocadito_13",
-      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmp65tpao0a/gt.txt', '-t', '/tmp/tmp65tpao0a/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmpuelml8yi/gt.txt', '-t', '/tmp/tmpuelml8yi/pred.txt', '-a', '-p', '1.0']' timed out after 300.0 seconds"
     },
     {
       "clip": "vocadito_21",
-      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmpdspjzrmb/gt.txt', '-t', '/tmp/tmpdspjzrmb/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
-    },
-    {
-      "clip": "vocadito_33",
-      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmp1gq60lh1/gt.txt', '-t', '/tmp/tmp1gq60lh1/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmpsxcosnme/gt.txt', '-t', '/tmp/tmpsxcosnme/pred.txt', '-a', '-p', '1.0']' timed out after 300.0 seconds"
     },
     {
       "clip": "vocadito_34",
-      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmp64ricq1n/gt.txt', '-t', '/tmp/tmp64ricq1n/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmpxc5l57r_/gt.txt', '-t', '/tmp/tmpxc5l57r_/pred.txt', '-a', '-p', '1.0']' timed out after 300.0 seconds"
     },
     {
       "clip": "vocadito_39",
-      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmp4y7zgtpc/gt.txt', '-t', '/tmp/tmp4y7zgtpc/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmpmamribyy/gt.txt', '-t', '/tmp/tmpmamribyy/pred.txt', '-a', '-p', '1.0']' timed out after 300.0 seconds"
     }
   ],
-  "wall_s": 945.5599672794342
+  "wall_s": 1881.9254868030548
 }
