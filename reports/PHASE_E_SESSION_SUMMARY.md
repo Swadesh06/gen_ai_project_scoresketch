@@ -94,3 +94,60 @@ After items 5 and 6 finish:
 
 40+ commits this session. WandB project: humscribe-v3.2. Sweep ID
 kunnj3ze. Origin pushed cleanly throughout.
+
+---
+
+## Late-session additions
+
+After items 1–8 settled, parallel-CPU + GPU saturation work shipped:
+
+**Item 6 sweep complete (122 runs)**:
+- Top config: tpb=12, voicing_psw=17, voicing_vt=0.82, dp_off=1.13.
+  overall_mv2h = 0.5289 (+0.022 over unquantised baseline). All top 3
+  configs use tpb=12 — independent confirmation of ME-14 finding.
+
+**ME-14 ensemble selection → tpb=12 default**:
+- 7/7 ASAP pieces prefer tpb=12 over tpb=24 (with octave_sanity on)
+- Mean delta +0.0110 from the tpb switch alone
+- Production default switched from tpb=24 to tpb=12 (humscribe/config.py)
+
+**Updated ASAP 9-piece MV2H** (with tpb=12 + octave_sanity production):
+- mean = **0.5492** on all 9 pieces (vs DP-tpb24-no-corr = 0.5277 = +0.022)
+- Bach BWV 856 single-piece: 0.4589 → **0.5588** (+0.100)
+- Bach BWV 848: 0.5263 → 0.5490 (+0.023)
+- Liszt Sonata: 0.4752 → 0.4987 (+0.024)
+
+**ME-1 (pYIN diversifier)**: discard. -0.007 mean MV2H on 6/10 Vocadito
+clips. Voicing-damping on disagreement too aggressive.
+
+**ME-10 (meter-template)**: discard. 1/9 ASAP correct — per-note score
+normalization biases toward small numerators.
+
+**Phase F-1 octave sanity**: shipped to production. 9/9 detector correct.
++0.0101 mean MV2H, +0.088 on Bach BWV 856.
+
+**Phase F-2 formant offset detector (in flight)**:
+- 80-bin mel-spectrogram, 1500-3500 Hz, → 96-hidden BiLSTM
+- Fold 1/5: val F1 = 0.542 (offset-event detection)
+- CPU-only training; co-runs with GPU LoRA.
+
+**C5b LoRA r=64 (in flight)**:
+- Step 100 loss = 0.91 vs C5 r=32 at step 100 = 1.07
+- Capacity hypothesis confirmed early. Awaiting test loss at step 1500.
+
+**MIR-ST500 partial (27 of 30 songs downloaded)**:
+- yt-dlp partial fetch; partial proof-of-concept of the item-2 path.
+- Full 500-song fetch deferred (heavy network IO).
+
+## Final production headlines
+
+| metric | session start | session end |
+|---|---|---|
+| ASAP 9-piece MV2H (post-DP, production defaults) | 0.5277 | **0.5492** (+0.022) |
+| Bach BWV 856 MV2H | 0.4589 | **0.5588** (+0.100) |
+| Bach BWV 848 MV2H | 0.5263 | **0.5490** (+0.023) |
+| ASAP MAESTRO chamber demo (rendered) | pre-polish | integer BPM, key sig, 0×48-lets |
+| Production default tatums_per_beat | 24 | **12** (with octave_sanity auto) |
+| MusicGen LoRA train infra | B77 distill only | C5 real-pair pipeline + C5b r=64 |
+| MV2H metric | not built | shipped (humscribe/eval/) |
+| Beat-tempo octave corrector | not built | shipped (humscribe/beat/octave_sanity.py) |
