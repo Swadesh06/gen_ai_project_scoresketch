@@ -1,9 +1,9 @@
 {
   "config": {
-    "steps": 1000,
-    "warmup_steps": 80,
+    "steps": 1500,
+    "warmup_steps": 100,
     "lr": 0.0001,
-    "lora_r": 32,
+    "lora_r": 64,
     "model_size": "melody-large",
     "batch_size": 1,
     "target_dur_s": 10.0,
@@ -11,13 +11,13 @@
     "limit_pairs": null,
     "test_frac": 0.1,
     "seed": 0,
-    "skip_overfit": false
+    "skip_overfit": true
   },
   "n_train_pairs": 315,
   "n_test_pairs": 34,
-  "train_loss_min": 1.007602572441101,
-  "train_loss_final": 1.4536241292953491,
-  "test_loss_mean": 1.388083261602065,
-  "wall_train_s": 2636.4164350032806,
-  "vram_peak_gb": 14.211947008
+  "train_loss_min": 0.610349714756012,
+  "train_loss_final": 0.7080515623092651,
+  "test_loss_mean": 0.9832254946231842,
+  "wall_train_s": 3023.3210756778717,
+  "vram_peak_gb": 14.317230592
 }
