@@ -1,8 +1,8 @@
 {
   "summary": {
-    "mean_f1": 0.6650545674003305,
+    "mean_f1": 0.6651617335544635,
     "median_f1": 0.6571028037383178,
-    "mean_p": 0.6787677334059966,
+    "mean_p": 0.6789806175229903,
     "mean_r": 0.6615336028035398,
     "n": 40,
     "gate_pass": true
@@ -297,10 +297,10 @@
       "clip": "vocadito_5"
     },
     {
-      "precision": 0.6216216216216216,
+      "precision": 0.6301369863013698,
       "recall": 0.6301369863013698,
-      "f1": 0.6258503401360545,
-      "n_pred": 74,
+      "f1": 0.6301369863013698,
+      "n_pred": 73,
       "n_ref": 73,
       "clip": "vocadito_6"
     },
@@ -337,7 +337,7 @@
     "onset_tol": 0.05,
     "pitch_tol_cents": 50.0,
     "gate_threshold_f1": 0.4,
-    "git_sha": "a4803a8",
+    "git_sha": "47b11b9",
     "pitch_model": "pesto_crepevoicing",
     "segmenter": "voicing"
   }
