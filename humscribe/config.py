@@ -76,9 +76,12 @@ class PipelineConfig:
     pitch_model: PitchModel = "pesto"
     transcriber: Transcriber | None = None
     note_segmenter: NoteSegmenter = "voicing"
-    tatums_per_beat: int = 24
-    # B+2 item 1.3: render path requantizes to TPB=12 to keep SVGs free of 24/48-lets
-    # while metric path uses tatums_per_beat=24 for snap accuracy.
+    # Phase E item 7 ME-14 finding: TPB=12 with octave_sanity beats TPB=24
+    # on MV2H end-to-end across 7/7 ASAP pieces (mean +0.011 over TPB=24).
+    # Switched from 24 to 12. Snap-F1 backwards-compat callers can override
+    # via cfg.tatums_per_beat=24 explicitly.
+    tatums_per_beat: int = 12
+    # Render TPB has matched metric TPB since Phase E (avoid resampling).
     render_tpb: int = 12
     estimate_key: bool = True
     # Phase E item 7 ME-9: line-of-fifths enharmonic spelling on the rendered
