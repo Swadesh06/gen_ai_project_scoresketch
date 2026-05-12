@@ -110,9 +110,32 @@ but voice separation is weak (only 0.46) because the ByteDance output is
 single-stream; the GT MIDI has true voice IDs. This is what an ME-13 voice
 legality / proper voice-tracking integration could fix without touching pitch.
 
+**Vocadito 40-clip A1 baseline (full clip, non-aligned DTW, 38/40 succeeded):**
+
+| metric | mean |
+|---|---|
+| MV2H | 0.5087 |
+| multi-pitch | 0.747 |
+| voice | 1.000 |
+| meter | 0.004 |
+| value | 0.793 |
+| harmony | 0.000 |
+
+Range across clips: MV2H ∈ [0.47, 0.55] (low variance). 2 clips (voc_2,
+voc_13, voc_34) hit the 120 s MV2H timeout — alignment search blew up,
+likely because of dense ornamentation; we can re-run those with `-p 0.5`
+(higher DTW penalty, faster search) but the mean is robust to skipping 2.
+
+`voice = 1.000` is trivially perfect because Vocadito is monophonic and we
+emit single-voice predictions. Meter is near-zero (no metric grid emitted).
+The headline humming-side number is then **MV2H = 0.51**, which becomes the
+target for the MIR-ST500 stack (item 2) and the ensemble work (item 7,
+ME-9 + ME-11 + ME-14).
+
 ## Next
 
-- Vocadito 40-clip MV2H baseline (running): the humming side, A1 annotator.
+- Item 6 sweep: 6 agents running on the WandB sweep `kunnj3ze`, 20 runs each
+  (= 120 total Bayesian-optimised configs).
 - Item 6 sweep: use MV2H as the optimisation target over DP params + voicing
   thresholds + render_tpb. Cache the per-piece prediction features first.
 - ME-14 ensemble selection: pick the best pipeline variant per-piece based

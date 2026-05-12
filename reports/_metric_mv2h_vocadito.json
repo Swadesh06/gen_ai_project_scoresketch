@@ -1,0 +1,451 @@
+{
+  "annotator": "A1",
+  "pitch_model": "pesto_crepevoicing",
+  "alignment": "non_aligned",
+  "eval_seconds": null,
+  "rows": [
+    {
+      "clip": "vocadito_1",
+      "multi_pitch": 0.828125,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7937949172302105,
+      "harmony": 0.0,
+      "mv2h": 0.5243839834460421,
+      "n_notes_gt": 59,
+      "n_notes_pred": 69,
+      "bpm_pred": 115.38461538461549
+    },
+    {
+      "clip": "vocadito_3",
+      "multi_pitch": 0.8775510204081632,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8207911087266252,
+      "harmony": 0.0,
+      "mv2h": 0.5396684258269577,
+      "n_notes_gt": 51,
+      "n_notes_pred": 47,
+      "bpm_pred": 142.8571428571429
+    },
+    {
+      "clip": "vocadito_4",
+      "multi_pitch": 0.7401574803149606,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7941259917245916,
+      "harmony": 0.0,
+      "mv2h": 0.5068566944079105,
+      "n_notes_gt": 69,
+      "n_notes_pred": 58,
+      "bpm_pred": 120.0
+    },
+    {
+      "clip": "vocadito_5",
+      "multi_pitch": 0.7455621301775148,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7992230799295462,
+      "harmony": 0.0,
+      "mv2h": 0.5089570420214122,
+      "n_notes_gt": 96,
+      "n_notes_pred": 73,
+      "bpm_pred": 83.33333333333347
+    },
+    {
+      "clip": "vocadito_6",
+      "multi_pitch": 0.684931506849315,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8310922869829991,
+      "harmony": 0.0,
+      "mv2h": 0.5032047587664629,
+      "n_notes_gt": 73,
+      "n_notes_pred": 73,
+      "bpm_pred": 81.08108108108105
+    },
+    {
+      "clip": "vocadito_7",
+      "multi_pitch": 0.7999999999999999,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7641450797857275,
+      "harmony": 0.0,
+      "mv2h": 0.5128290159571455,
+      "n_notes_gt": 47,
+      "n_notes_pred": 58,
+      "bpm_pred": 78.94736842105284
+    },
+    {
+      "clip": "vocadito_8",
+      "multi_pitch": 0.8533333333333333,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.915286194506829,
+      "harmony": 0.0,
+      "mv2h": 0.5537239055680325,
+      "n_notes_gt": 40,
+      "n_notes_pred": 35,
+      "bpm_pred": 120.0
+    },
+    {
+      "clip": "vocadito_9",
+      "multi_pitch": 0.7457627118644068,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7943431112891363,
+      "harmony": 0.0,
+      "mv2h": 0.5080211646307087,
+      "n_notes_gt": 62,
+      "n_notes_pred": 56,
+      "bpm_pred": 107.14285714285718
+    },
+    {
+      "clip": "vocadito_10",
+      "multi_pitch": 0.625,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7409080110690038,
+      "harmony": 0.0,
+      "mv2h": 0.47318160221380073,
+      "n_notes_gt": 35,
+      "n_notes_pred": 29,
+      "bpm_pred": 109.09090909090912
+    },
+    {
+      "clip": "vocadito_11",
+      "multi_pitch": 0.75,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8849837091220722,
+      "harmony": 0.0,
+      "mv2h": 0.5269967418244145,
+      "n_notes_gt": 37,
+      "n_notes_pred": 35,
+      "bpm_pred": 120.0
+    },
+    {
+      "clip": "vocadito_12",
+      "multi_pitch": 0.8421052631578948,
+      "voice": 1.0,
+      "meter": 0.007017543859649123,
+      "value": 0.8915208183219077,
+      "harmony": 0.0,
+      "mv2h": 0.5481287250678903,
+      "n_notes_gt": 27,
+      "n_notes_pred": 30,
+      "bpm_pred": 117.64705882352925
+    },
+    {
+      "clip": "vocadito_14",
+      "multi_pitch": 0.6865671641791046,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8644567646340513,
+      "harmony": 0.0,
+      "mv2h": 0.5102047857626312,
+      "n_notes_gt": 34,
+      "n_notes_pred": 33,
+      "bpm_pred": 124.99999999999989
+    },
+    {
+      "clip": "vocadito_15",
+      "multi_pitch": 0.7547169811320754,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7663816099526741,
+      "harmony": 0.0,
+      "mv2h": 0.5042197182169499,
+      "n_notes_gt": 47,
+      "n_notes_pred": 59,
+      "bpm_pred": 99.99999999999976
+    },
+    {
+      "clip": "vocadito_16",
+      "multi_pitch": 0.74,
+      "voice": 1.0,
+      "meter": 0.014285714285714287,
+      "value": 0.8110848426939861,
+      "harmony": 0.0,
+      "mv2h": 0.5130741113959401,
+      "n_notes_gt": 47,
+      "n_notes_pred": 53,
+      "bpm_pred": 142.8571428571429
+    },
+    {
+      "clip": "vocadito_17",
+      "multi_pitch": 0.8440366972477065,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8075030437916604,
+      "harmony": 0.0,
+      "mv2h": 0.5303079482078734,
+      "n_notes_gt": 54,
+      "n_notes_pred": 55,
+      "bpm_pred": 115.38461538461509
+    },
+    {
+      "clip": "vocadito_18",
+      "multi_pitch": 0.7800000000000001,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7769089312059546,
+      "harmony": 0.0,
+      "mv2h": 0.511381786241191,
+      "n_notes_gt": 45,
+      "n_notes_pred": 55,
+      "bpm_pred": 107.14285714285693
+    },
+    {
+      "clip": "vocadito_19",
+      "multi_pitch": 0.7088607594936709,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7764076662255256,
+      "harmony": 0.0,
+      "mv2h": 0.4970536851438393,
+      "n_notes_gt": 73,
+      "n_notes_pred": 85,
+      "bpm_pred": 130.43478260869566
+    },
+    {
+      "clip": "vocadito_20",
+      "multi_pitch": 0.7812499999999999,
+      "voice": 1.0,
+      "meter": 0.0106951871657754,
+      "value": 0.7719733054161444,
+      "harmony": 0.0,
+      "mv2h": 0.512783698516384,
+      "n_notes_gt": 31,
+      "n_notes_pred": 33,
+      "bpm_pred": 88.23529411764686
+    },
+    {
+      "clip": "vocadito_22",
+      "multi_pitch": 0.6746987951807228,
+      "voice": 1.0,
+      "meter": 0.024752475247524754,
+      "value": 0.7477744073297846,
+      "harmony": 0.0,
+      "mv2h": 0.48944513555160646,
+      "n_notes_gt": 45,
+      "n_notes_pred": 38,
+      "bpm_pred": 124.99999999999989
+    },
+    {
+      "clip": "vocadito_23",
+      "multi_pitch": 0.7551020408163266,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.6660389745818525,
+      "harmony": 0.0,
+      "mv2h": 0.4842282030796358,
+      "n_notes_gt": 53,
+      "n_notes_pred": 45,
+      "bpm_pred": 0.0
+    },
+    {
+      "clip": "vocadito_24",
+      "multi_pitch": 0.6499999999999999,
+      "voice": 1.0,
+      "meter": 0.012012012012012012,
+      "value": 0.7231557899182235,
+      "harmony": 0.0,
+      "mv2h": 0.47703356038604705,
+      "n_notes_gt": 39,
+      "n_notes_pred": 41,
+      "bpm_pred": 130.43478260869566
+    },
+    {
+      "clip": "vocadito_25",
+      "multi_pitch": 0.7111111111111111,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.6523443918047532,
+      "harmony": 0.0,
+      "mv2h": 0.47269110058317293,
+      "n_notes_gt": 38,
+      "n_notes_pred": 52,
+      "bpm_pred": 100.00000000000006
+    },
+    {
+      "clip": "vocadito_26",
+      "multi_pitch": 0.6379310344827587,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7840025903963352,
+      "harmony": 0.0,
+      "mv2h": 0.4843867249758188,
+      "n_notes_gt": 73,
+      "n_notes_pred": 43,
+      "bpm_pred": 146.34146341463426
+    },
+    {
+      "clip": "vocadito_27",
+      "multi_pitch": 0.8307692307692308,
+      "voice": 1.0,
+      "meter": 0.01606425702811245,
+      "value": 0.8845659434655241,
+      "harmony": 0.0,
+      "mv2h": 0.5462798862525735,
+      "n_notes_gt": 34,
+      "n_notes_pred": 31,
+      "bpm_pred": 83.33333333333341
+    },
+    {
+      "clip": "vocadito_28",
+      "multi_pitch": 0.6666666666666666,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7216716989788453,
+      "harmony": 0.0,
+      "mv2h": 0.47766767312910235,
+      "n_notes_gt": 44,
+      "n_notes_pred": 43,
+      "bpm_pred": 88.88888888888891
+    },
+    {
+      "clip": "vocadito_29",
+      "multi_pitch": 0.8169014084507044,
+      "voice": 1.0,
+      "meter": 0.005797101449275362,
+      "value": 0.847861243058155,
+      "harmony": 0.0,
+      "mv2h": 0.534111950591627,
+      "n_notes_gt": 36,
+      "n_notes_pred": 35,
+      "bpm_pred": 133.33333333333331
+    },
+    {
+      "clip": "vocadito_30",
+      "multi_pitch": 0.5656565656565657,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7614448448688882,
+      "harmony": 0.0,
+      "mv2h": 0.4654202821050908,
+      "n_notes_gt": 58,
+      "n_notes_pred": 41,
+      "bpm_pred": 0.0
+    },
+    {
+      "clip": "vocadito_31",
+      "multi_pitch": 0.7294117647058823,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8239856695584574,
+      "harmony": 0.0,
+      "mv2h": 0.510679486852868,
+      "n_notes_gt": 47,
+      "n_notes_pred": 38,
+      "bpm_pred": 71.42857142857144
+    },
+    {
+      "clip": "vocadito_32",
+      "multi_pitch": 0.7839999999999999,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7630517545988594,
+      "harmony": 0.0,
+      "mv2h": 0.5094103509197718,
+      "n_notes_gt": 57,
+      "n_notes_pred": 68,
+      "bpm_pred": 124.99999999999989
+    },
+    {
+      "clip": "vocadito_35",
+      "multi_pitch": 0.7000000000000001,
+      "voice": 1.0,
+      "meter": 0.03896103896103896,
+      "value": 0.6385329254137388,
+      "harmony": 0.0,
+      "mv2h": 0.47549879287495556,
+      "n_notes_gt": 37,
+      "n_notes_pred": 43,
+      "bpm_pred": 107.14285714285722
+    },
+    {
+      "clip": "vocadito_36",
+      "multi_pitch": 0.7441860465116278,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8965144679797273,
+      "harmony": 0.0,
+      "mv2h": 0.5281401028982711,
+      "n_notes_gt": 67,
+      "n_notes_pred": 62,
+      "bpm_pred": 85.71428571428564
+    },
+    {
+      "clip": "vocadito_37",
+      "multi_pitch": 0.7476635514018691,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8684301518406343,
+      "harmony": 0.0,
+      "mv2h": 0.5232187406485007,
+      "n_notes_gt": 51,
+      "n_notes_pred": 56,
+      "bpm_pred": 105.26315789473679
+    },
+    {
+      "clip": "vocadito_38",
+      "multi_pitch": 0.8108108108108107,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.8271247872426757,
+      "harmony": 0.0,
+      "mv2h": 0.5275871196106973,
+      "n_notes_gt": 78,
+      "n_notes_pred": 70,
+      "bpm_pred": 150.0
+    },
+    {
+      "clip": "vocadito_40",
+      "multi_pitch": 0.7916666666666666,
+      "voice": 1.0,
+      "meter": 0.0,
+      "value": 0.7413484731377774,
+      "harmony": 0.0,
+      "mv2h": 0.5066030279608887,
+      "n_notes_gt": 45,
+      "n_notes_pred": 51,
+      "bpm_pred": 78.94736842105263
+    }
+  ],
+  "mean": {
+    "mv2h": 0.5087464685775357,
+    "multi_pitch": 0.7471922276879144,
+    "voice": 1.0,
+    "meter": 0.003811333235561834,
+    "value": 0.7927287819642022,
+    "harmony": 0.0
+  },
+  "skipped": [
+    {
+      "clip": "vocadito_2",
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmppan0vror/gt.txt', '-t', '/tmp/tmppan0vror/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+    },
+    {
+      "clip": "vocadito_13",
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmp65tpao0a/gt.txt', '-t', '/tmp/tmp65tpao0a/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+    },
+    {
+      "clip": "vocadito_21",
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmpdspjzrmb/gt.txt', '-t', '/tmp/tmpdspjzrmb/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+    },
+    {
+      "clip": "vocadito_33",
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmp1gq60lh1/gt.txt', '-t', '/tmp/tmp1gq60lh1/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+    },
+    {
+      "clip": "vocadito_34",
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmp64ricq1n/gt.txt', '-t', '/tmp/tmp64ricq1n/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+    },
+    {
+      "clip": "vocadito_39",
+      "reason": "mv2h_failed: Command '['java', '-cp', '/workspace/swadesh/gen_ai_project_scoresketch/third_party/MV2H/bin', 'mv2h.Main', '-g', '/tmp/tmp4y7zgtpc/gt.txt', '-t', '/tmp/tmp4y7zgtpc/pred.txt', '-a', '-p', '1.0']' timed out after 120.0 seconds"
+    }
+  ],
+  "wall_s": 945.5599672794342
+}
