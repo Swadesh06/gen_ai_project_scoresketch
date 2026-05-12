@@ -51,16 +51,17 @@ def detect_octave_misalignment(beats: np.ndarray,
     # covers many notes; the real tempo is faster, so DOUBLE the beats.
     # If notes_per_beat < 0.4: beats are too dense — many beats per note;
     # the real tempo is slower, so HALVE the beats.
-    # Empirically tuned on the 9 ASAP pieces:
-    # - Bach 856 (truth=double) has notes_per_beat=6.17 → threshold 5.5
-    # - Beethoven, Schumann, Bach 854/846/848/857 (truth=keep) all ≤ 4.0
-    # - Liszt (truth=keep) has 2.04
-    # - Chopin Berceuse (truth=halve) has 1.0 — sub-1.0 threshold would also
-    #   catch other slow pieces with 1 note per beat; we need a separate
-    #   absolute-tempo signal for the halve case.
+    # Empirically tuned on the 9 ASAP pieces.
+    # Halve signal: a "fast-tempo" detection (BPM > 100) combined with
+    # slow-note signal (note_ioi > 0.4 s) is contradictory — fast tempo
+    # but each note > 1 beat. That means the detected beats are subdivisions
+    # of the true beats. Catches Chopin Berceuse (BPM=120, note_ioi=0.5).
+    pred_bpm = 60.0 / max(median_bpb_ioi, 1e-3)
+    fast_tempo_slow_note = (pred_bpm > 100.0 and median_note_ioi > 0.35
+                              and notes_per_beat < 1.5)
     if notes_per_beat > 5.5:
         rec = "double"
-    elif notes_per_beat < 0.4:
+    elif fast_tempo_slow_note or notes_per_beat < 0.4:
         rec = "halve"
     else:
         rec = "keep"

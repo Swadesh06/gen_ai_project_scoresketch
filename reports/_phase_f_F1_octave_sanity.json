@@ -90,7 +90,7 @@
     "ratio_pred_over_true": 3.0,
     "n_beats_pred": 435,
     "n_beats_gt": 20,
-    "recommend": "keep",
+    "recommend": "halve",
     "median_beat_ioi": 0.5,
     "median_note_ioi": 0.5,
     "notes_per_beat": 1.0,
