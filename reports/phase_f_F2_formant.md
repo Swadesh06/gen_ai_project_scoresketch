@@ -20,7 +20,7 @@ offsets. Targets the 22pp Vocadito offset20 gap (current 0.439 vs IAA
 - A deeper variant (hidden=128, layers=3) trains in parallel via
   `scripts/train_formant_offset_deep.py`.
 
-## Results (4/5 folds done — fold 5 in flight)
+## Final results
 
 | fold | val F1 | precision | recall | tps | fps | fns |
 |---|---|---|---|---|---|---|
@@ -28,12 +28,12 @@ offsets. Targets the 22pp Vocadito offset20 gap (current 0.439 vs IAA
 | 2 | 0.486 | 0.414 | 0.590 | 268 | 380 | 186 |
 | 3 | 0.415 | 0.347 | 0.516 | 206 | 388 | 193 |
 | 4 | 0.453 | 0.386 | 0.548 | 251 | 399 | 207 |
-| 5 | (running) | | | | | |
+| 5 | 0.430 | 0.374 | 0.506 | 207 | 347 | 202 |
 
-**Mean F1 (4/5 folds) = 0.474**. High variance (0.41–0.54) reflects the
-small-data regime (32 train clips per fold). Recall consistently 0.5–0.6,
-precision 0.35–0.5 (more false positives than misses) — suggests the
-threshold could move up.
+**5-fold mean offset F1 = 0.4652**. High variance (0.41–0.54) reflects
+the small-data regime (32 train clips per fold). Recall consistently
+0.5–0.6, precision 0.35–0.5 (more false positives than misses) —
+threshold tuning would help marginally.
 
 A parallel deeper variant (hidden=128, layers=3) fold 1: val F1 = 0.501.
 Slightly worse than base (0.542), supporting the over-fit hypothesis.
