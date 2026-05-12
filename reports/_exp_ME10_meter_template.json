@@ -1,0 +1,78 @@
+{
+  "rows": [
+    {
+      "piece": "asap_Bach__Fugue__bwv_854",
+      "chosen": "2/4",
+      "gt": "4/4",
+      "score": 734.0,
+      "n_notes": 374,
+      "match": false
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_846",
+      "chosen": "2/4",
+      "gt": "4/4",
+      "score": 765.0,
+      "n_notes": 383,
+      "match": false
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_848",
+      "chosen": "2/4",
+      "gt": "4/4",
+      "score": 731.0,
+      "n_notes": 347,
+      "match": false
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_856",
+      "chosen": "2/4",
+      "gt": "1/8",
+      "score": 858.0,
+      "n_notes": 436,
+      "match": false
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_857",
+      "chosen": "2/4",
+      "gt": "4/4",
+      "score": 521.0,
+      "n_notes": 251,
+      "match": false
+    },
+    {
+      "piece": "asap_Beethoven__Piano_Sonatas__21-1",
+      "chosen": "2/4",
+      "gt": "4/4",
+      "score": 1045.0,
+      "n_notes": 501,
+      "match": false
+    },
+    {
+      "piece": "asap_Chopin__Berceuse_op_57",
+      "chosen": "2/4",
+      "gt": "6/8",
+      "score": 281.0,
+      "n_notes": 131,
+      "match": false
+    },
+    {
+      "piece": "asap_Liszt__Sonata",
+      "chosen": "2/4",
+      "gt": "4/4",
+      "score": 322.0,
+      "n_notes": 142,
+      "match": false
+    },
+    {
+      "piece": "asap_Schumann__Toccata",
+      "chosen": "2/4",
+      "gt": "2/4",
+      "score": 1446.0,
+      "n_notes": 722,
+      "match": true
+    }
+  ],
+  "n_match": 1,
+  "n_total": 9
+}
