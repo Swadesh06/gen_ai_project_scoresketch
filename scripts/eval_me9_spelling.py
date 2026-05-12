@@ -90,43 +90,33 @@ def main():
                               render_tpb=12, enharmonic_spelling=True)
         acc_base = _accidental_count(s_base)
         acc_me9 = _accidental_count(s_me9)
-        # MV2H delta — sanity that pitches unchanged.
-        gt_path = CACHE / f"{k}_gt.txt"
-        if not gt_path.exists():
-            print(f"skip {k}: no GT"); continue
-        try:
-            txt_base = stream_to_mv2h_format(s_base)
-            txt_me9 = stream_to_mv2h_format(s_me9)
-            gt_txt = gt_path.read_text()
-            mv_base = compute_mv2h(txt_base, gt_txt, align="non_aligned",
-                                    timeout_s=60.0)
-            mv_me9 = compute_mv2h(txt_me9, gt_txt, align="non_aligned",
-                                    timeout_s=60.0)
-        except Exception as e:
-            print(f"{k} MV2H err: {e}"); continue
+        # Sanity that pitches are unchanged (MIDI numbers — not letter names).
+        pitches_base = sorted(int(p.midi) for el in s_base.recurse().notes
+                                for p in (el.pitches if hasattr(el, "pitches") else [el.pitch]))
+        pitches_me9 = sorted(int(p.midi) for el in s_me9.recurse().notes
+                              for p in (el.pitches if hasattr(el, "pitches") else [el.pitch]))
+        pitches_match = pitches_base == pitches_me9
 
-        delta = mv_me9.mv2h - mv_base.mv2h
         rel = (acc_base - acc_me9) / max(acc_base, 1)
         row = {"piece": k, "acc_base": acc_base, "acc_me9": acc_me9,
                 "acc_drop_pct": round(100 * rel, 2),
-                "mv2h_base": mv_base.mv2h, "mv2h_me9": mv_me9.mv2h,
-                "mv2h_delta": delta}
+                "pitches_unchanged": pitches_match,
+                "n_notes": len(pitches_base)}
         rows.append(row)
         print(f"{k:50s} acc {acc_base} -> {acc_me9} ({100*rel:.1f}% drop)  "
-              f"mv2h {mv_base.mv2h:.4f} -> {mv_me9.mv2h:.4f} "
-              f"(delta {delta:+.4f})")
+              f"pitches_unchanged={pitches_match}  notes={len(pitches_base)}")
 
     if rows:
         mean_drop = float(np.mean([r["acc_drop_pct"] for r in rows]))
-        mean_delta = float(np.mean([r["mv2h_delta"] for r in rows]))
+        all_match = all(r["pitches_unchanged"] for r in rows)
         print(f"\nmean accidental drop: {mean_drop:.1f}%")
-        print(f"mean MV2H delta: {mean_delta:+.4f}")
+        print(f"all pitches unchanged: {all_match}")
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps({
         "rows": rows,
         "mean_acc_drop_pct": float(np.mean([r["acc_drop_pct"] for r in rows])) if rows else None,
-        "mean_mv2h_delta": float(np.mean([r["mv2h_delta"] for r in rows])) if rows else None,
+        "all_pitches_unchanged": all(r["pitches_unchanged"] for r in rows) if rows else None,
     }, indent=2))
     print(f"wrote {args.out}")
 

@@ -1,0 +1,46 @@
+{
+  "rows": [
+    {
+      "piece": "asap_Bach__Fugue__bwv_854",
+      "acc_base": 213,
+      "acc_me9": 213,
+      "acc_drop_pct": 0.0,
+      "pitches_unchanged": true,
+      "n_notes": 374
+    },
+    {
+      "piece": "asap_Beethoven__Piano_Sonatas__21-1",
+      "acc_base": 54,
+      "acc_me9": 54,
+      "acc_drop_pct": 0.0,
+      "pitches_unchanged": true,
+      "n_notes": 501
+    },
+    {
+      "piece": "asap_Chopin__Berceuse_op_57",
+      "acc_base": 96,
+      "acc_me9": 116,
+      "acc_drop_pct": -20.83,
+      "pitches_unchanged": true,
+      "n_notes": 131
+    },
+    {
+      "piece": "asap_Liszt__Sonata",
+      "acc_base": 49,
+      "acc_me9": 50,
+      "acc_drop_pct": -2.04,
+      "pitches_unchanged": true,
+      "n_notes": 142
+    },
+    {
+      "piece": "asap_Schumann__Toccata",
+      "acc_base": 139,
+      "acc_me9": 139,
+      "acc_drop_pct": 0.0,
+      "pitches_unchanged": true,
+      "n_notes": 722
+    }
+  ],
+  "mean_acc_drop_pct": -4.574,
+  "all_pitches_unchanged": true
+}

@@ -56,18 +56,26 @@ def _eval_asap_piece(key: str, *, tpb: int, complexity_alpha: float,
     beats = d["beats"]
     if len(beats) < 2 or len(on) == 0:
         return None
-    # Run rhythm DP only.
+    # Run rhythm DP and re-snap onsets/offsets to the predicted tatum grid.
     q_on, q_off = viterbi_quantize_rhythm(
         on, off, beats, tatums_per_beat=int(tpb),
         offgrid_penalty=float(dp_offgrid_penalty),
     )
-    # Build NoteEvent list at predicted bpm.
     bpm = float(d["bpm"][0])
+    if bpm <= 0:
+        bpm = 120.0
+    tatum_s = 60.0 / (bpm * float(tpb))
+    # First note's quantised onset anchors the tatum 0 origin in seconds.
+    on_origin = float(on[0]) - q_on[0] * tatum_s if len(on) > 0 else 0.0
     notes = []
     for i in range(len(on)):
         m = int(midi[i])
         if m < 1 or m > 127: continue
-        notes.append(NoteEvent(onset_s=float(on[i]), offset_s=float(off[i]),
+        new_on = on_origin + int(q_on[i]) * tatum_s
+        new_off = on_origin + int(q_off[i]) * tatum_s
+        if new_off <= new_on:
+            new_off = new_on + tatum_s
+        notes.append(NoteEvent(onset_s=new_on, offset_s=new_off,
                                pitch_midi=m, velocity=80))
     pred_text = notes_to_mv2h_format(notes, bpm=bpm, time_sig="4/4",
                                       voices=[0]*len(notes))
@@ -95,6 +103,8 @@ def _eval_voc_clip(vid: int, annotator: str, *,
     notes = segment_pitch_to_notes(t, hz, vc, mc)
     if not notes:
         return None
+    bpm = float(d["bpm"][0])
+    if bpm <= 0: bpm = 120.0
     on = np.array([n.onset_s for n in notes], dtype=np.float64)
     off = np.array([n.offset_s for n in notes], dtype=np.float64)
     if len(beats) >= 2 and len(on) > 0:
@@ -102,7 +112,18 @@ def _eval_voc_clip(vid: int, annotator: str, *,
             on, off, beats, tatums_per_beat=int(tpb),
             offgrid_penalty=float(dp_offgrid_penalty),
         )
-    bpm = float(d["bpm"][0])
+        tatum_s = 60.0 / (bpm * float(tpb))
+        on_origin = float(on[0]) - q_on[0] * tatum_s
+        new_notes = []
+        for i, n in enumerate(notes):
+            new_on = on_origin + int(q_on[i]) * tatum_s
+            new_off = on_origin + int(q_off[i]) * tatum_s
+            if new_off <= new_on:
+                new_off = new_on + tatum_s
+            new_notes.append(NoteEvent(onset_s=new_on, offset_s=new_off,
+                                        pitch_midi=n.midi(),
+                                        velocity=n.velocity))
+        notes = new_notes
     pred_text = notes_to_mv2h_format(notes, bpm=bpm, time_sig="4/4",
                                       voices=[0]*len(notes))
     gt_text = gt.read_text()
