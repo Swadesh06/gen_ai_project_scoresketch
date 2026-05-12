@@ -43,8 +43,13 @@ def load_clip(clip_id: int, annotator: str = "A1") -> tuple[np.ndarray, np.ndarr
 
 def train_one_fold(train_ids: list[int], val_ids: list[int],
                     cfg: FormantOffsetConfig, epochs: int = 30,
-                    lr: float = 1e-3, device: str = "cpu") -> dict:
-    """Train BiLSTM on train_ids, return val F1 on val_ids."""
+                    lr: float = 1e-3, device: str = "cpu",
+                    save_path: Path | None = None) -> dict:
+    """Train BiLSTM on train_ids, return val F1 on val_ids.
+
+    If save_path is given, the trained weights are saved to that path
+    for later production use (F-2c/F-2d wiring into segmenter).
+    """
     model = FormantOffsetBiLSTM(cfg).to(device)
     optim = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     train_data = []
@@ -101,6 +106,11 @@ def train_one_fold(train_ids: list[int], val_ids: list[int],
     r = tps / max(tps + fns, 1)
     f1 = 2 * p * r / max(p + r, 1e-6)
     print(f"  val F1 = {f1:.3f}  (p={p:.3f}, r={r:.3f}, tps={tps}, fps={fps}, fns={fns})")
+    if save_path is not None:
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        torch.save({"model_state": model.state_dict(), "cfg": cfg.__dict__,
+                      "val_f1": f1, "val_ids": list(val_ids)}, save_path)
+        print(f"  saved fold ckpt: {save_path}")
     return {"val_f1": f1, "val_p": p, "val_r": r, "tps": tps, "fps": fps, "fns": fns,
              "n_train": len(train_data), "n_val": len(val_ids)}
 
@@ -121,11 +131,14 @@ def main():
     np.random.shuffle(ids)
     fold_size = len(ids) // args.folds
     fold_results = []
+    ckpt_root = Path("checkpoints/formant_offset_vocadito")
     for fi in range(args.folds):
         val = ids[fi * fold_size: (fi + 1) * fold_size]
         train = [i for i in ids if i not in val]
         print(f"\n=== fold {fi+1}/{args.folds}  train={len(train)} val={len(val)} ===")
-        res = train_one_fold(train, val, cfg, epochs=args.epochs, device=device)
+        save_path = ckpt_root / f"fold{fi}.pt"
+        res = train_one_fold(train, val, cfg, epochs=args.epochs,
+                              device=device, save_path=save_path)
         fold_results.append({"fold": fi, "val_ids": val, **res})
     mean_f1 = float(np.mean([r["val_f1"] for r in fold_results]))
     print(f"\n5-fold mean offset F1 = {mean_f1:.4f}")
