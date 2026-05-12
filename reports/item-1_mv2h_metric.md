@@ -34,7 +34,17 @@ rather than per-stage F1. Unblocks items 6 and parts of 7.
 
 ## Results
 
-**ASAP 9-piece baseline (eval_seconds=30, source=ymt3_cache, non-aligned DTW):**
+**Production headline (after Phase F-1 octave sanity, applied to DP outputs on 9-piece ASAP):**
+
+| metric | baseline (no DP, no corrector) | with DP only | **with DP + octave sanity** |
+|---|---|---|---|
+| mean MV2H | 0.5515 | 0.5277 | **0.5377** |
+
+The +0.0101 mean MV2H delta from the octave sanity is the first kept
+Phase E improvement to the production pipeline. Single-piece win: Bach
+BWV 856 +0.088 MV2H. Detector verdict 9/9 correct on the test set.
+
+**ASAP 9-piece baseline (eval_seconds=30, source=ymt3_cache, non-aligned DTW, no DP applied):**
 
 | piece | mv2h | mp | voice | meter | value | harmony | snap_b87 |
 |---|---|---|---|---|---|---|---|
