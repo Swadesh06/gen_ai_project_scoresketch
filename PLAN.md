@@ -217,3 +217,73 @@ at all times.
 - Phase D: MedleyDB pseudo-label training for Vocadito offset20 push
 - Phase D: end-to-end YMT3+ replacing the modular pipeline (complement to its modular use)
 - Phase D: MERT features into a learned voice tracker (replacing greedy on dense Romantic textures)
+
+
+## Phase E — session start (2026-05-12)
+
+### What's already done (verified from PHASE_D_SUMMARY, PHASE_D_INTEGRATION, INDEX, git log)
+- All Phase A gates pass; Phase B+1, B+2 (the v3.4 spec), and Phase D experiments shipped.
+- B76 transformer voice tracker (1.78M params, 94.47% mean acc on Romantic ASAP) wired in via `humscribe/rhythm/voice_transformer.py` and `pipeline._should_use_per_voice_dp()`.
+- B77 MusicGen LoRA infrastructure (r=32, 69% loss decay, 8.57 GB peak) — adapter caveat: trained on 6 distill pairs, memorized them. Real pairs = item 5.
+- B79 per-voice DP: +1.66pp on Chopin Berceuse, auto-routes only on Chopin-style.
+- Rendering polish: integer BPM, KrumhanslSchmuckler key, render TPB=12 vs metric TPB=24, tuplet denom cap. **MAESTRO chamber demo file is still the pre-polish output** — item 8 fixes it.
+- YourMT3+ default for `auto_piano` transcription.
+- target_bpm=110 in pipeline (B88 fix).
+- Production defaults in `humscribe/config.py`: TPB=24/render=12, hybrid voicing pesto_crepevoicing vt=0.75 psw=19, voice tracking adaptive_pj, per_voice_dp=auto.
+
+### Headline numbers (baselines, not targets)
+- ASAP 9-piece overall snap (score beats) = 0.774 (B63 cached transcription)
+- ASAP 9-piece overall snap (real beats) = 0.5055 (B87b production reality with target_bpm=110)
+- **27pp ASAP gap = dominant unfixed instrument-side weakness.** Do NOT fine-tune beat_this on ASAP (already trained on ASAP+14 others).
+- Vocadito A1 soft F1 = 0.665, soft-IAA = 0.6466; IAA ceiling = 0.740 (do not chase above)
+- Vocadito offset20 F1 = 0.439 vs IAA offset20 = 0.642 → **22pp humming-side gap**
+- MIR-1K mean RPA = 0.988 (saturated), MAESTRO instrument F1 sanity = 0.984
+- B87b mean snap = 0.5055, BWV 846 = 0.039 (tempo octave clearly mis-detected), Liszt = 0.054
+
+### Hardware actually present (correction from CLAUDE.md)
+- **GPU = RTX 2000 Ada, 16 GB VRAM** (CLAUDE.md says 32 GB Blackwell; not what's here).
+- 48 CPU cores. tmux + `monitor` sessions OK.
+- Implication: item 5 (JSB LoRA) needs musicgen-melody 1.5B (~5 GB), not melody-large (~13 GB), with gradient accumulation if needed. Item 3 (DDSP) and item 2 (MIR-ST500 BiLSTM) both fit easily. Cannot co-locate two large generative models.
+
+### Phase E execution order (with co-scheduling)
+1. **Item 1 (MV2H metric, CPU)** + **Item 8 (MAESTRO demo regen, CPU)** in parallel right now. Item 1 is the unblocker for items 6 + ME-14 + decision rules on all subsequent items.
+2. **Item 4 (Docker build + audiocraft→transformers swap, CPU)** — long-running background; queue once item 1's basic IO module is written and the audiocraft swap doesn't conflict.
+3. **Item 7 ME-9 (line-of-fifths enharmonic spelling, CPU)** — pure renderer polish, near-zero F1 risk. Filler while item 1 runs.
+4. **Item 6 (MV2H sweep)** depends on item 1. Cache features once, run ~6 parallel CPU agents.
+5. **Item 2 (MIR-ST500 stack, GPU ~3 GB)** — GPU primary while ME-7, ME-4, ME-11 keep CPU busy.
+6. **Item 3 (DDSP, GPU ~1 GB)** — can co-locate with item 2.
+7. **Item 5 (JSB Chorales LoRA, GPU)** — runs solo on GPU (cannot co-locate with item 2/3). Item 6/7 keep CPU busy in parallel.
+
+### Per-work-item resource summary
+| item | class | peak resource | co-runs with |
+|---|---|---|---|
+| 1 MV2H | CPU | a few cores, neg GPU | any |
+| 2 MIR-ST500 | GPU | ~3 GB | items 1, 4, 6, 7 (all CPU) |
+| 3 DDSP | GPU | ~1 GB | item 2 (small GPU) + CPU work |
+| 4 Docker | CPU | network + 1 core | any |
+| 5 JSB LoRA | GPU | ~10 GB (1.5B) | CPU work only |
+| 6 MV2H sweep | CPU | 6 cores | any GPU |
+| 7 ensemble | CPU | 1-2 cores each | any GPU |
+| 8 MAESTRO regen | CPU | 1-shot | any |
+
+### Phase E ensemble member priority
+ME-9 → ME-4 → ME-11 → ME-7 → ME-10 → ME-1 → ME-14 (depends on MV2H from item 1).
+Skip ME-3, ME-6, ME-13.
+
+### Phase F idea queue (after items 1-8 settle)
+- Learned beat post-corrector targeting the 27pp ASAP gap (autoregressive small Transformer on beat_this output + score-beats supervision).
+- Formant-band learned offset detector for the 22pp humming offset gap (MIR-ST500-pretrained, small head on 1.5-3.5 kHz mel).
+- Lakh MIDI LoRA fine-tune of MusicGen (after item 5 lands as feasibility proof).
+- Tempo-curve preservation in DP (skip the IBI-mean averaging; feed local IBI into Cemgil-Kappen).
+- Score-conditioned LoRA for MusicGen (MIDI as 2nd conditioning).
+- Anticipatory Music Transformer (B81/B86 had 0 events; deeper API dig before retrying).
+
+### Operational rules I will follow
+- Every commit/push goes to origin main unless the change is risky → branch.
+- Every experiment writes `reports/<exp_id>.md`, updates `reports/INDEX.md`, commits, pushes.
+- WandB tag `phase-e` on every Phase E run.
+- Single-batch overfit + warmup-vs-total assert + inference smoke before every long training launch.
+- Every rendering-affecting change includes before/after SVG paths in its report.
+- Always-on `monitor` tmux + `cpu-worker` tmux. Default state = ≥ 1 GPU + ≥ 1 CPU job + monitor.
+- Cite ASAP numbers with beat source ("score beats" or "real beats from beat_this").
+
