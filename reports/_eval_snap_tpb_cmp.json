@@ -1,0 +1,63 @@
+{
+  "rows": [
+    {
+      "piece": "asap_Bach__Fugue__bwv_854",
+      "snap_tpb24": 0.1443850267379679,
+      "snap_tpb12": 0.1443850267379679,
+      "snap_tpb8": 0.1443850267379679
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_846",
+      "snap_tpb24": 0.26370757180156656,
+      "snap_tpb12": 0.26109660574412535,
+      "snap_tpb8": 0.2454308093994778
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_848",
+      "snap_tpb24": 0.17341040462427745,
+      "snap_tpb12": 0.17630057803468208,
+      "snap_tpb8": 0.17630057803468208
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_856",
+      "snap_tpb24": 0.14220183486238533,
+      "snap_tpb12": 0.1559633027522936,
+      "snap_tpb8": 0.1444954128440367
+    },
+    {
+      "piece": "asap_Bach__Fugue__bwv_857",
+      "snap_tpb24": 0.164,
+      "snap_tpb12": 0.172,
+      "snap_tpb8": 0.16
+    },
+    {
+      "piece": "asap_Beethoven__Piano_Sonatas__21-1",
+      "snap_tpb24": 0.42915811088295686,
+      "snap_tpb12": 0.4188911704312115,
+      "snap_tpb8": 0.3593429158110883
+    },
+    {
+      "piece": "asap_Chopin__Berceuse_op_57",
+      "snap_tpb24": 0.030534351145038167,
+      "snap_tpb12": 0.030534351145038167,
+      "snap_tpb8": 0.030534351145038167
+    },
+    {
+      "piece": "asap_Liszt__Sonata",
+      "snap_tpb24": 0.06338028169014084,
+      "snap_tpb12": 0.056338028169014086,
+      "snap_tpb8": 0.06338028169014084
+    },
+    {
+      "piece": "asap_Schumann__Toccata",
+      "snap_tpb24": 0.11080332409972299,
+      "snap_tpb12": 0.1038781163434903,
+      "snap_tpb8": 0.1038781163434903
+    }
+  ],
+  "mean": {
+    "snap_tpb24": 0.16906454509378402,
+    "snap_tpb12": 0.16882079770642477,
+    "snap_tpb8": 0.15863861022288023
+  }
+}
