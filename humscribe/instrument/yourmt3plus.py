@@ -87,6 +87,7 @@ def transcribe_yourmt3plus(audio_path: str,
                             precision: str = "16") -> list[NoteEvent]:
     """Transcribe an audio file with YourMT3+; returns a list of NoteEvent."""
     model = _load(checkpoint=checkpoint, precision=precision)
+    abs_audio = str(Path(audio_path).expanduser().resolve())
     with _ymt3_cwd():
         import soundfile as sf
         import torchaudio.functional as F  # type: ignore
@@ -95,7 +96,7 @@ def transcribe_yourmt3plus(audio_path: str,
         from utils.event2note import merge_zipped_note_events_and_ties_to_notes
         # Use soundfile to avoid torchaudio's torchcodec dependency. Returns
         # (samples, channels) float64; convert to (1, T) float32 first.
-        audio_np, sr = sf.read(str(audio_path), always_2d=True)
+        audio_np, sr = sf.read(abs_audio, always_2d=True)
         audio = torch.from_numpy(audio_np.T.astype("float32"))  # (channels, T)
         audio = torch.mean(audio, dim=0).unsqueeze(0)
         audio = F.resample(audio, sr, model.audio_cfg["sample_rate"])

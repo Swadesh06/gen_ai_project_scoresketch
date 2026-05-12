@@ -42,3 +42,7 @@ wandb/
 
 # starter prompt — operator-only artifact, never commit
 STARTER_PROMPT.md
+
+# Phase E item 1 — MV2H Java code (built locally; rebuild via Makefile)
+third_party/MV2H/bin/
+
