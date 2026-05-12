@@ -72,7 +72,7 @@ def _eval_asap_piece(key: str, *, tpb: int, complexity_alpha: float,
     pred_text = notes_to_mv2h_format(notes, bpm=bpm, time_sig="4/4",
                                       voices=[0]*len(notes))
     gt_text = gt.read_text()
-    res = compute_mv2h(pred_text, gt_text, align="non_aligned")
+    res = compute_mv2h(pred_text, gt_text, align="non_aligned", timeout_s=60.0)
     return res.mv2h, res.as_dict()
 
 
@@ -106,7 +106,7 @@ def _eval_voc_clip(vid: int, annotator: str, *,
     pred_text = notes_to_mv2h_format(notes, bpm=bpm, time_sig="4/4",
                                       voices=[0]*len(notes))
     gt_text = gt.read_text()
-    res = compute_mv2h(pred_text, gt_text, align="non_aligned")
+    res = compute_mv2h(pred_text, gt_text, align="non_aligned", timeout_s=60.0)
     return res.mv2h, res.as_dict()
 
 
@@ -123,16 +123,25 @@ def _wandb_init(cfg: dict):
 
 
 def main():
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(allow_abbrev=False)
     ap.add_argument("--tpb", type=int, default=24)
-    ap.add_argument("--complexity-alpha", type=float, default=1.0)
-    ap.add_argument("--sigma-quant", type=float, default=0.03)
-    ap.add_argument("--voicing-psw", type=int, default=19)
-    ap.add_argument("--voicing-vt", type=float, default=0.75)
-    ap.add_argument("--target-bpm", type=float, default=110.0)
-    ap.add_argument("--dp-offgrid-penalty", type=float, default=0.5)
+    # Accept both dash and underscore forms so WandB sweep's --foo_bar args
+    # work alongside our CLI's --foo-bar.
+    ap.add_argument("--complexity-alpha", "--complexity_alpha",
+                    dest="complexity_alpha", type=float, default=1.0)
+    ap.add_argument("--sigma-quant", "--sigma_quant",
+                    dest="sigma_quant", type=float, default=0.03)
+    ap.add_argument("--voicing-psw", "--voicing_psw",
+                    dest="voicing_psw", type=int, default=19)
+    ap.add_argument("--voicing-vt", "--voicing_vt",
+                    dest="voicing_vt", type=float, default=0.75)
+    ap.add_argument("--target-bpm", "--target_bpm",
+                    dest="target_bpm", type=float, default=110.0)
+    ap.add_argument("--dp-offgrid-penalty", "--dp_offgrid_penalty",
+                    dest="dp_offgrid_penalty", type=float, default=0.5)
     ap.add_argument("--annotator", choices=["A1", "A2"], default="A1")
-    ap.add_argument("--out-json", type=Path, default=None)
+    ap.add_argument("--out-json", "--out_json", dest="out_json",
+                    type=Path, default=None)
     args = ap.parse_args()
 
     cfg = vars(args).copy(); cfg.pop("out_json", None)

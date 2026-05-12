@@ -1,4 +1,5 @@
 program: scripts/sweep_mv2h_e6.py
+project: humscribe-v3.2
 method: bayes
 metric:
   name: overall_mv2h
