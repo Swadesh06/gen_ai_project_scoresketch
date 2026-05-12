@@ -36,7 +36,7 @@ PIECES = [
 ]
 
 
-def _eval(piece_key: str, apply_corr: bool, tpb: int = 24) -> dict | None:
+def _eval(piece_key: str, apply_corr: bool, tpb: int = 12) -> dict | None:
     npz = CACHE / f"{piece_key}.npz"
     gt = CACHE / f"{piece_key}_gt.txt"
     if not (npz.exists() and gt.exists()): return None

@@ -26,11 +26,12 @@ alone**. Shipped to production behind `PipelineConfig.octave_sanity =
 
 ## Headline numbers (after this session)
 
-| metric | before session | after session | Δ |
+| metric | original | final session | Δ |
 |---|---|---|---|
-| ASAP 9-piece MV2H (post-DP, no corrector) | 0.5277 | — | (new baseline) |
-| ASAP 9-piece MV2H (post-DP + octave sanity) | — | **0.5377** | **+0.010** |
-| Bach BWV 856 MV2H | 0.4589 | **0.5470** | **+0.088** |
+| ASAP 9-piece MV2H (DP tpb=24, no corrector) | 0.5277 | — | (start baseline) |
+| + octave sanity (still tpb=24) | — | 0.5377 | +0.010 |
+| + **tpb=12 default switch (with octave sanity)** | — | **0.5492** | **+0.022** |
+| Bach BWV 856 alone (DP tpb=24 no corr → tpb=12 + sanity) | 0.4589 | **0.5588** | **+0.100** |
 | MAESTRO 5-clip MV2H | (new) | 0.4587 | (new baseline) |
 | Vocadito 40-clip A1 MV2H | (new) | 0.5087 | (new baseline) |
 
