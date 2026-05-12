@@ -1,0 +1,43 @@
+# HumScribe Phase E runtime requirements.
+# Pin top-level packages only; let pip resolve transitive deps.
+
+# core ML
+torch>=2.1
+torchaudio>=2.1
+transformers>=4.45
+peft>=0.12
+
+# pitch tracking
+pesto-pitch==2.0.1
+torchcrepe==0.0.24
+
+# beat
+beat-this==1.1.0
+
+# piano transcription
+piano-transcription-inference==0.0.6
+basic-pitch==0.4.0
+
+# audio I/O
+librosa==0.11.0
+soundfile==0.13.1
+scipy==1.17.1
+numpy<2
+
+# notation + rendering
+music21==9.9.1
+verovio==6.1.0
+pretty_midi==0.2.11
+
+# UI + logging
+streamlit>=1.30
+wandb==0.26.1
+
+# datasets
+mirdata==1.0.0
+
+# optional: audiocraft backend for MusicGen. Set
+# HUMSCRIBE_MUSICGEN_BACKEND=hf to use the HF transformers path instead.
+# audiocraft pulls in many heavy deps including spaCy; install only if
+# you actually want the audiocraft backend.
+# audiocraft==1.3.0

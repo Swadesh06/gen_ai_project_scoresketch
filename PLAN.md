@@ -243,7 +243,12 @@ at all times.
 ### Hardware actually present (correction from CLAUDE.md)
 - **GPU = RTX 2000 Ada, 16 GB VRAM** (CLAUDE.md says 32 GB Blackwell; not what's here).
 - 48 CPU cores. tmux + `monitor` sessions OK.
-- Implication: item 5 (JSB LoRA) needs musicgen-melody 1.5B (~5 GB), not melody-large (~13 GB), with gradient accumulation if needed. Item 3 (DDSP) and item 2 (MIR-ST500 BiLSTM) both fit easily. Cannot co-locate two large generative models.
+- **Per the user's clarification**: keep all experiments at the originally-
+  specified model sizes. Per B67 (Phase D), MusicGen-Melody-Large (3.3B) peak
+  was 6.25 GB — fits comfortably. If memory pressure arises, reduce batch size
+  or use gradient accumulation, **never downsize the model**. The constraint is
+  that genuinely-large GPU jobs (MusicGen training, full pipeline inference
+  loops) get the GPU solo while CPU work runs in parallel.
 
 ### Phase E execution order (with co-scheduling)
 1. **Item 1 (MV2H metric, CPU)** + **Item 8 (MAESTRO demo regen, CPU)** in parallel right now. Item 1 is the unblocker for items 6 + ME-14 + decision rules on all subsequent items.

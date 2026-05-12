@@ -9,6 +9,13 @@ demo flow; pass `model_size="melody-large"` for higher-quality offline use.
 
 Stubs `spacy/thinc` because `audiocraft.modules.conditioners` imports them at
 package-import time even though they aren't reached for chroma/text inference.
+
+Phase E item 4: a parallel `humscribe.arrange.musicgen_hf` backend uses
+HuggingFace `transformers.MusicgenMelodyForConditionalGeneration` (no
+audiocraft dependency, runs on Windows). Select via `set_backend("hf")` or
+the `HUMSCRIBE_MUSICGEN_BACKEND=hf` environment variable. The audiocraft
+backend remains the default because B77 LoRA adapters were trained against
+its LM and the conversion to HF layout is not yet implemented.
 """
 from __future__ import annotations
 import io
@@ -35,6 +42,24 @@ from audiocraft.models import MusicGen
 
 
 _LOADED: dict[str, MusicGen] = {}
+
+
+# Phase E item 4: backend selection. "audiocraft" (default, supports B77 LoRA)
+# or "hf" (HuggingFace transformers, cross-platform).
+_BACKEND = os.environ.get("HUMSCRIBE_MUSICGEN_BACKEND", "audiocraft").lower()
+
+
+def set_backend(backend: Literal["audiocraft", "hf"]) -> None:
+    """Switch the arrange() backend at runtime. 'hf' uses transformers
+    MusicgenMelody; 'audiocraft' uses the original Meta package."""
+    global _BACKEND
+    if backend not in ("audiocraft", "hf"):
+        raise ValueError(f"unknown backend: {backend!r}")
+    _BACKEND = backend
+
+
+def get_backend() -> str:
+    return _BACKEND
 
 
 def _load(model_size: Literal["melody", "melody-large"] = "melody",
@@ -96,6 +121,14 @@ def arrange(
     `checkpoints/musicgen_lora_b77/step_300`), the LM uses that adapter on
     top of the base weights — fine-tuned style/speaker.
     """
+    if _BACKEND == "hf":
+        from humscribe.arrange import musicgen_hf
+        return musicgen_hf.arrange(
+            melody_audio_path, prompt, duration_s=duration_s,
+            model_size=model_size, seed=seed,
+            cfg_coef=cfg_coef, temperature=temperature,
+            lora_adapter=lora_adapter,
+        )
     if seed is not None:
         torch.manual_seed(seed)
     mg = _load(model_size=model_size, lora_adapter=lora_adapter)

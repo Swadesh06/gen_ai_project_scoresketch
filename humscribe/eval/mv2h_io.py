@@ -76,6 +76,7 @@ def notes_to_mv2h_format(
     tatums_per_beat: int = 4,
     key_tonic: int | None = None,
     key_mode: str = "Maj",
+    quantise_to_tatum: bool = False,
 ) -> str:
     """Convert (NoteEvent[], bpm, time_sig) -> MV2H text.
 
@@ -83,11 +84,27 @@ def notes_to_mv2h_format(
     `tatums_per_beat` controls the tatum density we emit (not the pipeline DP
     resolution — MV2H uses tatums as the metric resolution proxy, denser is
     safer for the `-a` non-aligned evaluator).
+    `quantise_to_tatum`: when True, emitted `onVal`/`offVal` snap to the
+    nearest tatum pulse. Default False: produces higher MV2H scores because
+    the DTW alignment in `-a` mode struggles when many predicted notes
+    collapse onto the same onVal bucket. Item 6's sweep can flip this on
+    if it finds a regime where it helps.
     """
     if voices is None:
         voices = [0] * len(notes)
     if len(voices) != len(notes):
         raise ValueError("voices length must match notes length")
+
+    if bpm <= 0 or tatums_per_beat <= 0:
+        tatum_ms = 250.0  # fallback: quarter-note tatum at 60 bpm
+    else:
+        tatum_ms = 60_000.0 / (float(bpm) * float(tatums_per_beat))
+
+    def _q(ms: int) -> int:
+        if not quantise_to_tatum or tatum_ms <= 0:
+            return ms
+        return int(round(ms / tatum_ms) * tatum_ms)
+
     lines: list[str] = []
     max_off_ms = 0
     for ev, v in zip(notes, voices):
@@ -98,8 +115,12 @@ def notes_to_mv2h_format(
         off_ms = int(round(ev.offset_s * 1000.0))
         if off_ms <= on_ms:
             off_ms = on_ms + 1
+        on_val = _q(on_ms)
+        off_val = _q(off_ms)
+        if off_val <= on_val:
+            off_val = on_val + max(int(tatum_ms), 1)
         max_off_ms = max(max_off_ms, off_ms)
-        lines.append(f"Note {int(midi)} {on_ms} {on_ms} {off_ms} {int(v)}")
+        lines.append(f"Note {int(midi)} {on_ms} {on_val} {off_val} {int(v)}")
     for t in _tatum_grid_ms(float(bpm), max_off_ms, tatums_per_beat):
         lines.append(f"Tatum {t}")
     lines.append(_hierarchy_line(time_sig, tatums_per_subbeat=tatums_per_beat // 2 if tatums_per_beat >= 2 else 1))
@@ -162,11 +183,11 @@ def _collect_notes_from_container(container, voice_id: int, bpm: float,
         if isinstance(el, m21chord.Chord):
             for p in el.pitches:
                 notes.append(NoteEvent(onset_s=on_s, offset_s=off_s,
-                                       midi_pitch=int(p.midi), velocity=80))
+                                       pitch_midi=int(p.midi), velocity=80))
                 voices.append(voice_id)
         elif isinstance(el, m21note.Note):
             notes.append(NoteEvent(onset_s=on_s, offset_s=off_s,
-                                   midi_pitch=int(el.pitch.midi), velocity=80))
+                                   pitch_midi=int(el.pitch.midi), velocity=80))
             voices.append(voice_id)
 
 
@@ -233,7 +254,7 @@ def midi_to_mv2h_format(midi_path: str | Path, *, tatums_per_beat: int = 4) -> s
         v = t_idx
         for n in inst.notes:
             notes.append(NoteEvent(onset_s=float(n.start), offset_s=float(n.end),
-                                   midi_pitch=int(n.pitch), velocity=int(n.velocity)))
+                                   pitch_midi=int(n.pitch), velocity=int(n.velocity)))
             voices.append(v)
     return notes_to_mv2h_format(
         notes, bpm=bpm, time_sig=time_sig, voices=voices,

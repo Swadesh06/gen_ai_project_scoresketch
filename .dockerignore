@@ -1,0 +1,42 @@
+.env
+.env.*
+.git
+.gitignore
+.github
+.idea
+.vscode
+.DS_Store
+*.swp
+__pycache__
+*.pyc
+*.pyo
+.mypy_cache
+.pytest_cache
+.coverage
+.tox
+
+# repo-only artifacts
+checkpoints/
+logs/
+outputs/
+wandb/
+**/wandb/
+**/.cache
+*.tar.gz
+*.zip
+
+# datasets — must not enter the image
+/datasets/
+**/datasets/
+
+# task definitions / prompts are not needed at runtime
+task_descriptions/
+reports/_*.json
+
+# Bundled MV2H sources kept; only ignore stale build dir.
+third_party/MV2H/bin/
+
+# Editor / OS junk
+.DS_Store
+*.swp
+.ipynb_checkpoints/
