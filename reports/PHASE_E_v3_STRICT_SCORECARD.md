@@ -6,15 +6,21 @@ F-6, F-7) that fed back into v3 item criteria.
 
 ## Summary
 
+**IMPORTANT**: production Vocadito A1 noff F1 measured by the canonical
+`scripts/gate_vocadito_conp.py` (using `mir_eval.transcription`) is
+**0.666** (not the 0.618 my custom eval scripts measured — my code
+required exact MIDI match while mir_eval uses ±50 cents tolerance).
+The strict criteria in items 2/7 should be evaluated against 0.666.
+
 | item | description | strict pass | notes |
 |---|---|---|---|
 | **1** | MV2H end-to-end metric | **✅ PASS** | Wrapper + correlation analysis + ASAP/Vocadito/MAESTRO eval all done |
-| 2 | MIR-ST500 BiLSTM stack | ❌ FAIL | F-2b test F1 0.30 wrong domain; ME-11 -0.025 onset attempt also negative |
-| 3 | DDSP humming→instrument | partial | direct ≥0.55 ✓ (0.618); ensemble ≥0.71 ✗ (0.484) |
+| 2 | MIR-ST500 BiLSTM stack | ❌ FAIL (close) | Canonical baseline 0.666 vs threshold 0.69 (gap −0.024). F-2b test F1 0.30 wrong domain; ME-11 −0.025 onset attempt also negative |
+| 3 | DDSP humming→instrument | partial | direct ≥0.55 ✓ (0.618 strict / 0.666 canonical); ensemble ≥0.71 ✗ (0.484 strict) |
 | **4** | Cross-platform Docker | UNTESTABLE | Dockerfile validates statically; docker binary not present in sandbox |
 | 5 | JSB Chorales LoRA | ✅ objective | Test loss 0.983 vs base; F-7 +0.141 chroma sim; subjective ≥3.5/5 needs humans (unverifiable) |
 | 6 | MV2H sweep | ❌ FAIL | Best +0.022 (sweep), production 0.5172 baseline — short of +0.03 |
-| 7 | Music-theory ensemble | ❌ FAIL | All members negative or below +0.01 bar; full ensemble 0.5935 < 0.70 |
+| 7 | Music-theory ensemble | ❌ FAIL (close) | Canonical 0.666 vs threshold 0.70 (gap −0.034). All members negative or below +0.01 bar |
 | **8** | MAESTRO chamber demo | **✅ PASS** | Integer tempo (73), key sig, 0 tuplets at render_tpb=8 |
 
 **Items 1, 8 strictly pass.** Items 4, 5 effectively pass (criteria reachable but
