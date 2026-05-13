@@ -1,0 +1,21 @@
+{
+  "config": {
+    "steps": 1500,
+    "warmup_steps": 50,
+    "lr": 5e-05,
+    "model_size": "melody-large",
+    "target_dur_s": 10.0,
+    "save_every": 100,
+    "limit_pairs": null,
+    "test_frac": 0.1,
+    "seed": 0
+  },
+  "source_adapter": "checkpoints/musicgen_lora_c5_jsb/step_1500",
+  "n_train_pairs": 315,
+  "n_test_pairs": 34,
+  "train_loss_min": 0.5335468053817749,
+  "train_loss_final": 0.6259093880653381,
+  "test_loss_mean": 0.9996236019274768,
+  "wall_train_s": 4590.2421197891235,
+  "vram_peak_gb": 14.317230592
+}
