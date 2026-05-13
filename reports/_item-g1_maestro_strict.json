@@ -1,0 +1,240 @@
+{
+  "per_clip": [
+    {
+      "clip": "MIDI-Unprocessed_Chamber1_MID--AUDIO_07_R3_2018_wav--2_30s.wav",
+      "off": {
+        "multi_pitch": 0.6666666666666666,
+        "voice": 0.6764132553606237,
+        "meter": 0.04366812227074236,
+        "value": 0.900990099009901,
+        "harmony": 0.0,
+        "mv2h": 0.4575476286615868,
+        "n_notes_pred": 173,
+        "voices_mode": "off",
+        "n_voices_pred": 1,
+        "n_notes_gt": 343,
+        "n_voices_gt": 1
+      },
+      "b76": {
+        "multi_pitch": 0.6666666666666666,
+        "voice": 0.49512670565302147,
+        "meter": 0.04366812227074236,
+        "value": 0.8783783783783784,
+        "harmony": 0.0,
+        "mv2h": 0.4167679745937618,
+        "n_notes_pred": 173,
+        "voices_mode": "b76",
+        "n_voices_pred": 2,
+        "n_notes_gt": 343,
+        "n_voices_gt": 1
+      },
+      "greedy": {
+        "multi_pitch": 0.6666666666666666,
+        "voice": 0.36452241715399614,
+        "meter": 0.04366812227074236,
+        "value": 0.8545454545454545,
+        "harmony": 0.0,
+        "mv2h": 0.38588053212737194,
+        "n_notes_pred": 173,
+        "voices_mode": "greedy",
+        "n_voices_pred": 23,
+        "n_notes_gt": 343,
+        "n_voices_gt": 1
+      }
+    },
+    {
+      "clip": "MIDI-Unprocessed_Chamber2_MID--AUDIO_09_R3_2018_wav--1_30s.wav",
+      "off": {
+        "multi_pitch": 0.9538461538461539,
+        "voice": 0.3734061930783242,
+        "meter": 0.15469613259668508,
+        "value": 0.8300581351500207,
+        "harmony": 0.0,
+        "mv2h": 0.4624013229342368,
+        "n_notes_pred": 190,
+        "voices_mode": "off",
+        "n_voices_pred": 1,
+        "n_notes_gt": 200,
+        "n_voices_gt": 1
+      },
+      "b76": {
+        "multi_pitch": 0.9538461538461539,
+        "voice": 0.3114754098360656,
+        "meter": 0.15469613259668508,
+        "value": 0.8247128403009939,
+        "harmony": 0.0,
+        "mv2h": 0.44894610731597967,
+        "n_notes_pred": 190,
+        "voices_mode": "b76",
+        "n_voices_pred": 2,
+        "n_notes_gt": 200,
+        "n_voices_gt": 1
+      },
+      "greedy": {
+        "multi_pitch": 0.9538461538461539,
+        "voice": 0.14207650273224043,
+        "meter": 0.15469613259668508,
+        "value": 0.8472019946636465,
+        "harmony": 0.0,
+        "mv2h": 0.41956415676774517,
+        "n_notes_pred": 190,
+        "voices_mode": "greedy",
+        "n_voices_pred": 38,
+        "n_notes_gt": 200,
+        "n_voices_gt": 1
+      }
+    },
+    {
+      "clip": "MIDI-Unprocessed_Chamber2_MID--AUDIO_09_R3_2018_wav--3_30s.wav",
+      "off": {
+        "multi_pitch": 0.9069767441860465,
+        "voice": 0.5295698924731184,
+        "meter": 0.09484536082474226,
+        "value": 0.9340398566694138,
+        "harmony": 0.0,
+        "mv2h": 0.4930863708306642,
+        "n_notes_pred": 317,
+        "voices_mode": "off",
+        "n_voices_pred": 1,
+        "n_notes_gt": 371,
+        "n_voices_gt": 1
+      },
+      "b76": {
+        "multi_pitch": 0.9069767441860465,
+        "voice": 0.30860215053763435,
+        "meter": 0.09484536082474226,
+        "value": 0.9225530264091223,
+        "harmony": 0.0,
+        "mv2h": 0.44659545639150905,
+        "n_notes_pred": 317,
+        "voices_mode": "b76",
+        "n_voices_pred": 2,
+        "n_notes_gt": 371,
+        "n_voices_gt": 1
+      },
+      "greedy": {
+        "multi_pitch": 0.9069767441860465,
+        "voice": 0.05268817204301076,
+        "meter": 0.09484536082474226,
+        "value": 0.8917857142857143,
+        "harmony": 0.0,
+        "mv2h": 0.38925919826790273,
+        "n_notes_pred": 317,
+        "voices_mode": "greedy",
+        "n_voices_pred": 41,
+        "n_notes_gt": 371,
+        "n_voices_gt": 1
+      }
+    },
+    {
+      "clip": "MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--1_30s.wav",
+      "off": {
+        "multi_pitch": 0.937984496124031,
+        "voice": 0.5141242937853107,
+        "meter": 0.2060390763765542,
+        "value": 0.6693276173354871,
+        "harmony": 0.0,
+        "mv2h": 0.46549509672427664,
+        "n_notes_pred": 124,
+        "voices_mode": "off",
+        "n_voices_pred": 1,
+        "n_notes_gt": 134,
+        "n_voices_gt": 1
+      },
+      "b76": {
+        "multi_pitch": 0.937984496124031,
+        "voice": 0.39830508474576265,
+        "meter": 0.2060390763765542,
+        "value": 0.6581547181267373,
+        "harmony": 0.0,
+        "mv2h": 0.440096675074617,
+        "n_notes_pred": 124,
+        "voices_mode": "b76",
+        "n_voices_pred": 2,
+        "n_notes_gt": 134,
+        "n_voices_gt": 1
+      },
+      "greedy": {
+        "multi_pitch": 0.937984496124031,
+        "voice": 0.17514124293785308,
+        "meter": 0.2060390763765542,
+        "value": 0.4924876933225995,
+        "harmony": 0.0,
+        "mv2h": 0.36233050175220755,
+        "n_notes_pred": 124,
+        "voices_mode": "greedy",
+        "n_voices_pred": 33,
+        "n_notes_gt": 134,
+        "n_voices_gt": 1
+      }
+    },
+    {
+      "clip": "MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--2_30s.wav",
+      "off": {
+        "multi_pitch": 0.9956709956709957,
+        "voice": 0.34848484848484845,
+        "meter": 0.009501187648456057,
+        "value": 0.7665022149181222,
+        "harmony": 0.0,
+        "mv2h": 0.42403184934448446,
+        "n_notes_pred": 115,
+        "voices_mode": "off",
+        "n_voices_pred": 1,
+        "n_notes_gt": 116,
+        "n_voices_gt": 1
+      },
+      "b76": {
+        "multi_pitch": 0.9956709956709957,
+        "voice": 0.22424242424242422,
+        "meter": 0.009501187648456057,
+        "value": 0.7497945777547537,
+        "harmony": 0.0,
+        "mv2h": 0.39584183706332593,
+        "n_notes_pred": 115,
+        "voices_mode": "b76",
+        "n_voices_pred": 2,
+        "n_notes_gt": 116,
+        "n_voices_gt": 1
+      },
+      "greedy": {
+        "multi_pitch": 0.9956709956709957,
+        "voice": 0.10606060606060606,
+        "meter": 0.009501187648456057,
+        "value": 0.6698012526922168,
+        "harmony": 0.0,
+        "mv2h": 0.3562068084144549,
+        "n_notes_pred": 115,
+        "voices_mode": "greedy",
+        "n_voices_pred": 34,
+        "n_notes_gt": 116,
+        "n_voices_gt": 1
+      }
+    }
+  ],
+  "means": {
+    "off": {
+      "mv2h": 0.4605124536990498,
+      "multi_pitch": 0.8922290112987786,
+      "voice": 0.48839969663644506,
+      "meter": 0.101749975943436,
+      "value": 0.820183584616589,
+      "harmony": 0.0
+    },
+    "b76": {
+      "mv2h": 0.42964961008783875,
+      "multi_pitch": 0.8922290112987786,
+      "voice": 0.3475503550029816,
+      "meter": 0.101749975943436,
+      "value": 0.8067187081939972,
+      "harmony": 0.0
+    },
+    "greedy": {
+      "mv2h": 0.38264823946593646,
+      "multi_pitch": 0.8922290112987786,
+      "voice": 0.1680977881855413,
+      "meter": 0.101749975943436,
+      "value": 0.7511644219019263,
+      "harmony": 0.0
+    }
+  }
+}

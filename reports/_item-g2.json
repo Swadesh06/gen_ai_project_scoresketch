@@ -1,28 +1,22 @@
 {
   "item": "G-2",
   "name": "meter grid markers in MV2H emission",
-  "status": "shipped",
+  "status": "asap-pass-maestro-discard",
   "strict_pass": {
     "asap_meter": {"threshold": 0.30, "observed": 0.303, "pass": true},
     "maestro_meter": {"threshold": 0.35, "observed": 0.102, "pass": false},
     "no_dtw_collapse": {"pass": true, "pieces_with_nan": 0},
-    "no_other_subscore_regression": {"pass": true, "value_drop": 0.0}
+    "no_other_subscore_regression": {"pass": true, "value_drop_asap": 0.004, "value_drop_maestro": 0.013}
   },
   "headline": {
-    "asap_mv2h_mean_baseline": 0.5515,
-    "asap_mv2h_mean_with_g2": 0.5915,
-    "asap_mv2h_mean_delta": 0.0400,
     "asap_meter_baseline": 0.103,
     "asap_meter_with_g2": 0.303,
     "asap_meter_delta": 0.200,
-    "asap_mv2h_mean_with_g1g2": 0.6151,
-    "asap_mv2h_mean_delta_g1g2": 0.0636
+    "asap_mv2h_g1g2_combined": 0.6151,
+    "maestro_meter_baseline": 0.085,
+    "maestro_meter_with_g2": 0.102
   },
-  "datasets_evaluated": ["asap", "maestro"],
-  "asap_beat_source": "real beats from beat_this on cached rendered audio",
   "code_paths": ["humscribe/eval/mv2h_io.py", "scripts/eval_mv2h_phase_g.py"],
-  "discarded_for": ["maestro"],
-  "discard_rationale": "chamber meter ambiguity between beat_this and 30 s MIDI excerpt; ASAP win is real.",
-  "rendered_svg_changes": "none — emitter-only change does not touch score.py.",
+  "discard_rationale_maestro": "beat_this on chamber audio mis-detects meter; predicted beats don't align with pretty_midi.get_beats() on the 30 s MIDI excerpt. The lift over baseline is +0.017 (real) but falls short of 0.35. Phase H needs a chamber-tuned beat tracker.",
   "report": "reports/item-g2.md"
 }
