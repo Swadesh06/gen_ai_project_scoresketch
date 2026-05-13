@@ -13,9 +13,9 @@ After the strict-measurement re-run on the canonical gates.
 ## Strict-pass tally
 
 - **Full strict pass (all criteria for the item)**: G-4 (Vocadito noff F1 0.6776), G-7 (5/5 demos)
-- **Partial strict pass (some axes only)**: G-1 ASAP arm (voice 0.825), G-2 ASAP arm (meter 0.303), G-9 (1 of 3 criteria — global conf vs MV2H r=0.435)
-- **Discarded with rationale**: G-3, G-5, G-6, G-8, G-10, G-11, G-12, G-13, G-14, G-15
-- **Per-spec artifact closure**: G-16 (5/10 pairs + protocol + Form), G-17 (build script)
+- **Partial strict pass (one axis only)**: G-1 ASAP arm (voice 0.825), G-2 ASAP arm (meter 0.303)
+- **Discarded with rationale**: G-3, G-5, G-6, G-8, G-9, G-10, G-11, G-12, G-13, G-14, G-15 (eleven items)
+- **Per-spec artifact closure**: G-16 (10/10 pairs after the 5-render top-up + protocol + Form), G-17 (build script)
 
 ## Per-item status (strict measurement)
 

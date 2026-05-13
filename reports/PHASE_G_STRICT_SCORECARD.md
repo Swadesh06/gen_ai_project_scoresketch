@@ -23,7 +23,7 @@ spec named (no surrogates).
 | 13 | Lakh MIDI LoRA | ❌ session-budget mismatch | discarded |
 | 14 | multi-take averaging | ❌ no triplet corpus | discarded |
 | 15 | DDSP solo_flute2 | ❌ checkpoint not retrievable | discarded |
-| 16 | C5b listening | per-spec artifact (5/10 pairs) | shipped artifact |
+| 16 | C5b listening | **per-spec artifact 10/10 pairs** | shipped artifact |
 | 17 | Docker build harness | per-spec artifact | shipped script |
 
 ## Strict pass count
@@ -129,8 +129,9 @@ G-11's IOI heuristic correctly downgrades vocadito_1_humming (2 → 0 unreadable
 ### G-15 DDSP solo_flute2 — discarded (checkpoint absent)
 - solo_flute2_ckpt: Magenta GCS bucket returns HTTP 404 on every tested path; gcloud/gsutil not installed. Three architectural fixes (crossfade, loudness-norm bypass, solo_flute2 path) shipped at `humscribe/pitch/timbre_transfer/ddsp_flute.py`.
 
-### G-16 C5b listening — artifact partial (5/10 pairs)
-- 10 pairs → 5/10 shipped from prior session's `outputs/c5_vs_c5b_multi/`
+### G-16 C5b listening — artifact full (10/10 pairs)
+- 10 pairs → **10/10 shipped**: BWV 85.6, 86.6, 87.7, 88.7, 89.6 (prior) + BWV 90.5, 91.6, 94.8, 96.6, 101.7 (rendered this strict-measurement run via `scripts/g16_render_5more.py`)
+- Chroma-sim mechanism evidence on the new 5: c5b mean 0.7076 vs base 0.5504 (Δ +0.157)
 - Protocol + Form template at `outputs/g16_listening_test/` → ✓
 - Mean rating ≥ 3.5/5 → human-rater dependent, spec-allowed exception
 

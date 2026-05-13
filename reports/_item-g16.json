@@ -1,18 +1,18 @@
 {
   "item": "G-16",
   "name": "C5b LoRA subjective listening artifact",
-  "status": "shipped (artifact criterion); mean rating deferred to human raters per spec",
+  "status": "shipped (artifact criterion met); mean rating deferred to human raters per spec",
   "strict_pass": {
-    "ten_pairs": {"threshold": 10, "observed": 5, "pass": false, "note": "5/10 pair set shipped from prior session's outputs/c5_vs_c5b_multi/; rendering 5 additional pairs requires MusicGen-Melody-Large on GPU (deferred behind regression-gate queue this session)"},
+    "ten_pairs": {"threshold": 10, "observed": 10, "pass": true, "note": "5 prior + 5 added via scripts/g16_render_5more.py: BWV 85.6, 86.6, 87.7, 88.7, 89.6, 90.5, 91.6, 94.8, 96.6, 101.7"},
     "protocol_and_form_shipped": {"threshold": "shipped", "observed": "shipped", "pass": true},
     "mean_rating_ge_3.5": {"threshold": 3.5, "observed": null, "pass": null, "note": "human-rater dependent; agent does not run this per spec ('The agent doesn't run this, but creates the eval artifacts and a Google Form / submission flow')"}
   },
   "headline": {
-    "pairs_shipped": 5,
-    "pairs_deferred": 5,
+    "pairs_shipped": 10,
+    "extra_pair_chroma_sim_mean": {"base": 0.5504, "c5b": 0.7076, "delta": 0.1572},
     "protocol_path": "outputs/g16_listening_test/PROTOCOL.md",
     "form_path": "outputs/g16_listening_test/google_form.md"
   },
-  "code_paths": ["outputs/g16_listening_test/"],
+  "code_paths": ["outputs/g16_listening_test/", "scripts/g16_render_5more.py"],
   "report": "reports/item-g16.md"
 }
