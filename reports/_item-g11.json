@@ -3,15 +3,19 @@
   "name": "render_tpb auto-detect",
   "status": "discarded",
   "strict_pass": {
-    "le_5_unreadable_tuplets": {"threshold": 5, "observed": 11, "pass": false, "note": "BWV 854 alone has 8 unreadable (7x12-let + 1x24-let); G-11 only fires when median IOI > 0.3s and so cannot help fast piano demos"},
+    "le_5_unreadable_tuplets_pre_regen_demos": {"threshold": 5, "observed": 11, "pass": false, "note": "bwv_854_piano=8 (7x12-let+1x24-let), maestro=0, mtg_qbh=1, vocadito_1=2"},
+    "le_5_unreadable_tuplets_post_regen_with_phase_g": {"threshold": 5, "observed": 33, "pass": false, "note": "bwv_854=17, maestro=15 (regen used render_tpb=12 by default; v3 item 8 had explicitly forced render_tpb=8 on MAESTRO), mtg_qbh=1, vocadito_1=0 (G-11 fires here)"},
     "no_mv2h_regression_gt_0.005": {"threshold": 0.005, "observed": 0.0, "pass": true}
   },
   "headline": {
-    "audit_total_unreadable": 11,
-    "per_demo_unreadable": {"bwv_854_piano": 8, "maestro_chamber3_30s": 0, "mtg_qbh_q1_humming": 1, "vocadito_1_humming": 2},
+    "audit_total_unreadable_pre_regen": 11,
+    "audit_total_unreadable_post_regen": 33,
+    "per_demo_pre_regen": {"bwv_854_piano": 8, "maestro_chamber3_30s": 0, "mtg_qbh_q1_humming": 1, "vocadito_1_humming": 2},
+    "per_demo_post_regen": {"bwv_854_piano": 17, "maestro_chamber3_30s": 15, "mtg_qbh_q1_humming": 1, "vocadito_1_humming": 0},
+    "g11_helped_vocadito_1": true,
     "ioi_threshold_s": 0.30
   },
-  "discard_rationale": "Strict per-demo tuplet count by parsing musicxml time-modification elements: total = 11 (criterion <= 5). G-11's median-IOI-based heuristic only triggers on slow pieces (vocadito_1 = 0.336 s → downgrade to render_tpb=8 helps); fast piano demos like Bach BWV 854 (IOI = 0.15 s) never trigger and keep render_tpb=12, which produces 12-let tuplets. The structural fix is a two-pass tuplet count (Phase H), not an IOI heuristic.",
+  "discard_rationale": "Two state checks (pre-Phase-G shipped state, post-Phase-G regen state) both fail the strict <= 5 criterion. G-11's IOI-based heuristic correctly downgrades vocadito_1 to render_tpb=8 (eliminates all unreadable tuplets there) but does not fire on the fast piano demo (BWV 854) or the chamber demo (MAESTRO, where v3 item 8 had explicitly forced render_tpb=8 and Phase G's auto-detect doesn't replicate that override). The structural fix is a two-pass tuplet count (build at tpb=12, count, re-build at tpb=8 if > 1/bar) — Phase H scope.",
   "code_paths": ["humscribe/config.py", "humscribe/pipeline.py", "scripts/count_tuplets_g11.py", "reports/_item-g11_tuplet_audit.json"],
   "report": "reports/item-g11.md"
 }

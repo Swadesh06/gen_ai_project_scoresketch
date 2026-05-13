@@ -1,19 +1,19 @@
 {
   "item": "G-9",
   "name": "confidence-aware per-note output",
-  "status": "partial-pass",
+  "status": "discarded",
   "strict_pass": {
-    "global_conf_vs_mv2h_abs_r": {"threshold": 0.4, "observed": 0.435, "pass": true, "metric": "median beat-strength aggregate"},
-    "per_note_in_gt_corr": {"threshold": 0.4, "observed": null, "pass": null, "note": "deferred — Vocadito GT matching is Phase H"},
-    "lowest_20pct_recovers_60pct_fps": {"threshold": 0.6, "observed": null, "pass": null, "note": "deferred"}
+    "per_note_conf_vs_in_gt_abs_r": {"threshold": 0.4, "observed": 0.118, "pass": false, "note": "Vocadito 10-clip subset, mir_eval transcription match with onset_tol=50ms pitch_tol=50c"},
+    "lowest_20pct_recovers_60pct_fps": {"threshold": 0.6, "observed": 0.244, "pass": false},
+    "global_conf_vs_mv2h_abs_r": {"threshold": 0.4, "observed": 0.435, "pass": true, "metric": "median beat-strength aggregate vs ASAP MV2H"}
   },
   "headline": {
-    "pearson_mean_beat_conf_vs_mv2h": -0.230,
-    "pearson_median_beat_conf_vs_mv2h": -0.435,
-    "ymt3_cache_conf_constant": true
+    "pearson_per_note": 0.118,
+    "lowest_20pct_fp_recall": 0.244,
+    "pearson_global_mean": 0.435
   },
-  "datasets_evaluated": ["asap"],
-  "asap_beat_source": "real beats from beat_this (cached)",
-  "code_paths": ["humscribe/eval/confidence.py", "scripts/eval_confidence.py"],
+  "datasets_evaluated": ["asap", "vocadito (10-clip subset)"],
+  "code_paths": ["humscribe/eval/confidence.py", "scripts/eval_confidence.py", "scripts/eval_confidence_per_note.py"],
+  "discard_rationale": "Per-note aggregation (mean PESTO conf * mean CREPE periodicity * beat strength at onset) is too coarse a signal on Vocadito monophonic humming. PESTO/CREPE confidence is uniformly high on voiced frames; beat strength dominates but Vocadito's humming beats are weak signals themselves. Net per-note |r| = 0.118 and lowest-20% only recovers 24.4% of false positives, both well below strict thresholds. The aggregation API is shipped at humscribe/eval/confidence.py for future Phase H work using per-token YMT3 logits.",
   "report": "reports/item-g9.md"
 }

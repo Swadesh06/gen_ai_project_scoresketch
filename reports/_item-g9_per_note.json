@@ -1,0 +1,63 @@
+{
+  "phase_g_post": "off",
+  "annotator": "A1",
+  "n_clips": 10,
+  "n_notes": 501,
+  "n_fp": 201,
+  "pearson_conf_vs_in_gt": 0.11801395757607398,
+  "lowest_20pct_flag_recovers_fp_fraction": 0.24378109452736318,
+  "per_clip": [
+    {
+      "clip": "vocadito_10",
+      "n_pred": 29,
+      "n_fp": 12
+    },
+    {
+      "clip": "vocadito_11",
+      "n_pred": 35,
+      "n_fp": 14
+    },
+    {
+      "clip": "vocadito_12",
+      "n_pred": 30,
+      "n_fp": 10
+    },
+    {
+      "clip": "vocadito_13",
+      "n_pred": 67,
+      "n_fp": 33
+    },
+    {
+      "clip": "vocadito_14",
+      "n_pred": 33,
+      "n_fp": 12
+    },
+    {
+      "clip": "vocadito_15",
+      "n_pred": 59,
+      "n_fp": 28
+    },
+    {
+      "clip": "vocadito_16",
+      "n_pred": 53,
+      "n_fp": 14
+    },
+    {
+      "clip": "vocadito_17",
+      "n_pred": 55,
+      "n_fp": 20
+    },
+    {
+      "clip": "vocadito_18",
+      "n_pred": 55,
+      "n_fp": 22
+    },
+    {
+      "clip": "vocadito_19",
+      "n_pred": 85,
+      "n_fp": 36
+    }
+  ],
+  "strict_pearson_pass": false,
+  "strict_lowest_20pct_pass": false
+}

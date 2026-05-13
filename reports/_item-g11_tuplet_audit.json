@@ -3,20 +3,26 @@
     {
       "demo": "bwv_854_piano",
       "tuplet_breakdown_mxl": {
-        "3": 442,
-        "6": 13,
-        "12": 7,
-        "24": 1
+        "3": 397,
+        "12": 13,
+        "6": 25,
+        "24": 4
       },
       "tuplet_breakdown_svg": {},
-      "unreadable_mxl": 8,
+      "unreadable_mxl": 17,
       "unreadable_svg": 0
     },
     {
       "demo": "maestro_chamber3_30s",
-      "tuplet_breakdown_mxl": {},
+      "tuplet_breakdown_mxl": {
+        "3": 76,
+        "12": 10,
+        "6": 15,
+        "24": 4,
+        "48": 1
+      },
       "tuplet_breakdown_svg": {},
-      "unreadable_mxl": 0,
+      "unreadable_mxl": 15,
       "unreadable_svg": 0
     },
     {
@@ -32,13 +38,9 @@
     },
     {
       "demo": "vocadito_1_humming",
-      "tuplet_breakdown_mxl": {
-        "3": 44,
-        "12": 2,
-        "6": 2
-      },
+      "tuplet_breakdown_mxl": {},
       "tuplet_breakdown_svg": {},
-      "unreadable_mxl": 2,
+      "unreadable_mxl": 0,
       "unreadable_svg": 0
     },
     {
@@ -60,7 +62,7 @@
       "unreadable_svg": 0
     }
   ],
-  "g11_total_unreadable": 11,
+  "g11_total_unreadable": 33,
   "g11_demos_in_scope": [
     "bwv_854_piano",
     "maestro_chamber3_30s",
