@@ -1,17 +1,18 @@
 {
   "item": "G-5",
   "name": "median pitch smoothing (Mauch 2014 pYIN)",
-  "status": "code-shipped-eval-partial",
+  "status": "discarded",
   "strict_pass": {
-    "vocadito_a1_noff_f1_ge_0.67": {"threshold": 0.67, "observed": null, "pass": null, "note": "deferred"},
-    "no_instrument_regression": {"threshold": "no regression", "observed": "no regression (humming-only gate)", "pass": true}
+    "vocadito_a1_noff_f1_ge_0.67": {"threshold": 0.67, "observed_g5_alone": 0.6520, "baseline": 0.6652, "delta": -0.0132, "pass": false, "note": "ablated via scripts/gate_vocadito_conp_phase_g.py --apply g5 on full 40-clip A1"},
+    "no_instrument_regression": {"threshold": "no regression", "observed": "humming-only gate; instrument path unaffected", "pass": true}
   },
   "headline": {
-    "vocadito_g1g2_post_multi_pitch": 0.772,
-    "vocadito_baseline_multi_pitch": 0.754,
-    "multi_pitch_delta_attrib_g5": 0.018,
-    "default_window_ms": 250
+    "vocadito_baseline_noff_f1": 0.6652,
+    "vocadito_g5_alone_noff_f1": 0.6520,
+    "g5_isolated_delta": -0.0132,
+    "production_default_after_strict": "off"
   },
   "code_paths": ["humscribe/post_process.py", "humscribe/pipeline.py", "humscribe/config.py"],
+  "discard_rationale": "G-5 alone regresses noff F1 by 0.0132 vs baseline. The 250 ms voiced-only smoothing widens the segmenter's existing 190 ms median further than helpful — pitch transitions get smeared, per-note pitch median shifts outside the 50-cent strict tolerance. The published 250 ms window from Mauch 2014 was tuned against a different segmenter family.",
   "report": "reports/item-g5.md"
 }

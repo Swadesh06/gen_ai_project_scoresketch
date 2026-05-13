@@ -1,0 +1,71 @@
+{
+  "per_demo": [
+    {
+      "demo": "bwv_854_piano",
+      "tuplet_breakdown_mxl": {
+        "3": 442,
+        "6": 13,
+        "12": 7,
+        "24": 1
+      },
+      "tuplet_breakdown_svg": {},
+      "unreadable_mxl": 8,
+      "unreadable_svg": 0
+    },
+    {
+      "demo": "maestro_chamber3_30s",
+      "tuplet_breakdown_mxl": {},
+      "tuplet_breakdown_svg": {},
+      "unreadable_mxl": 0,
+      "unreadable_svg": 0
+    },
+    {
+      "demo": "mtg_qbh_q1_humming",
+      "tuplet_breakdown_mxl": {
+        "3": 37,
+        "6": 1,
+        "12": 1
+      },
+      "tuplet_breakdown_svg": {},
+      "unreadable_mxl": 1,
+      "unreadable_svg": 0
+    },
+    {
+      "demo": "vocadito_1_humming",
+      "tuplet_breakdown_mxl": {
+        "3": 44,
+        "12": 2,
+        "6": 2
+      },
+      "tuplet_breakdown_svg": {},
+      "unreadable_mxl": 2,
+      "unreadable_svg": 0
+    },
+    {
+      "demo": "vocadito_1_humming_before",
+      "tuplet_breakdown_mxl": {
+        "3": 59,
+        "12": 2,
+        "6": 6
+      },
+      "tuplet_breakdown_svg": {},
+      "unreadable_mxl": 2,
+      "unreadable_svg": 0
+    },
+    {
+      "demo": "vocadito_1_humming_after",
+      "tuplet_breakdown_mxl": {},
+      "tuplet_breakdown_svg": {},
+      "unreadable_mxl": 0,
+      "unreadable_svg": 0
+    }
+  ],
+  "g11_total_unreadable": 11,
+  "g11_demos_in_scope": [
+    "bwv_854_piano",
+    "maestro_chamber3_30s",
+    "mtg_qbh_q1_humming",
+    "vocadito_1_humming"
+  ],
+  "g11_strict_pass": false
+}

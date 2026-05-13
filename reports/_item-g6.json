@@ -1,18 +1,18 @@
 {
   "item": "G-6",
   "name": "silent-region trimming for beat_this",
-  "status": "code-shipped-eval-partial",
+  "status": "discarded-on-strict-criterion",
   "strict_pass": {
-    "vocadito_beat_f_ge_0.95_on_silent_clips": {"threshold": 0.95, "observed": null, "pass": null, "note": "Vocadito subset has no clips with > 1 s leading/trailing silence; synthetic smoke test passes"},
-    "mv2h_ge_baseline_plus_0.01": {"threshold": 0.01, "observed": 0.014, "pass": true, "note": "combined G-4/5/6"},
-    "no_no_silence_regression": {"threshold": "no regression", "observed": "short-circuit on lead_s==0", "pass": true}
+    "vocadito_beat_f_ge_0.95_on_silent_clips": {"threshold": 0.95, "observed": null, "pass": null, "note": "Vocadito has no clips with > 1 s leading/trailing silence; criterion is vacuous on this corpus"},
+    "mv2h_ge_baseline_plus_0.01": {"threshold": 0.01, "observed": "MV2H surrogate +0.014 in 10-clip subset but strict noff F1 -0.0065 — surrogate metric overstates the lift", "pass": false},
+    "no_no_silence_regression": {"threshold": "no regression", "observed": "humming-only; instrument path unaffected", "pass": true}
   },
   "headline": {
     "silent_trim_db": -40.0,
-    "margin_ms": 10.0,
-    "frame_ms": 20.0,
-    "default_state": "auto for humming"
+    "vocadito_clips_with_>1s_leading_silence": 0,
+    "production_default_after_strict": "off"
   },
+  "discard_rationale": "G-6 cannot demonstrate its target Vocadito beat F-measure ≥ 0.95 on > 1 s silent clips because no such clips exist in Vocadito. Combined with G-4 + G-5 the production default-on path regressed noff F1 by 0.0065, so the safer choice is default-off. Pipeline routes audio correctly (trims only the audio fed to beat_this); the bug surfaced only in the inline gate path which is now fixed.",
   "code_paths": ["humscribe/post_process.py", "humscribe/pipeline.py", "humscribe/config.py"],
   "report": "reports/item-g6.md"
 }

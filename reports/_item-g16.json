@@ -1,11 +1,11 @@
 {
   "item": "G-16",
   "name": "C5b LoRA subjective listening artifact",
-  "status": "human-artifact-shipped",
+  "status": "shipped (artifact criterion); mean rating deferred to human raters per spec",
   "strict_pass": {
-    "ten_pairs": {"threshold": 10, "observed": 5, "pass": false, "note": "5 ready, 5 deferred behind GPU contention"},
-    "protocol_and_form": {"threshold": "shipped", "observed": "shipped", "pass": true},
-    "mean_rating_ge_3.5": {"threshold": 3.5, "observed": null, "pass": null, "note": "human-rater dependent"}
+    "ten_pairs": {"threshold": 10, "observed": 5, "pass": false, "note": "5/10 pair set shipped from prior session's outputs/c5_vs_c5b_multi/; rendering 5 additional pairs requires MusicGen-Melody-Large on GPU (deferred behind regression-gate queue this session)"},
+    "protocol_and_form_shipped": {"threshold": "shipped", "observed": "shipped", "pass": true},
+    "mean_rating_ge_3.5": {"threshold": 3.5, "observed": null, "pass": null, "note": "human-rater dependent; agent does not run this per spec ('The agent doesn't run this, but creates the eval artifacts and a Google Form / submission flow')"}
   },
   "headline": {
     "pairs_shipped": 5,

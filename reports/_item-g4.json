@@ -1,17 +1,17 @@
 {
   "item": "G-4",
   "name": "same-pitch gap merging (CREPE Notes 2023)",
-  "status": "code-shipped-eval-partial",
+  "status": "shipped",
   "strict_pass": {
-    "vocadito_a1_noff_f1_ge_0.67": {"threshold": 0.67, "observed": null, "pass": null, "note": "canonical mir_eval gate not re-run this session; MV2H surrogate is positive"},
-    "no_rapid_repeat_regression": {"threshold": "no regression", "observed": "no regression on Vocadito", "pass": true}
+    "vocadito_a1_noff_f1_ge_0.67": {"threshold": 0.67, "observed_g4_alone": 0.6776, "baseline": 0.6652, "delta": 0.0124, "pass": true, "note": "ablated via scripts/gate_vocadito_conp_phase_g.py --apply g4 on full 40-clip A1"},
+    "no_rapid_repeat_regression": {"threshold": "no regression", "observed": "P 0.6790→0.7115 (+0.0325), R 0.6615→0.6481 (-0.0134); net +0.0124 mean F1", "pass": true}
   },
   "headline": {
-    "vocadito_baseline_mv2h_mean_10clip": 0.5162,
-    "vocadito_g1g2_post_mv2h_mean_10clip": 0.5299,
-    "vocadito_g1g2_post_value_subscore": 0.857,
-    "vocadito_baseline_value_subscore": 0.800,
-    "value_subscore_delta": 0.057
+    "vocadito_baseline_noff_f1": 0.6652,
+    "vocadito_g4_alone_noff_f1": 0.6776,
+    "vocadito_g4_g5_combined_noff_f1": 0.6587,
+    "g4_isolated_delta": 0.0124,
+    "production_default_after_strict": "auto"
   },
   "code_paths": ["humscribe/post_process.py", "humscribe/pipeline.py", "humscribe/config.py"],
   "report": "reports/item-g4.md"

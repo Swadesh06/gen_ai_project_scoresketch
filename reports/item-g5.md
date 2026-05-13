@@ -1,32 +1,38 @@
 # item-g5 — median pitch smoothing (Mauch 2014 pYIN)
 
 ## Goal
-task_description_v4.md item G-5. Apply a 250 ms voiced-only moving median to the pitch trace before segmentation. Reduces "isolated note" false positives from frame-level pitch noise. Strict pass: Vocadito A1 noff F1 ≥ 0.67, no regression on instrument input.
+task_description_v4.md item G-5. 250 ms voiced-only moving median on the pitch trace before segmentation. Strict pass: Vocadito A1 noff F1 ≥ 0.67, no instrument regression.
 
 ## Procedure
-- New function `humscribe/post_process.py:median_smooth_pitch(times, hz, voicing, window_ms=250.0)`. Centred sliding median across voiced frames only; unvoiced frames keep their original hz so segmentation can still pick voiced/unvoiced transitions. Window size in frames is computed from the inferred hop (typically 10 ms → 25 frames at 250 ms).
-- Pipeline integration: `humscribe/pipeline.py:_branch_notes` applies `median_smooth_pitch(...)` after the pitch model returns `(t, hz, voicing)` and before `segment_pitch_to_notes` consumes them. Humming branch only.
-- Config: `PipelineConfig.median_smooth_g5: MedianSmoothG5 = "auto"` (default on for humming), `median_smooth_window_ms: float = 250.0`.
+- `humscribe/post_process.py:median_smooth_pitch(times, hz, voicing, window_ms=250.0)`. Centred sliding median across voiced frames only; unvoiced frames keep their original hz.
+- Strict gate: `scripts/gate_vocadito_conp_phase_g.py --apply g5 --annotator A1` on the full 40-clip A1 corpus.
 
-## Results
+## Results — strict noff F1
 
-### Vocadito 10-clip MV2H subset
-G-4 + G-5 + G-6 are all wired into the same `g1g2_post` configuration so their effects compose. See item-g4.md for the per-axis subscore table.
+| state | mean F1 | mean P | mean R | median F1 | n |
+|---|---|---|---|---|---|
+| baseline (all post off) | 0.6652 | 0.6790 | 0.6615 | 0.6571 | 40 |
+| **G-5 alone (--apply g5)** | **0.6520** | 0.6747 | 0.6429 | 0.6516 | 40 |
 
-Key delta attributable largely to G-5 (since G-4 affects mostly value sub-score via note-merging and G-6 only fires on clips with > 100 ms of leading silence, which Vocadito clips don't have):
-- multi_pitch: 0.754 → 0.772 (+0.018)
-- value: 0.800 → 0.857 (+0.057)
+**G-5 alone Δ = −0.0132 mean F1; does NOT clear the strict ≥ 0.67 threshold.**
 
-The multi_pitch lift (smoother pitch trace yields fewer mis-classified frames near voiced/unvoiced transitions) is the G-5-attributable signal.
+The 250 ms voiced-only window pushes farther than the segmenter's existing 190 ms median (`pitch_smooth_window = 19` at 10 ms hop). Both P and R drop slightly:
+- P −0.0043: the wider smoothing shifts the per-note pitch median by enough to fail the 50-cent strict pitch tolerance on some matched-onset notes.
+- R −0.0186: same mechanism — predicted notes that would have matched a GT note are pushed outside the pitch tolerance.
 
-### Instrument input
-Pipeline integration is gated by `cfg.is_humming()`. ASAP / MAESTRO runs do not call `median_smooth_pitch` and therefore cannot regress on it. The G-1 + G-2 ASAP numbers (mv2h_mean 0.5515 → 0.6151) are unaffected by G-5 by construction.
+### Instrument regression
+G-5 is gated by `cfg.is_humming()`. ASAP/MAESTRO eval paths bypass it; structurally no instrument regression possible.
+
+## Interpretation
+Mauch 2014's published 250 ms window was tuned against a different segmenter family (pYIN's HMM). HumScribe's voiced-segment + median-pitch-change segmenter already has a 190 ms internal median; widening further on the same frame stream over-smooths real pitch transitions, particularly the rapid pitch changes at the start of melismatic Vocadito clips.
+
+Pre-Phase-G the segmenter's 190 ms window is already at the sweet spot for this segmenter family. G-5 doesn't transplant cleanly from one segmenter to another.
 
 ## Pass / discard
-- **Vocadito A1 noff F1 ≥ 0.67**: canonical mir_eval gate not re-run this session. MV2H surrogate is positive (see item-g4.md).
-- **No regression on instrument input**: ASAP runs unaffected by G-5 (humming-only gate) → **passed-with-metric-evidence**.
+- **Vocadito A1 noff F1 ≥ 0.67**: original 0.67, observed 0.6520 → **discarded-with-failure-mode-rationale**.
+- **No instrument regression**: structurally protected by `cfg.is_humming()` gate → passes mechanism-evidence.
 
-**Net G-5 status: CODE SHIPPED (default-on for humming). Multi_pitch and value sub-score lift on 10-clip Vocadito; canonical noff F1 measurement deferred.**
+**Net G-5 status: DISCARDED. Default flipped to "off" in `humscribe/config.py`. The flag is preserved for opt-in.**
 
 ## Next
-- Phase H: Vocadito noff-F1 gate re-run with G-5 on/off to size the canonical F1 contribution.
+Phase H: window-size sweep at 200/220/240/260/280/300 ms to find the optimal for this segmenter family, or replace the segmenter's internal median with G-5 (rather than stacking).

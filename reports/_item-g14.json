@@ -1,10 +1,10 @@
 {
   "item": "G-14",
   "name": "multi-take averaging UX",
-  "status": "code-shipped-eval-deferred",
+  "status": "discarded",
   "strict_pass": {
-    "consensus_f1_ge_0.72": {"threshold": 0.72, "observed": null, "pass": null, "note": "deferred — needs 5 user-recorded triplets"},
-    "single_take_f1_ge_0.65": {"threshold": 0.65, "observed": null, "pass": null, "note": "deferred"},
+    "consensus_f1_ge_0.72": {"threshold": 0.72, "observed": null, "pass": false, "note": "no 5-triplet user-recorded dataset available; mir public corpora do not include multi-take recordings of the same melody by the same user"},
+    "single_take_f1_ge_0.65": {"threshold": 0.65, "observed": null, "pass": false},
     "algorithm_and_ui_shipped": {"threshold": "shipped", "observed": "shipped", "pass": true}
   },
   "headline": {
@@ -13,5 +13,6 @@
     "pitch_tolerance_semitones": 1
   },
   "code_paths": ["humscribe/eval/multi_take.py", "app/streamlit_app.py"],
+  "discard_rationale": "The strict 'consensus F1 >= 0.72 on 5 triplets' criterion requires 5 sets of 3 distinct user-recorded takes of the same melody (15 audio clips). No mir public corpus (Vocadito, MIR-1K, MTG-QBH, MAESTRO) has multi-take metadata, and synthesising 'three takes' from a single recording with random perturbations would not exercise the consensus logic realistically. Code path + UI are shipped; the F1 numbers are unsatisfiable without a user-supplied dataset.",
   "report": "reports/item-g14.md"
 }

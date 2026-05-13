@@ -1,19 +1,19 @@
 {
   "item": "G-15",
   "name": "DDSP solo_flute2 retest",
-  "status": "code-shipped-eval-deferred",
+  "status": "discarded",
   "strict_pass": {
-    "direct_voc_a1_ge_0.55": {"threshold": 0.55, "observed": null, "pass": null, "note": "deferred — solo_flute2_ckpt not on host"},
-    "ensemble_voc_a1_ge_0.65": {"threshold": 0.65, "observed": null, "pass": null, "note": "deferred"},
-    "three_fixes_shipped": {"threshold": 3, "observed": 3, "pass": true, "note": "crossfade, loudness-norm bypass, solo_flute2 path"}
+    "direct_voc_a1_ge_0.55": {"threshold": 0.55, "observed": null, "pass": false, "note": "solo_flute2_ckpt is not on this host; no direct HTTP URL on Magenta GCS resolves to the checkpoint (404 on all tested paths); gcloud / gsutil not installed in env"},
+    "ensemble_voc_a1_ge_0.65": {"threshold": 0.65, "observed": null, "pass": false},
+    "three_fixes_shipped": {"threshold": 3, "observed": 3, "pass": true, "note": "crossfade 200ms overlap-add, loudness-norm bypass, solo_flute2 checkpoint path"}
   },
   "headline": {
     "module_path": "humscribe/pitch/timbre_transfer/ddsp_flute.py",
-    "crossfade_ms": 200,
-    "chunk_s": 4.0,
     "checkpoint_dir": "/workspace/.cache/ddsp_checkpoints/solo_flute2_ckpt",
-    "checkpoint_available": false
+    "checkpoint_available": false,
+    "magenta_gcs_404_on_https": true
   },
   "code_paths": ["humscribe/pitch/timbre_transfer/ddsp_flute.py"],
+  "discard_rationale": "Magenta's DDSP solo_flute checkpoint is hosted on GCS but no direct HTTPS URL resolves (tested storage.googleapis.com/magentadata/... 404). Without gcloud/gsutil + Magenta GCS auth, the checkpoint cannot be downloaded into this environment. The three architectural fixes (crossfade, loudness-norm bypass, solo_flute2 checkpoint path) are shipped; the measurement cannot run without the weights. v3 item 3 already showed solo_violin gave Voc A1 = 0.14 (well below 0.55), and the only theoretical basis for solo_flute2 clearing 0.55 is 'flute is less vibrato-sensitive' — without empirical confirmation, the strict criterion cannot be claimed met.",
   "report": "reports/item-g15.md"
 }

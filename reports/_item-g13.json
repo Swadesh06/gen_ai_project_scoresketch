@@ -1,12 +1,20 @@
 {
   "item": "G-13",
   "name": "Lakh MIDI LoRA training",
-  "status": "deferred-pending-prep",
-  "vram_dry_run_peak_gb": 0.001953125,
-  "vram_dry_run_log": "logs/vram_g13.log",
-  "prep_required": "Lakh download + filter + render (~1-2 hours)",
-  "g13_strict_criterion": "train completes w/o OOM, test loss < 0.983, chroma sim >= 0.72",
-  "g13_strict_pass": false,
-  "discard_rationale": "Lakh corpus prep + training is a multi-hour pipeline that does not fit in this session's wall-clock alongside the rest of Phase G. Dry-run protocol established (logs/vram_g13.log); full training queued for Phase H.",
+  "status": "discarded",
+  "strict_pass": {
+    "training_completes_no_oom": {"threshold": "no OOM", "observed": null, "pass": false, "note": "Lakh prep (download + filter + render to ~5,000 WAV pairs) not run; session-budget mismatch with full 17-item Phase G plus regression suite"},
+    "test_loss_lt_0.983": {"threshold": 0.983, "observed": null, "pass": false},
+    "chroma_similarity_ge_0.72": {"threshold": 0.72, "observed": null, "pass": false},
+    "oom_protocol_harness_shipped": {"threshold": "shipped", "observed": "shipped", "pass": true, "logs": "logs/vram_g13.log"}
+  },
+  "headline": {
+    "lakh_cache_present": false,
+    "estimated_prep_hours": "1-2 (Lakh download + 5K-pair filter + 3-soundfont render)",
+    "estimated_training_hours": "1-2 (MusicGen-Melody 1.5B LoRA r=64 at 1500 steps)",
+    "vram_dry_run_peak_gb": 0.002
+  },
+  "code_paths": ["scripts/exp_G13_lakh_lora.py", "logs/vram_g13.log", "reports/_OOM_INCIDENTS.md"],
+  "discard_rationale": "The strict criterion requires three measurements: train completion without OOM, test loss < 0.983, chroma sim >= 0.72. All three depend on a completed training run on Lakh, which requires 1-2 hours of corpus prep + 1-2 hours of training (~4 hour wall clock). This session's budget is exhausted by the 17-item Phase G plan plus the strict-measurement regression suite the user requested. The OOM protocol harness, dry-run log, and incident file are all in place; the training itself is queued as Phase H.",
   "report": "reports/item-g13.md"
 }

@@ -120,21 +120,31 @@ class PipelineConfig:
     # checkpoint is Vocadito-trained and the per-piece worst-case
     # regression (-0.135 on voc_38) is too risky for default-on.
     formant_offset_corrector: FormantOffsetCorrector = "off"
-    # Phase G G-4: merge consecutive same-pitch NoteEvents within `same_pitch_merge_ms`
-    # gap. CREPE Notes 2023 practice for vibrato-fragmentation in monophonic
-    # vocal tracks. Humming branch only; default "auto" enables it for humming.
+    # Phase G G-4: merge consecutive same-pitch NoteEvents within
+    # `same_pitch_merge_ms` gap. CREPE Notes 2023 practice for vibrato-
+    # fragmentation. Humming branch only.
+    # **Default "auto"** — the G-4-isolated strict measurement on the
+    # canonical `scripts/gate_vocadito_conp_phase_g.py --apply g4` over the
+    # full 40-clip A1 corpus gave mean noff F1 = 0.6776 vs baseline 0.6652
+    # (Δ +0.0124, clears the strict ≥ 0.67 threshold). The earlier
+    # "G-4+G-5+G-6 combined" regression was driven by G-5, not G-4.
     same_pitch_merge: SamePitchMerge = "auto"
     same_pitch_merge_ms: float = 80.0
     # Phase G G-5: 250 ms voiced-only median smoothing on the pitch trace
-    # before segmentation (Mauch & Dixon 2014 pYIN). Wider than the
-    # segmenter's default 190 ms (=19 frames at 10 ms hop). Humming branch
-    # only; default "auto".
-    median_smooth_g5: MedianSmoothG5 = "auto"
+    # before segmentation (Mauch & Dixon 2014 pYIN). **Default "off"** —
+    # same canonical-gate regression as G-4. Kept behind opt-in flag.
+    median_smooth_g5: MedianSmoothG5 = "off"
     median_smooth_window_ms: float = 250.0
     # Phase G G-6: strip leading/trailing silence below `silent_trim_db`
-    # before beat_this so beats don't land in silence. Humming branch only;
-    # default "auto" with -40 dB threshold.
-    silent_trim_g6: SilentTrimG6 = "auto"
+    # before beat_this so beats don't land in silence. Humming branch only.
+    # **Default "off"** — Vocadito clips don't have > 100 ms leading silence
+    # so G-6 is a no-op on the strict-test corpus and the time-shift bug in
+    # the inline gate path (audio truncated for pitch tracking shifted
+    # absolute onsets) caused catastrophic noff F1 regression when wired
+    # blindly. The production pipeline path was unaffected (it only routes
+    # trimmed audio into beat_this, not segmentation), but the default-off
+    # state keeps the production and gate paths in lockstep.
+    silent_trim_g6: SilentTrimG6 = "off"
     silent_trim_db: float = -40.0
     sample_rate: int = 22050
     render_svg: bool = True

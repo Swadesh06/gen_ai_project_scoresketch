@@ -1,10 +1,10 @@
 {
   "item": "G-10",
   "name": "bar-level structural diagnostic",
-  "status": "partial-pass",
+  "status": "discarded",
   "strict_pass": {
     "liszt_lt_0.4": {"threshold": 0.4, "observed": 0.490, "pass": false},
-    "bach_fugues_gt_0.8": {"threshold": 0.8, "observed": "4/5 pass (BWV 846 = 0.500)", "pass": false},
+    "bach_fugues_gt_0.8": {"threshold": 0.8, "observed_per_fugue": {"bwv_846": 0.500, "bwv_848": 0.990, "bwv_854": 1.000, "bwv_856": 0.973, "bwv_857": 0.980}, "n_passing": 4, "n_total": 5, "pass": false, "note": "BWV 846 fails the per-fugue >0.8 requirement (0.500 due to a tempo change in the first 30s)"},
     "pearson_with_mv2h_ge_0.3": {"threshold": 0.3, "observed": 0.440, "pass": true}
   },
   "headline": {
@@ -16,5 +16,6 @@
   "datasets_evaluated": ["asap"],
   "asap_beat_source": "real beats from beat_this (cached)",
   "code_paths": ["humscribe/eval/bar_diag.py", "scripts/eval_bar_diag.py"],
+  "discard_rationale": "Two of three strict criteria miss: Liszt scores 0.490 vs <0.4 (narrow miss; downbeats are recovered well enough that bar-duration MAD is non-zero) and BWV 846 scores 0.500 vs >0.8 (a tempo change in the first 30s creates two distinct bar IBIs). The correlation criterion passes (+0.440) but the per-piece cutoffs were authored with tighter beat detection assumed.",
   "report": "reports/item-g10.md"
 }

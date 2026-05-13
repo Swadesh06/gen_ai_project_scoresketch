@@ -1,14 +1,14 @@
 {
   "item": "G-17",
   "name": "Docker actual-build verification artifact",
-  "status": "human-artifact-shipped",
+  "status": "shipped (artifact criterion); docker-host run deferred per spec",
   "strict_pass": {
-    "script_shipped": {"threshold": "executable", "observed": "shipped", "pass": true},
-    "build_passes_on_user_host": {"threshold": "exit 0", "observed": null, "pass": null, "note": "sandbox has no docker; user runs the script"}
+    "build_script_shipped": {"threshold": "executable", "observed": "shipped + executable", "pass": true},
+    "build_passes_on_user_host": {"threshold": "exit 0", "observed": null, "pass": null, "note": "the spec assigns the docker build run to the user, not the agent ('The agent creates a build script and the validation harness. The user runs the actual docker build on their machine.')"}
   },
   "headline": {
     "script_path": "scripts/g17_docker_verify.sh",
-    "checks": ["docker present", "daemon reachable", "files present", "docker build", "import smoke", "streamlit smoke (optional)"]
+    "checks": ["docker present", "daemon reachable", "required files", "docker build", "import smoke", "streamlit smoke (optional)"]
   },
   "code_paths": ["scripts/g17_docker_verify.sh", "Dockerfile"],
   "report": "reports/item-g17.md"

@@ -1,18 +1,17 @@
 {
   "item": "G-11",
   "name": "render_tpb auto-detect",
-  "status": "shipped",
+  "status": "discarded",
   "strict_pass": {
-    "le_5_unreadable_tuplets": {"threshold": 5, "observed": 3, "pass": true},
-    "no_mv2h_regression_gt_0.005": {"threshold": 0.005, "observed": 0.0, "pass": true, "note": "render-only change cannot affect MV2H structurally"}
+    "le_5_unreadable_tuplets": {"threshold": 5, "observed": 11, "pass": false, "note": "BWV 854 alone has 8 unreadable (7x12-let + 1x24-let); G-11 only fires when median IOI > 0.3s and so cannot help fast piano demos"},
+    "no_mv2h_regression_gt_0.005": {"threshold": 0.005, "observed": 0.0, "pass": true}
   },
   "headline": {
-    "ioi_threshold_s": 0.30,
-    "default_render_tpb": 12,
-    "downgrade_render_tpb": 8,
-    "demos_with_auto_downgrade": 1
+    "audit_total_unreadable": 11,
+    "per_demo_unreadable": {"bwv_854_piano": 8, "maestro_chamber3_30s": 0, "mtg_qbh_q1_humming": 1, "vocadito_1_humming": 2},
+    "ioi_threshold_s": 0.30
   },
-  "code_paths": ["humscribe/config.py", "humscribe/pipeline.py"],
-  "rendered_svg_changes": "vocadito_1_humming downgraded to render_tpb=8 (eliminated 3 x 24-lets); others unchanged.",
+  "discard_rationale": "Strict per-demo tuplet count by parsing musicxml time-modification elements: total = 11 (criterion <= 5). G-11's median-IOI-based heuristic only triggers on slow pieces (vocadito_1 = 0.336 s → downgrade to render_tpb=8 helps); fast piano demos like Bach BWV 854 (IOI = 0.15 s) never trigger and keep render_tpb=12, which produces 12-let tuplets. The structural fix is a two-pass tuplet count (Phase H), not an IOI heuristic.",
+  "code_paths": ["humscribe/config.py", "humscribe/pipeline.py", "scripts/count_tuplets_g11.py", "reports/_item-g11_tuplet_audit.json"],
   "report": "reports/item-g11.md"
 }
