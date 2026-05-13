@@ -1,0 +1,18 @@
+{
+  "item": "G-6",
+  "name": "silent-region trimming for beat_this",
+  "status": "code-shipped-eval-partial",
+  "strict_pass": {
+    "vocadito_beat_f_ge_0.95_on_silent_clips": {"threshold": 0.95, "observed": null, "pass": null, "note": "Vocadito subset has no clips with > 1 s leading/trailing silence; synthetic smoke test passes"},
+    "mv2h_ge_baseline_plus_0.01": {"threshold": 0.01, "observed": 0.014, "pass": true, "note": "combined G-4/5/6"},
+    "no_no_silence_regression": {"threshold": "no regression", "observed": "short-circuit on lead_s==0", "pass": true}
+  },
+  "headline": {
+    "silent_trim_db": -40.0,
+    "margin_ms": 10.0,
+    "frame_ms": 20.0,
+    "default_state": "auto for humming"
+  },
+  "code_paths": ["humscribe/post_process.py", "humscribe/pipeline.py", "humscribe/config.py"],
+  "report": "reports/item-g6.md"
+}

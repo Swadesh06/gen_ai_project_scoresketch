@@ -1,0 +1,143 @@
+{
+  "mode": "baseline",
+  "use_beats": false,
+  "use_voices": false,
+  "phase_g_post": false,
+  "vocadito": {
+    "rows": [
+      {
+        "clip": "vocadito_1",
+        "multi_pitch": 0.8360655737704918,
+        "voice": 1.0,
+        "meter": 0.0,
+        "value": 0.7920760537356861,
+        "harmony": 0.0,
+        "mv2h": 0.5256283255012356,
+        "n_notes_gt": 57,
+        "n_notes_pred": 65,
+        "bpm_pred": 115.38461538461549
+      },
+      {
+        "clip": "vocadito_10",
+        "multi_pitch": 0.625,
+        "voice": 1.0,
+        "meter": 0.0,
+        "value": 0.7409080110690038,
+        "harmony": 0.0,
+        "mv2h": 0.47318160221380073,
+        "n_notes_gt": 35,
+        "n_notes_pred": 29,
+        "bpm_pred": 109.09090909090912
+      },
+      {
+        "clip": "vocadito_11",
+        "multi_pitch": 0.75,
+        "voice": 1.0,
+        "meter": 0.07239819004524886,
+        "value": 0.8194719787855415,
+        "harmony": 0.0,
+        "mv2h": 0.528374033766158,
+        "n_notes_gt": 37,
+        "n_notes_pred": 35,
+        "bpm_pred": 120.0
+      },
+      {
+        "clip": "vocadito_12",
+        "multi_pitch": 0.8421052631578948,
+        "voice": 1.0,
+        "meter": 0.07773851590106008,
+        "value": 0.8885785694119169,
+        "harmony": 0.0,
+        "mv2h": 0.5616844696941744,
+        "n_notes_gt": 27,
+        "n_notes_pred": 30,
+        "bpm_pred": 117.64705882352925
+      },
+      {
+        "clip": "vocadito_13",
+        "multi_pitch": 0.6808510638297873,
+        "voice": 1.0,
+        "meter": 0.0671462829736211,
+        "value": 0.7575961163970633,
+        "harmony": 0.0,
+        "mv2h": 0.5011186926400943,
+        "n_notes_gt": 74,
+        "n_notes_pred": 67,
+        "bpm_pred": 0.0
+      },
+      {
+        "clip": "vocadito_14",
+        "multi_pitch": 0.6865671641791046,
+        "voice": 1.0,
+        "meter": 0.0,
+        "value": 0.8644567646340513,
+        "harmony": 0.0,
+        "mv2h": 0.5102047857626312,
+        "n_notes_gt": 34,
+        "n_notes_pred": 33,
+        "bpm_pred": 124.99999999999989
+      },
+      {
+        "clip": "vocadito_15",
+        "multi_pitch": 0.7547169811320754,
+        "voice": 1.0,
+        "meter": 0.0,
+        "value": 0.7663816099526741,
+        "harmony": 0.0,
+        "mv2h": 0.5042197182169499,
+        "n_notes_gt": 47,
+        "n_notes_pred": 59,
+        "bpm_pred": 99.99999999999976
+      },
+      {
+        "clip": "vocadito_16",
+        "multi_pitch": 0.74,
+        "voice": 1.0,
+        "meter": 0.016304347826086956,
+        "value": 0.8110848426939861,
+        "harmony": 0.0,
+        "mv2h": 0.5134778381040146,
+        "n_notes_gt": 47,
+        "n_notes_pred": 53,
+        "bpm_pred": 142.8571428571429
+      },
+      {
+        "clip": "vocadito_17",
+        "multi_pitch": 0.8440366972477065,
+        "voice": 1.0,
+        "meter": 0.040540540540540536,
+        "value": 0.7804635765377846,
+        "harmony": 0.0,
+        "mv2h": 0.5330081628652064,
+        "n_notes_gt": 54,
+        "n_notes_pred": 55,
+        "bpm_pred": 115.38461538461509
+      },
+      {
+        "clip": "vocadito_18",
+        "multi_pitch": 0.7800000000000001,
+        "voice": 1.0,
+        "meter": 0.0,
+        "value": 0.7769089312059546,
+        "harmony": 0.0,
+        "mv2h": 0.511381786241191,
+        "n_notes_gt": 45,
+        "n_notes_pred": 55,
+        "bpm_pred": 107.14285714285693
+      }
+    ],
+    "mean": {
+      "mv2h": 0.5162279415005456,
+      "multi_pitch": 0.7539342743317061,
+      "voice": 1.0,
+      "meter": 0.02741278772865575,
+      "value": 0.7997926454423663,
+      "harmony": 0.0
+    },
+    "use_beats": false,
+    "use_voices": false,
+    "alignment": "non_aligned",
+    "annotator": "A1"
+  },
+  "wall_s": 204.75530982017517
+}

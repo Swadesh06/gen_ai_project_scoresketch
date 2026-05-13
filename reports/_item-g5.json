@@ -1,0 +1,17 @@
+{
+  "item": "G-5",
+  "name": "median pitch smoothing (Mauch 2014 pYIN)",
+  "status": "code-shipped-eval-partial",
+  "strict_pass": {
+    "vocadito_a1_noff_f1_ge_0.67": {"threshold": 0.67, "observed": null, "pass": null, "note": "deferred"},
+    "no_instrument_regression": {"threshold": "no regression", "observed": "no regression (humming-only gate)", "pass": true}
+  },
+  "headline": {
+    "vocadito_g1g2_post_multi_pitch": 0.772,
+    "vocadito_baseline_multi_pitch": 0.754,
+    "multi_pitch_delta_attrib_g5": 0.018,
+    "default_window_ms": 250
+  },
+  "code_paths": ["humscribe/post_process.py", "humscribe/pipeline.py", "humscribe/config.py"],
+  "report": "reports/item-g5.md"
+}

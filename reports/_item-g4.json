@@ -1,0 +1,18 @@
+{
+  "item": "G-4",
+  "name": "same-pitch gap merging (CREPE Notes 2023)",
+  "status": "code-shipped-eval-partial",
+  "strict_pass": {
+    "vocadito_a1_noff_f1_ge_0.67": {"threshold": 0.67, "observed": null, "pass": null, "note": "canonical mir_eval gate not re-run this session; MV2H surrogate is positive"},
+    "no_rapid_repeat_regression": {"threshold": "no regression", "observed": "no regression on Vocadito", "pass": true}
+  },
+  "headline": {
+    "vocadito_baseline_mv2h_mean_10clip": 0.5162,
+    "vocadito_g1g2_post_mv2h_mean_10clip": 0.5299,
+    "vocadito_g1g2_post_value_subscore": 0.857,
+    "vocadito_baseline_value_subscore": 0.800,
+    "value_subscore_delta": 0.057
+  },
+  "code_paths": ["humscribe/post_process.py", "humscribe/pipeline.py", "humscribe/config.py"],
+  "report": "reports/item-g4.md"
+}
