@@ -86,7 +86,10 @@ def main(n_steps: int = 20, lora_r: int = 16, lr: float = 1e-4,
     print(f"loading audiocraft MusicGen {model_size}")
     t0 = time.time()
     mg = MusicGen.get_pretrained(f"facebook/musicgen-{model_size}", device="cuda")
-    lm = mg.lm  # the autoregressive language model
+    # audiocraft loads in fp16 by default; cast LM to fp32 so LoRA grad math works
+    # without dtype mismatches. Adds ~3 GB VRAM but training stability is worth it.
+    mg.lm = mg.lm.to(torch.float32)
+    lm = mg.lm
     print(f"  loaded in {time.time()-t0:.1f}s; lm params: {sum(p.numel() for p in lm.parameters())/1e6:.1f}M")
 
     # Identify target Linear modules in the LM. audiocraft's LM has cross-attention

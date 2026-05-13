@@ -75,8 +75,10 @@ def main(model_size: str, duration: float, clip: str) -> None:
             "n_presets": len(rows),
             "total_wall_s": sum(r["wall_s"] for r in rows),
         })
-        Path("reports/_exp_B64_musicgen_presets.json").write_text(
-            json.dumps({"rows": rows, "config": cfg}, indent=2))
+        out_json = ("reports/_exp_B64_musicgen_presets.json"
+                     if model_size == "melody"
+                     else f"reports/_exp_B67_musicgen_{model_size}.json")
+        Path(out_json).write_text(json.dumps({"rows": rows, "config": cfg}, indent=2))
     print(f"\n  run: {run.url}")
     run.finish()
 

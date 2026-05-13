@@ -29,9 +29,9 @@
     },
     {
       "piece": "asap_Bach__Fugue__bwv_856",
-      "tpb24_no_corr_mv2h": null,
-      "tpb24_sanity_mv2h": null,
-      "tpb12_sanity_mv2h": null,
+      "tpb24_no_corr_mv2h": 0.4588781025038875,
+      "tpb24_sanity_mv2h": 0.5469748069736171,
+      "tpb12_sanity_mv2h": 0.5588320679008503,
       "tpb6_sanity_mv2h": 0.5685087682149772,
       "best": "tpb6_sanity",
       "best_mv2h": 0.5685087682149772
@@ -50,9 +50,9 @@
       "tpb24_no_corr_mv2h": 0.5045810667252326,
       "tpb24_sanity_mv2h": 0.5045810667252326,
       "tpb12_sanity_mv2h": 0.5147476164809157,
-      "tpb6_sanity_mv2h": null,
-      "best": "tpb12_sanity",
-      "best_mv2h": 0.5147476164809157
+      "tpb6_sanity_mv2h": 0.5303800628944694,
+      "best": "tpb6_sanity",
+      "best_mv2h": 0.5303800628944694
     },
     {
       "piece": "asap_Chopin__Berceuse_op_57",
@@ -75,18 +75,18 @@
     {
       "piece": "asap_Schumann__Toccata",
       "tpb24_no_corr_mv2h": 0.49701331245464864,
-      "tpb24_sanity_mv2h": null,
-      "tpb12_sanity_mv2h": null,
-      "tpb6_sanity_mv2h": null,
-      "best": "tpb24_no_corr",
-      "best_mv2h": 0.49701331245464864
+      "tpb24_sanity_mv2h": 0.49701331245464864,
+      "tpb12_sanity_mv2h": 0.5116946770046883,
+      "tpb6_sanity_mv2h": 0.5236496112790402,
+      "best": "tpb6_sanity",
+      "best_mv2h": 0.5236496112790402
     }
   ],
   "means": {
-    "tpb24_no_corr": 0.5362827700369183,
-    "tpb24_sanity": 0.5422389678547332,
-    "tpb12_sanity": 0.5532214602226894,
-    "tpb6_sanity": 0.5548423721504838
+    "tpb24_no_corr": 0.5276822514221371,
+    "tpb24_sanity": 0.5377400993790443,
+    "tpb12_sanity": 0.5492307740515959,
+    "tpb6_sanity": 0.5486584754696552
   },
-  "oracle_ensemble_mv2h": 0.5493917958387818
+  "oracle_ensemble_mv2h": 0.5540883230874424
 }

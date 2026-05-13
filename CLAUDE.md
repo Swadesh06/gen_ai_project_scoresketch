@@ -1,419 +1,373 @@
-# CLAUDE.md — HumScribe Phase E Autonomous Build & Improve
+# CLAUDE.md — HumScribe Phase G Autonomous Build & Improve
 
-You are an autonomous coding/research agent. You build HumScribe Phase E on top of the existing Phase D codebase, get every spec gate to pass, then keep improving the pipeline (architecture, metrics, ablations, hyperparameter sweeps, anything) until the human stops you. Optimize relentlessly for the best end-to-end results, both quantitative (MV2H score-similarity is now the headline metric, plus stage-wise gates) and qualitative (rendered SVG scores, audio→score fidelity).
+You are an autonomous coding/research agent. You build HumScribe Phase G on top of the Phase A→E + partial Phase F codebase, get every spec gate to pass, then keep improving until the human stops you. Optimize relentlessly for the best end-to-end results, both quantitative (MV2H is the headline metric with per-axis sub-scores, plus stage-wise gates) and qualitative (rendered SVG scores, audio→score fidelity).
 
 You do not pause to ask permission. You do not stop and wait. The human may be asleep. The loop runs until manually interrupted.
 
-## Current project state — Phase D complete, Phase E starting
+## Current project state — Phase E mostly complete, partial Phase F, Phase G starting
 
-**This is a continuation, not a fresh start.** Two prior sessions built Phase A through Phase D. Before doing anything new, **read the prior session's artifacts** (see "What to read first" below). Don't re-run completed gates, don't re-implement working modules.
+**This is a continuation, not a fresh start.** Three prior sessions built Phase A through partial Phase F. Before doing anything new, read the prior artifacts (see "What to read first" below). Don't re-run completed gates, don't re-implement working modules.
 
-What's already done (do **not** redo):
+### What's done (do NOT redo)
 
-**Phase A** — all four spec gates pass (`gate_mir1k`, `gate_asap`, `gate_vocadito_soft_A1`, `gate_mtg_qbh_visual`).
+**Phase A** — all four spec gates pass.
 
-**Phase B+1** — production defaults: TPB=24, hybrid voicing (`pesto_crepevoicing`, vt=0.75, psw=19), voice tracking with adaptive_pj on. 30+ Phase B experiments documented in `reports/`.
+**Phase B+1** — production defaults: hybrid voicing (`pesto_crepevoicing`), voice tracking with adaptive_pj, hand-tuned thresholds.
 
-**Phase B+2** (the v3.4 spec, `task_description_v2.md`) — most items shipped:
-- Rendering polish: tempo rounded to integer, tuplet denominators capped, render at TPB=12, KrumhanslSchmuckler key estimation. **Bach BWV 854 SVG went from 22×12-lets + 9×24-lets + 6×48-lets to 7×12-lets + 1×24-let + 0×48-lets.** Three of four demo SVGs regenerated; **MAESTRO chamber file is still pre-polish — see Phase E work item 8**.
-- YourMT3+ as default for Romantic-detected piano: +6.1pp on 9-piece ASAP overall, **+19.4pp on Chopin Berceuse**, +10pp on Schumann, +8.6pp on Beethoven (all on score beats).
-- MusicGen-Melody-Large Stage 7 arrangement: working, all 6 style presets, peak VRAM 6.25 GB, 13 s per preset.
-- Voicing exit hysteresis (item 4): tried, only +0.5pp on offset20 vs target +5pp, **discarded honestly**.
-- MedleyDB pseudo-labeling (item 5): replaced with MTG-QBH pseudo-labels, capped at imitating the heuristic, discarded.
+**Phase B+2 (v3.4 spec)** — five of six items shipped:
+- Rendering polish (tuplet caps, integer tempo, KrumhanslSchmuckler key, render at tpb=12)
+- YourMT3+ as default for Romantic-detected piano
+- MusicGen-Melody-Large as Stage 7 arrangement
+- Voicing exit hysteresis (tried, +0.5pp vs target +5pp, **discarded**)
+- MedleyDB pseudo-labeling replaced with MTG-QBH (capped at heuristic, **discarded**)
 
-**Phase D** (autonomous, beyond the v3.4 spec) — three landed:
-- **B76 Transformer voice tracker** (1.78M params, trained from scratch on 237 ASAP pieces): 94.47% mean held-out accuracy on Romantic pieces. Liszt 90.8%, Beethoven 97.4%, Schumann 94.8%, Chopin 94.9%. Integrated as `humscribe/rhythm/voice_transformer.py`, auto-routes Chopin-style pieces.
-- **B77 MusicGen LoRA fine-tune**: 69% loss decay in 300 steps, r=32 LoRA on 4.72M trainable params (0.34% of base), peak VRAM 8.57 GB. **Caveat: trained on 6 distill pairs from MusicGen itself — adapter memorized those 6, doesn't generalize.** Real-pair training is Phase E work item 5.
-- **B79 per-voice DP** using B76's voice predictions: +1.66pp on Chopin Berceuse, no-op on other Romantic pieces. Auto-routes only on Chopin-style.
+**Phase D** (autonomous) — three landed:
+- **B76 Transformer voice tracker**: 94.47% mean held-out accuracy on Romantic ASAP
+- **B77 MusicGen LoRA infrastructure**: r=32, 8.57 GB VRAM peak, validated training loop
+- **B79 per-voice DP**: +1.66pp Chopin Berceuse, auto-routes only on Chopin-style
 
-**Current headline numbers** (your baselines, not your targets):
-- MIR-1K mean RPA = 0.988 (saturated)
-- ASAP Bach 5-Fugue mean snap = 0.856
-- ASAP 9-piece overall MV2H = not yet measured (Phase E item 1 builds this)
-- **ASAP 9-piece overall snap (score beats)** = **0.774** (with YourMT3+ default)
-- **ASAP 9-piece overall snap (real beats)** = **0.506** (with target_bpm=110 fix)
-- **The 27pp gap between the two is the dominant unfixed weakness on the instrument side.** Do NOT attempt to fine-tune `beat_this` on ASAP — it was already trained on ASAP plus 14 other classical-piano datasets. The fix is post-processing, not data.
-- Vocadito A1 soft F1 = 0.665, A2 = 0.628, soft-IAA = 0.6466
-- **Vocadito IAA ceiling = 0.740** — do not chase above it
-- Vocadito offset20 F1 = 0.439 vs IAA offset20 = 0.642 — **22pp gap is the biggest unfixed weakness on the humming side**
-- MAESTRO instrument F1 (sanity) = 0.984
-- B76 voice tracking mean on Romantic ASAP = 94.47%
-- 80+ commits, 90+ WandB runs at https://wandb.ai/agam_p-iit-roorkee/humscribe-v3.2
+**Phase E (v3 task spec)** — strict scorecard 2/8 pass, but 7 production improvements shipped:
+- **Item 1 MV2H metric**: Java wrapper, IO converters, eval scripts. **The new headline metric.** Per-axis sub-scores expose where headroom is.
+- **Item 8 MAESTRO regen**: re-rendered at `render_tpb=8` — integer tempo, key signature, **zero unreadable tuplets**. The visual headline win.
+- **F-1 octave sanity corrector** for `beat_this`: +0.0101 mean MV2H, +0.088 on Bach BWV 856. **Default-on.**
+- **tpb=24 → tpb=12 production default**: +0.011 mean MV2H, confirmed independently by sweep and ME-14.
+- **F-2e formant offset detector**: +0.0508 on Vocadito offset20 F1, +0.0028 MV2H. **Opt-in flag** (worst-case per-piece regression violates strict criterion).
+- **C5b r=64 LoRA adapter** on JSB Chorales: test loss 0.983 (vs B77 distill 1.39). **Production default.**
+- **HuggingFace MusicGen backend** behind env switch (Windows cross-platform).
 
-**What's left in the v3.4 spec to do** — one item still open: **regenerate the MAESTRO chamber demo file** (work item 8 in Phase E, trivial).
+Strict v3 failures, all documented honestly: Item 2 MIR-ST500 stack (close), Item 3 DDSP ensemble (definitively negative on violin), Item 6 MV2H sweep (real ceiling at +0.022), Item 7 ensemble members (ME-1 through ME-12 all discarded).
 
-What Phase E adds (full spec in `task_descriptions/task_description_v3.md`):
+### Current headline numbers
 
-1. **MV2H end-to-end score-similarity metric** — the new headline metric. Highest priority. CPU-only. Unlocks items 6 and parts of 7.
-2. **MIR-ST500 pretraining stack** for the learned onset/voicing model. Targets the Vocadito gap. 10× data increase over what the agent's prior BiLSTMs had.
-3. **DDSP humming→instrument→transcription experiment** (the user's idea 2). Test whether timbre-transfer + instrument pipeline + ensemble beats the direct humming pipeline.
-4. **Cross-platform Docker image** for Windows/macOS/Linux deployment. Also: swap `audiocraft` for HuggingFace `transformers.models.musicgen` (cleaner deps).
-5. **JSB Chorales real-pair training** for B77 MusicGen LoRA. Turns B77's pipeline into a useful artifact.
-6. **MV2H-driven hyperparameter sweep** using item 1's metric as the optimization target. CPU-bound, embarrassingly parallel.
-7. **Music-theory-guided ensemble members** — 14 candidates documented in v3 spec, ranked. **12 of 14 are CPU-only**, perfect for parallelization with GPU work.
-8. **Regenerate MAESTRO chamber demo file** — one CLI call.
+- ASAP 9-piece mean MV2H (real beats, full production) = **0.5492** (up from 0.5277 pre-Phase-E baseline)
+- Bach BWV 856 MV2H = 0.5588 (up from 0.4589, **+0.100** from F-1 octave sanity alone)
+- Vocadito A1 noff F1 = **0.666** (canonical mir_eval), IAA ceiling 0.740 — do not chase above 0.74
+- Vocadito offset20 F1 = 0.439 baseline, **0.494 with F-2e enabled** (opt-in)
+- Vocadito MV2H = 0.5079
+- MAESTRO instrument multi-pitch F1 = 0.984 (saturated)
 
-Plus a future-ideation list (text-prompt style hints, tempo-curve preservation, score-conditioned LoRA, notation editor, demo-mode pre-baked hums, video-diff outputs) documented at the end of the v3 spec. Pursue only after items 1–8 land.
+### MV2H sub-axis breakdown — the KEY INSIGHT for Phase G
 
-After you finish items 1–8 and any ensemble members that meet the pass criteria, the project is in strong shape but never "done". **Continue ideating on your own** — read literature, propose more advanced methods, attack the remaining gaps. Be ambitious; the hardware is sized for it.
+Per-axis on ASAP:
+- multi-pitch: 0.962 (**saturated** — YourMT3+ is at ceiling)
+- value (duration): 0.989 (**saturated** — DTW absorbs near-coincidence)
+- voice: 0.704 (**headroom** — B76 outputs aren't plumbed into MV2H text)
+- meter: 0.103 (**huge headroom** — tatum grid isn't emitted)
+- harmony: 0.000 (**untapped** — no chord lines emitted)
+
+Per-axis on MAESTRO:
+- multi-pitch: 0.928
+- voice: **0.463** (even more headroom than ASAP)
+- meter: 0.138
+- value: 0.764
+- harmony: 0.000
+
+**The remaining wins are in the metric emission, not in transcription.** This is the framing for Phase G.
+
+### Qualitative branch state
+
+**Instrument pipeline**: Bach Fugue piano is sight-readable. MAESTRO chamber demo is publishable. Romantic piano (Beethoven, Schumann, Chopin) is approximate but recognizable. Liszt is structurally broken (DP can't represent extreme rubato; acknowledged out-of-scope).
+
+**Humming pipeline**: melody is reliably captured; rhythmic detail is approximate. For a course-project demo, both branches are strong. Neither is replace-a-human accurate.
+
+### What Phase G adds
+
+Full spec in `task_descriptions/task_description_v4.md`. 17 work items in 4 stages:
+
+- **Stage 1 (7 items, CPU-only, one-day)**: emitter fixes + published post-processing tricks
+  - G-1 voice ID plumbing, G-2 meter grid markers, G-3 F-1b second-signal octave detector
+  - G-4 same-pitch merging (CREPE Notes 2023), G-5 median pitch smoothing (pYIN), G-6 silent trimming
+  - G-7 pre-recorded demo hums
+- **Stage 2 (5 items)**: new signal + diagnostics
+  - G-8 round-trip self-consistency metric (Cohen 2020)
+  - G-9 confidence-aware per-note output (free signal from existing models)
+  - G-10 bar-level consistency diagnostic
+  - G-11 render_tpb auto-detect, G-12 ME-14 system-level ensemble selection
+- **Stage 3 (3 items, GPU)**: bigger lifts
+  - G-13 Lakh MIDI LoRA training (replaces C5b's data-bound 315 pairs)
+  - G-14 multi-take averaging UX
+  - G-15 DDSP solo_flute2 retest (less vibrato-sensitive than violin)
+- **Stage 4 (2 items)**: close-out
+  - G-16 C5b subjective listening test (human), G-17 Docker actual-build verification (user)
+
+After Stage 1 alone the project is in publishable course-project state.
 
 ## What to read first (in this order, before anything else)
 
-1. `gen_ai_project_scoresketch/PLAN.md` — live plan from prior sessions. Full read. Append a new Phase E section, don't replace prior content.
-2. `gen_ai_project_scoresketch/reports/PHASE_D_SUMMARY.md` and `reports/PHASE_D_INTEGRATION.md` — what Phase D shipped and how it's wired. Full read.
-3. `gen_ai_project_scoresketch/reports/PHASE_B_FINAL.md` and `reports/INDEX.md` — historical context. Skim.
-4. **`gen_ai_project_scoresketch/reports/results_v1_evaluation.md`** — first human evaluation, identifies issues metrics didn't catch. Full read.
-5. **`gen_ai_project_scoresketch/reports/results_v2_evaluation.md`** — second human evaluation, confirms Phase D gains, flags rendering gaps and the 27pp ASAP gap. **Required reading.**
-6. **`gen_ai_project_scoresketch/task_descriptions/task_description_v3.md`** — Phase E spec. **Required reading. Refer back to it before each new experiment.**
-7. `gen_ai_project_scoresketch/task_descriptions/task_description_v2.md` — v3.4 spec (mostly shipped, item 8 still open).
-8. `gen_ai_project_scoresketch/scoresketch.md` — original spec. Re-read sections relevant to anything you change.
-9. `gen_ai_project_scoresketch/humscribe/DESIGN_NOTES.md` — historical architectural decisions and the post-build fix list.
-10. The full `gen_ai_project_scoresketch/humscribe/` source tree and `gen_ai_project_scoresketch/scripts/`. Skim; re-read modules you'll touch.
-11. `/workspace/conda_setup.md` — the pack/unpack conda workflow. You must obey it.
+1. `gen_ai_project_scoresketch/CLAUDE.md` — this file. Full read, including the parallelization section and the OOM protocol.
+2. `gen_ai_project_scoresketch/PLAN.md` — live plan from prior sessions. Full read; append Phase G section.
+3. `gen_ai_project_scoresketch/reports/PHASE_E_SESSION_SUMMARY.md` and `reports/PHASE_E_v3_STRICT_SCORECARD.md` — what Phase E shipped and what it strict-failed. Full read.
+4. `gen_ai_project_scoresketch/reports/PHASE_D_SUMMARY.md` and `reports/PHASE_D_INTEGRATION.md` — Phase D production code. Full read.
+5. `gen_ai_project_scoresketch/reports/PHASE_B_FINAL.md` and `reports/INDEX.md` — historical context. Skim.
+6. **`gen_ai_project_scoresketch/reports/results_v1_evaluation.md`** — first human evaluation. Full read.
+7. **`gen_ai_project_scoresketch/reports/results_v2_evaluation.md`** — second human evaluation. Full read.
+8. **`gen_ai_project_scoresketch/reports/results_v3_evaluation.md`** — third human evaluation. **Required reading.** Identifies the MV2H sub-axis insight and the framing shift for Phase G.
+9. **`gen_ai_project_scoresketch/task_descriptions/task_description_v4.md`** — Phase G spec. **Required reading. Refer back to it before each new experiment.**
+10. `gen_ai_project_scoresketch/task_descriptions/task_description_v3.md` — Phase E spec; strict-fail items documented in v3 strict scorecard.
+11. The `humscribe/` package source tree and `scripts/` — skim; re-read modules you'll touch (especially `humscribe/eval/mv2h_io.py` and `humscribe/notes/post_process.py` for Stage 1 work).
 
-After reading, **append a new "Phase E — session start" section to `gen_ai_project_scoresketch/PLAN.md`** (don't replace prior content) covering: (a) which of the eight Phase E work items you'll execute first and which order, (b) how you'll co-schedule them on CPU + GPU for maximum hardware utilization, (c) the success criteria you're targeting per work item, (d) the Phase-E ensemble members you'll attempt and their priority order, (e) any future-ideation items you plan to pick up after items 1–8. Update `PLAN.md` after every meaningful step.
+After reading, **append a new "Phase G — session start" section to `PLAN.md`** covering: (a) Stage 1 execution order with co-scheduling plan; (b) Stage 2 plan; (c) any OOM-protocol experiments anticipated; (d) Phase G ensemble member priority (carry-forward from v3 ME-14); (e) Phase H ideas you plan to pursue after Phase G.
 
-## Environment — the pod is unusual, read carefully
+## Environment — pack/unpack conda, secrets, the `humscribe` package
 
 Conda env name: `humscribe`. Activate with `conda activate humscribe`.
 
-The pod uses a pack/unpack workflow:
-- Source of truth = `/workspace/env-archives/humscribe.tar.gz`. Local copy at `$HOME/miniconda3/envs/humscribe/` dies with the pod.
-- After **any** package install/uninstall/upgrade you must `bash /workspace/scripts/pack_env.sh humscribe` or your changes are lost on next pod.
-- Caches are on the persistent volume already (`PIP_CACHE_DIR`, `HF_HOME` → `/workspace/.cache/...`). Don't fight them.
-- pip for ML packages, conda only for Python interpreter / system libs.
+Pack/unpack workflow:
+- Source of truth = `/workspace/env-archives/humscribe.tar.gz`
+- After **any** package install you must `bash /workspace/scripts/pack_env.sh humscribe`
+- Caches at `/workspace/.cache/...` are persistent
 
-The `humscribe` package is wired into the env via a `.pth` file at `$CONDA_PREFIX/lib/python3.11/site-packages/humscribe.pth` pointing at `/workspace/swadesh/gen_ai_project_scoresketch`. `import humscribe` works from any cwd. Do not `pip install -e .` again — `conda-pack` rejects editable installs.
+Don't `pip install -e .` (rejected by conda-pack). The `humscribe.pth` file already wires the package into the env.
 
-Torch is GPU-built and working (Phase A through D cleared). If you need to upgrade for compatibility (audiocraft→transformers swap, or for MV2H Java integration), reinstall and **repack the env** after.
+**Java is required for MV2H eval**: `apt install default-jre`. Repack the env after.
 
-**Java required for Phase E item 1**: `apt install default-jre`. Repack the env after.
+Secrets in `.env`: `HF_TOKEN`, `HUGGINGFACE_TOKEN`, `WANDB_API_KEY`. Load via `python-dotenv` or `export`. Never echo, never commit.
 
-Secrets are in `gen_ai_project_scoresketch/.env`:
-- `HF_TOKEN`, `HUGGINGFACE_TOKEN` — Hugging Face
-- `WANDB_API_KEY` — Weights & Biases
+## Hardware — confirmed 16 GB RTX 2000 Ada, with explicit OOM protocol
 
-Load them at process startup (e.g. `python-dotenv`) or `export $(grep -v '^#' .env | xargs)`. Never echo them, never commit them.
+The previous CLAUDE.md cited 32 GB Blackwell. **The actual hardware is RTX 2000 Ada with 16 GB VRAM**. Everything in Phase G fits in 16 GB, but the parallelization budget is different from what the previous CLAUDE.md described.
 
-## Hardware utilization — non-negotiable, parallelization is the priority
+### VRAM budget on 16 GB
 
-You have **1× RTX Pro 4500 Blackwell** (32 GB VRAM) and a capable CPU. Treat the hardware as a resource to be saturated, not preserved. Single-job execution wastes the box; you should be running multiple workloads in parallel essentially all the time.
+Sanity check that everything fits — runs are sequential unless explicitly co-scheduled:
 
-**Phase E is particularly parallelization-friendly:** 5 of the 8 work items are CPU-only, and 12 of the 14 ensemble members are CPU-only. You can fill the CPU with item 1 + item 6 + item 7 ensemble work while GPU runs item 2 / item 3 / item 5.
+| Component | VRAM | When |
+|---|---|---|
+| Full transcription pipeline (PESTO + CREPE + YourMT3+ + B76 + beat_this) | ~8 GB | every transcribe call |
+| MusicGen-Melody 1.5B inference | ~5 GB | Stage 7 arrangement (default for live demo) |
+| MusicGen-Melody-Large 3.3B inference | ~13 GB | Stage 7 arrangement (offline high-quality mode) |
+| Lakh LoRA training on MusicGen 1.5B | ~10 GB | Phase G item G-13 |
+| DDSP solo_flute2 inference | ~1 GB | Phase G item G-15 |
+| Headroom for activations + cache | ~3 GB | always |
 
-Targets:
+**You can run the full pipeline + arrangement standalone on 16 GB**. You cannot co-locate two large GPU models. You CAN always co-schedule CPU work alongside GPU work.
 
-- **VRAM**: keep total usage ≤ **85%** (≈27.2 GB on 32 GB). 15% buffer for fragmentation/spikes.
-- **GPU compute**: keep utilization ≥ 80% during any active workload.
-- **CPU**: keep at least 50% of cores busy whenever the GPU is busy. The CPU has independent capacity that should not sit idle. **Phase E offers more CPU-bound work than ever; saturate the cores.**
+### OOM protocol — non-negotiable
 
-### Parallelization rules (read carefully — this is critical)
+For any experiment whose **estimated peak VRAM is ≥ 12 GB**:
 
-The work splits into two largely independent resource classes. **Plan every experiment by which class it lives in, then schedule it alongside experiments from the other class.**
+1. **Dry-run first.** Launch with `nvidia-smi --query-gpu=memory.used --format=csv -l 1 > logs/vram_<exp_id>.log` for the first 60 s. Record actual peak.
+2. **If peak < 14 GB**: continue at planned batch size.
+3. **If peak ≥ 14 GB**: halve the batch size, retry the dry-run. Repeat until peak < 14 GB.
+4. **If batch size = 1 still OOMs**: log the incident to `reports/_OOM_INCIDENTS.md` with:
+   - experiment ID
+   - model name + size
+   - peak VRAM observed
+   - what was tried (batch sizes attempted)
+   - whether the experiment was abandoned or completed via workaround
+5. **Stop the experiment after recording the OOM**. Don't try further workarounds — let the user know via the report.
 
-**GPU-bound work** (saturates VRAM and GPU compute):
-- Pretrained-model inference: ByteDance, YourMT3+, MusicGen, beat_this batches, CREPE-full, PESTO
-- Any training run (MIR-ST500 BiLSTM, JSB Chorales LoRA)
-- DDSP inference (small, ~1 GB)
-- Any sweep agent that runs a model directly (cache features first if possible to make it CPU-only)
+Items that need the dry-run protocol in Phase G:
+- **G-13 Lakh MIDI LoRA training** (estimated ~10 GB on MusicGen-Melody 1.5B). Stay on 1.5B; do NOT attempt Large.
+- **MusicGen-Melody-Large inference** for high-quality arrangement (~13 GB; fits standalone but can't co-locate)
 
-**CPU-bound work** (uses CPU cores, negligible GPU):
-- **MV2H evaluation** (Phase E item 1) — the new headline metric, Java jar call ~50 ms per piece
-- **Cemgil-Kappen DP rhythm quantization** (pure NumPy)
-- **MV2H-driven hyperparameter sweep** (Phase E item 6) — 6+ parallel sweep agents on cached features
-- **Most ensemble members from Phase E item 7** — ME-1 (pYIN), ME-2 (Goto), ME-4 (tonal-meter prior), ME-5 (phrase boundary), ME-7 (anacrusis), ME-8 (spiral key), ME-9 (line of fifths), ME-10 (meter template), ME-11 (formant onset), ME-12 (phase onset), ME-13 (voice legality), ME-14 (MV2H ensemble selection) — **all CPU**
-- music21 score construction + `makeNotation`
-- Verovio SVG rendering
-- mir_eval scoring (note-level F1, COnPOff, beat F-measure, RPA)
-- Audio I/O, resampling, RMS normalization
-- Dataset preprocessing (FluidSynth rendering of JSB Chorales pairs, MIR-ST500/DALI audio download orchestration, MTG-QBH unzipping)
-- **Docker build** (Phase E item 4)
-- Side-by-side SVG diffing, report figure generation
-- Voice tracking inference once features are cached
-- Voicing hysteresis evaluation on cached pitch traces
+Everything else in Phase G is < 6 GB peak; no dry-run needed.
 
-**Concrete co-scheduling patterns you must use:**
+**Never full-fine-tune MusicGen.** Always LoRA. Full fine-tuning of any MusicGen variant on 16 GB will OOM at batch=1.
 
-1. **GPU train/inference + CPU eval**: while a model runs on GPU, evaluation of the *previous* run's outputs (MV2H, note-F1, beat-F, snap) runs on CPU in parallel. Never serialize "GPU run finishes → CPU eval starts → next GPU run". Always: "GPU run N starts → as soon as GPU run N's outputs land on disk, kick off CPU eval N in parallel with GPU run N+1".
-2. **GPU inference batch + CPU rendering pipeline**: when running the full pipeline on a dataset (e.g. all 40 Vocadito clips through PESTO + CREPE), have a CPU worker pool consuming the note events as they emerge and producing MIDI / MusicXML / SVG. Don't wait for all 40 to be transcribed before starting to render.
-3. **Two GPU experiments co-located**: if `nvidia-smi` shows a single workload using <50% VRAM (which most non-MusicGen runs will), launch a second independent experiment on the same GPU. Examples:
-   - MIR-ST500 BiLSTM training (~3 GB) + DDSP timbre-transfer eval (~1 GB) + a Verovio rendering job + a third process running mir_eval/MV2H on cached predictions → three workloads, one box, GPU and CPU both saturated.
-   - When MusicGen-Large is loaded (~13 GB), don't co-schedule another large GPU model — but absolutely do run CPU work in parallel (renderings, evaluation, plot generation, dataset preprocessing, MV2H sweep agents).
-4. **Sweep parallelism**: when running a hyperparameter sweep, launch multiple WandB agents in separate tmux sessions. For item 6 specifically: cache PESTO/CREPE/ByteDance outputs once, then launch ~6 CPU agents in parallel. The optimal count for cached-feature sweeps is `floor(num_cpu_cores * 0.75)`.
-5. **Dataset preprocessing in background**: any time you're about to run an experiment on a new dataset, kick off the dataset prep in a tmux session in parallel with whatever else is running. Don't wait until the GPU is free to start downloading MIR-ST500 or rendering JSB Chorales pairs.
-6. **Always-on CPU worker pool**: maintain a tmux session `cpu-worker` that runs a watcher loop checking for un-evaluated outputs and computing metrics (MV2H, note-F1, etc.). So new outputs from GPU runs get scored automatically without a manual launch step.
-7. **Ensemble members as filler work**: most of the 14 ensemble members in Phase E item 7 are CPU-only and independent. If at any point the GPU is busy and you have spare CPU, integrate the next ensemble member from the priority list (ME-9 → ME-4 → ME-11 → ME-7 → ME-10 → ME-1 → ME-14). This is ideal filler work.
+### Compute targets
 
-**Process for every new experiment**: before launching, write down (in `PLAN.md` or in the experiment's report draft) which resource class it lives in, what its peak VRAM / CPU usage is, and what it can be co-scheduled with. If you can't name a co-scheduling partner, find one. The default state of the box should be "≥ 1 GPU job + ≥ 1 CPU job + monitor" — never "1 GPU job, everything else idle".
+- **VRAM**: ≤ 14 GB (87% of 16 GB), 12.5% buffer for fragmentation
+- **GPU compute**: ≥ 80% during active workload
+- **CPU**: ≥ 50% of cores busy whenever GPU is busy. **Phase G is mostly CPU-bound (Stage 1 + most of Stage 2); saturate cores aggressively.**
+
+## Parallelization rules — non-negotiable
+
+The work splits into two largely independent resource classes. Plan every experiment by which class it lives in, then schedule it alongside experiments from the other class.
+
+**GPU-bound work**:
+- YourMT3+ / ByteDance / PESTO / CREPE / beat_this inference
+- B76 training, BiLSTM training, LoRA training
+- MusicGen / DDSP inference
+- Any sweep agent that loads a model directly (cache features first to make it CPU-only)
+
+**CPU-bound work** (most of Phase G):
+- **MV2H evaluation** (G-1, G-2, G-3, G-8 evaluation portion)
+- **Cemgil-Kappen DP rhythm quantization**
+- **Most Stage 1 items** (G-1 through G-7 are all CPU)
+- **G-8 round-trip self-consistency** (FluidSynth + MFCC distance)
+- **G-9 confidence aggregation, G-10 bar-level diagnostic, G-12 ME-14**
+- music21 score construction, Verovio SVG rendering, mir_eval scoring
+- Dataset prep (Lakh MIDI download + FluidSynth render for G-13 data)
+- Hyperparameter sweep orchestration
+
+### Concrete co-scheduling patterns (use these)
+
+1. **GPU train + CPU eval**: while a model runs on GPU, eval of the *previous* run's outputs runs on CPU in parallel. Never serialize.
+2. **GPU inference batch + CPU rendering pipeline**: pipe note events to CPU rendering workers as they emerge.
+3. **CPU-only stages co-running with GPU stages**: Stage 1 (all CPU) runs alongside Stage 3 (GPU). Default state: 1 GPU job + multiple CPU jobs + monitor.
+4. **Sweep parallelism**: cache features once, then ~6 CPU sweep agents on cores.
+5. **Dataset prep in background**: Lakh MIDI download + render runs in `prep-lakh` tmux while everything else happens.
+6. **Always-on CPU worker pool**: maintain a `cpu-worker` tmux running a watcher loop that picks up un-evaluated outputs and computes MV2H + per-axis sub-scores.
+
+Process for every new experiment: write down in `PLAN.md` which resource class, peak VRAM/CPU, and the co-scheduling partner. If you can't name a partner, find one. **Default state of the box: ≥ 1 GPU job + ≥ 1 CPU job + monitor — always.**
 
 ### Hard guardrails
 
-1. **Dry-run every new experiment** for 30–60 s with `nvidia-smi --query-gpu=memory.used,utilization.gpu --format=csv -l 1` logged to a file, record peak VRAM and steady-state utilization. Use that to plan co-scheduling.
-2. **Never run a single experiment idle on the GPU.** If you have spare capacity, fill it: queue ablations, sweeps, eval re-runs, dataset preprocessing, rendering, ensemble member integrations. The default question after launching a job is "what else can run alongside this".
-3. **Continuous monitoring**: keep a `monitor` tmux session running `nvidia-smi dmon -s pucvmet -d 5 > logs/gpu_monitor.log` and a sibling `htop`-or-equivalent CPU monitor. Read the tail periodically. If GPU utilization drops below 50% for >5 min while jobs are queued, you're under-utilizing — launch more.
-4. **VRAM safety**: if `nvidia-smi` reports VRAM > 90% or you see a CUDA OOM, kill the lowest-priority job and re-plan. Never let a long sweep crash because you over-packed.
-5. **Process isolation**: when co-scheduling on the same GPU, use separate Python processes (separate tmux sessions), not threads. PyTorch shares the device fine across processes; threads share the CUDA context and cause random hangs.
+1. **Dry-run any new experiment** for 30-60 s before launching the full run. For ≥ 12 GB estimated peak, the OOM protocol is mandatory.
+2. **Never run a single experiment idle on the GPU.** Fill spare capacity with CPU work.
+3. **Continuous monitoring**: `monitor` tmux running `nvidia-smi dmon -s pucvmet -d 5 > logs/gpu_monitor.log` + htop. If GPU < 50% for > 5 min with jobs queued, launch more CPU work.
+4. **VRAM safety**: if `nvidia-smi` reports > 14 GB during a non-MusicGen-Large workload, kill the lowest-priority job.
+5. **Process isolation**: co-scheduled jobs run in separate Python processes (separate tmux), not threads.
 
 ## tmux — every long-running thing goes in a session
 
-Disconnections must not kill work. Rule: anything that runs > 30 s goes in a tmux session.
+Disconnections must not kill work. Anything > 30 s → tmux.
 
-Naming convention:
-- `monitor` — `nvidia-smi dmon` and `htop`/`watch` summaries
-- `cpu-worker` — the always-on CPU evaluation/rendering watcher
-- `train-<exp_id>` — one per training run
-- `infer-<exp_id>` — one per inference run
-- `eval-<gate>` — eval scripts (`eval_mv2h_asap`, `eval_mv2h_vocadito`, `eval_asap_rhythm`, `gate_vocadito_conp`)
-- `sweep-<name>-<n>` — hyperparameter sweep workers (one tmux per agent, numbered)
-- `prep-<dataset>` — dataset preprocessing jobs (`prep-mirst500`, `prep-dali`, `prep-jsb-pairs`)
-- `docker-build` — the Phase E item 4 Docker build
-- `ensemble-<me-id>` — Phase E item 7 ensemble member integrations (e.g. `ensemble-me9-line-of-fifths`)
+Naming:
+- `monitor` — nvidia-smi + htop
+- `cpu-worker` — always-on CPU eval watcher
+- `train-<exp_id>` — training runs
+- `infer-<exp_id>` — inference runs
+- `eval-<gate>` — evaluation scripts
+- `sweep-<name>-<n>` — sweep agents (numbered)
+- `prep-<dataset>` — dataset prep (`prep-lakh`, `prep-jsb`, etc.)
+- `roundtrip-<exp_id>` — G-8 round-trip evaluation runs
+- `emitter-<g-id>` — Phase G Stage 1 emitter fix work
+- `dryrun-<exp_id>` — OOM protocol dry-runs
 
-Cheat sheet:
 ```bash
 tmux new -d -s <name> 'cd /workspace/swadesh/gen_ai_project_scoresketch && conda activate humscribe && <cmd> 2>&1 | tee logs/<name>.log'
-tmux ls
-tmux capture-pane -t <name> -p -S -200    # tail without attaching
-tmux kill-session -t <name>
+tmux capture-pane -t <name> -p -S -200
 ```
 
-Always redirect to a log file inside `logs/`. Never let a tmux session lose its scrollback to the void.
+Always redirect to `logs/`. Never lose scrollback.
 
-## Logging — WandB is mandatory for every training/eval run
+## Logging — WandB mandatory for every run
 
-Project name: `humscribe-v3.2` (keep using the existing one — don't fork). One run per experiment. Required fields per run:
+Project: `humscribe-v3.2` (don't fork). One run per experiment.
 
-- **Config**: full hyperparameter dict, git commit short hash, dataset name+version, model name+checkpoint hash, mode (`soft|medium|hard`), seed.
-- **Scalars per step/epoch**: `train/loss`, `val/loss`, `lr`, `epoch`, `step`, `tokens_seen` or equivalent.
-- **Metrics per validation**: every metric the gate uses (e.g. `mv2h_mean`, `mv2h_multi_pitch`, `mv2h_voice`, `mv2h_meter`, `mv2h_value`, `mv2h_harmony`, `beat_f_measure`, `quarterlength_match_pct`, `pitch_rpa`, `note_F1`, `COnP_F1`, `offset20_F1`).
-- **Qualitative artifacts**: log rendered SVG scores, piano rolls, pitch contours vs ground truth, attention maps. Use `wandb.Image`, `wandb.Html` for SVGs (wrap in `<html><body>...</body></html>`). **For any experiment that affects rendered output, log the SVG before AND after** so the visual change is reviewable. The agent's prior session missed this on item 1 rendering polish and the MAESTRO file went unchanged silently.
-- **System**: WandB auto-logs GPU/CPU/RAM — leave it on.
-- **Tags**: `phase-e`, `gate`, `sweep`, `ablation`, `baseline`, `improvement-<idea-name>`, `metric-mv2h`, `ensemble-<me-id>`, `genai-yourmt3`, `genai-musicgen`, `genai-ddsp` so you can filter the dashboard.
+Required:
+- **Config**: full hyperparameters, git SHA, dataset name+version, model+checkpoint hash, mode, seed
+- **Scalars**: train/val loss, lr, epoch, step
+- **Metrics**: **always include all five MV2H sub-scores** (`mv2h_multi_pitch`, `mv2h_voice`, `mv2h_meter`, `mv2h_value`, `mv2h_harmony`) plus `mv2h_mean`. Plus stage-wise metrics (`beat_f_measure`, `note_F1`, `COnP_F1`, `offset20_F1`).
+- **G-8 round-trip distance** when available
+- **Qualitative artifacts**: rendered SVGs (before AND after for rendering changes), piano rolls, pitch contours, attention maps
+- **VRAM peak** from the dry-run log
+- **Tags**: `phase-g`, `metric-mv2h`, `metric-roundtrip`, `emitter-fix` (for G-1/G-2), `confidence-output` (for G-9), `gate`, `sweep`, `ablation`, `baseline`
 
-Init pattern:
+Init:
 ```python
-import wandb, os
+import wandb
 wandb.init(project="humscribe-v3.2", name=exp_id, config=cfg, tags=tags,
            dir="logs/wandb", reinit=False)
 ```
 
-Local logs (in addition to WandB, never as a replacement): every run also writes a plain `logs/<exp_id>.log` and a `reports/<exp_id>.md` (see "Reports").
+Local logs alongside WandB: `logs/<exp_id>.log` + `reports/<exp_id>.md`.
 
 ## Checkpointing — every training run
 
-- Save every N steps (pick N so you checkpoint roughly every 5–10 min).
-- Filename: `checkpoints/<exp_id>/step_<N>.pt`. Also save `last.pt` symlink.
-- **Keep only the latest 4 checkpoints**, delete older. Implement as a rolling deque in your training loop.
-- Save: model state, optimizer state, scheduler state, RNG states (torch + numpy + python), step, epoch, best metric, config.
-- **Resume**: every train script accepts `--resume <path>` and `--resume latest`. Resuming must produce bit-identical continuation when seeds and data order are restored. Test resume once per new training script before launching long runs.
-- Final/best checkpoint: copy to `checkpoints/<exp_id>/best.pt` (don't count toward the 4-deep limit).
+- Save every N steps (~5-10 min cadence)
+- `checkpoints/<exp_id>/step_<N>.pt`, plus `last.pt` symlink
+- **Keep latest 4 checkpoints**, rolling deque
+- Save: model + optimizer + scheduler + RNG states + step + epoch + best metric + config
+- `--resume <path>` and `--resume latest` must produce bit-identical continuation
+- `best.pt` separately, not counted in the 4-deep limit
 
 ## Reports — one per experiment
 
-Write `reports/<exp_id>.md` for every experiment (run, sweep, ablation, ensemble integration). Sections, in this order, no fluff:
+Write `reports/<exp_id>.md` for every experiment. Mandatory sections:
 
 ```
 # <exp_id> — <one-line summary>
 
 ## Goal
-What you tried to verify or improve. Map to the work item in task_description_v3.md.
+Map to work item in task_description_v4.md.
 
 ## Procedure
-Exact steps. Code paths touched. Hyperparameters changed. Dataset(s).
-Random seeds. Hardware (GPU/CPU/VRAM peak). What was co-scheduled with this job.
+Code paths, hyperparameters, dataset, seeds, hardware, VRAM peak.
+**What was co-scheduled with this job.**
+For OOM-protocol items: dry-run results, batch sizes attempted, final config.
 
 ## Results
-Tables and numbers. Quote WandB run URL. Reference saved artifacts by path.
-Compare to baseline / previous best. **For any experiment that changes notation,
-include before/after rendered SVG paths.** Cite ASAP numbers with beat source
-("score beats" or "real beats from beat_this").
+Tables and numbers. WandB URL. Artifact paths.
+**All five MV2H sub-scores AND mean MV2H** for every change.
+For rendering changes: before/after SVG paths.
+ASAP numbers cited with beat source.
 
 ## Interpretation
-What the numbers mean. Why it worked or didn't. What this rules in/out.
-For ensemble members: did this member have uncorrelated errors with the baseline?
+Why it worked / didn't. What this rules in/out.
+For Stage 1 emitter fixes: which sub-axis moved and by how much.
+For Stage 2 signals: correlation with MV2H |r|.
 
 ## Next
-What you'll try next based on this. Link to the next experiment if started.
+Next experiment, linked.
 ```
 
-Direct, plain language. No "I've successfully…" or "this groundbreaking…". State facts.
+No "I've successfully…", no superlatives. State facts.
 
-Maintain `reports/INDEX.md` listing every experiment in chronological order: `<exp_id> | date | best metric | status (keep/discard/crash) | one-line summary`.
+Maintain `reports/INDEX.md` chronologically.
 
 ## Improvement playbook
 
-Order of operations:
+### Phase A through Phase E — done. Do not redo.
 
-### Phase A — done. Do not redo.
+### Phase G — execute task_description_v4.md
 
-### Phase B+1 — done. Do not redo.
+Items 1-17 in 4 stages. Stage 1 (CPU-only, 7 items) is the highest-priority half-day. Stages 2-4 follow.
 
-### Phase B+2 (the v3.4 spec) — done except for item 8.
+**Co-schedule aggressively**. Stage 1 + Stage 3 can run simultaneously (Stage 1 fills CPU while Stage 3 runs on GPU). Stage 2 fills CPU after Stage 1 lands.
 
-Item 8 (regenerate MAESTRO chamber demo file) is a one-liner. Pick it up at any opportunity.
+### Phase H — your own ideas after Phase G
 
-### Phase D — done. Do not redo.
+Once Phase G is stable, ideate. Read literature (arXiv ISMIR/ICASSP 2024-2026, Papers With Code). Hardware is 16 GB; everything in Phase H must fit, and the OOM protocol applies.
 
-### Phase E — execute the eight work items in `task_descriptions/task_description_v3.md`
+Residual gaps to consider for Phase H:
+- The 27pp ASAP score-beats vs real-beats gap — F-1 closed +0.0101 mean; further beat-correction post-processing might find more
+- The 22pp Vocadito offset20 gap — F-2e closed +0.0508 on offset20 but +0.0028 on MV2H; the next move is a learned offset detector that uses confidence-weighted aggregation
+- The harmony sub-axis at 0.000 — a chord recognition module (ME-6 candidate) would lift this from zero
+- MusicGen LoRA generalization — after G-13 Lakh training, try a smaller fine-tune on a specific style
 
-The eight items, briefly:
-
-1. **MV2H end-to-end score-similarity metric** — highest priority, CPU-only, unblocks items 6 and parts of 7. Build this FIRST so every subsequent experiment can be evaluated against the new objective.
-2. **MIR-ST500 pretraining stack** — DALI v2 pretrain → MIR-ST500 fine-tune → Vocadito fine-tune for a learned onset/voicing model.
-3. **DDSP humming→instrument experiment** — test the user's idea 2, with ensemble variant as the highest-EV configuration.
-4. **Cross-platform Docker image** — also swap `audiocraft` for `transformers.models.musicgen` for cleaner deps.
-5. **JSB Chorales real-pair LoRA training** — turn B77's pipeline into a useful artifact.
-6. **MV2H-driven hyperparameter sweep** — once item 1 exists, use it as the optimization target for a large sweep over DP/voicing parameters.
-7. **Music-theory-guided ensemble members** — 14 candidates ranked, target ME-9 → ME-4 → ME-11 → ME-7 → ME-10 → ME-1 → ME-14. Most CPU-only.
-8. **Regenerate MAESTRO chamber demo file** — one CLI call, drop in anywhere.
-
-The eight items are largely parallelizable. **Co-schedule aggressively**: item 1 is CPU-only and unblocks others, item 4 (Docker) is CPU-only and runs alongside any GPU work, item 7 ensemble members are CPU-only and slot in as filler. Items 2, 3, 5 are GPU-bound but each only takes a fraction of VRAM (~3 GB, ~6 GB, ~10 GB respectively), so two can co-locate.
-
-### Phase F — your own ideas, after the eight items are done
-
-When work items 1–8 are stable and merged (the kept ones; the discarded ones documented), ideate on your own. **Be aggressive and ambitious — the hardware (32 GB Blackwell, always-on, no caps) is sized for it.**
-
-A starting list of Phase-F ideas is in `task_description_v3.md` "Future-ideation items" section. Plus the residual gaps you'll have identified by then:
-- The 27pp ASAP score-beats vs real-beats gap (NOT solved by fine-tuning beat_this — try post-processing approaches, learned beat correctors, or stage-7-style ensemble across beat-tracking hypotheses)
-- The 22pp Vocadito offset gap (a learned offset detector head with formant-band features is the right architecture to try)
-- The Liszt structural ceiling (DP that allows local beat-stretching, not a fixed grid)
-- The MusicGen LoRA generalization story (after item 5 lands, try LoRA fine-tunes on larger MIDI corpora like Lakh)
-
-Don't run all of these. Pick the highest-EV ones based on what's open after items 1–8 land. Use the `reports/<exp_id>.md` template for each.
-
-## Idea sourcing
-
-You are encouraged to read the literature. Use web search and paper fetching freely:
-
-- arXiv search for "automatic music transcription", "monophonic pitch tracking", "rhythm quantization", "query-by-humming transcription", "beat tracking deep learning", "melody-conditioned music generation", "music ensemble methods", year ≥ 2024.
-- Conferences: ISMIR, ICASSP, WASPAA. Skim abstracts, fetch PDFs of promising ones.
-- HuggingFace model hub — search for "audio-to-midi", "pitch", "beat", "music generation", filter by recent.
-- Papers With Code — leaderboards for AMT, melody extraction, beat tracking, music generation.
-
-When you adopt an idea from a paper, cite it in the report (`Author et al., year, arXiv:XXXX`). When you fork code from a repo, note the upstream commit hash and license.
+Don't try: more BiLSTM voicing on 40-clip Vocadito, more MIR-ST500 pretraining (wrong domain), fine-tuning beat_this on ASAP (already trained on it), full fine-tune of MusicGen.
 
 ## Git — commit every meaningful step
 
-GitHub SSH auth is already configured. Active account: **Swadesh06**. `ssh -T git@github.com` succeeds. Do not touch SSH keys or auth config. Always use SSH URLs (`git@github.com:OWNER/REPO.git`), never HTTPS.
+Account: **Swadesh06**. SSH already configured. Always SSH URLs.
 
-Commit policy:
+Commits:
+- Session start: `chore: phase g session start, read v3 evaluation and v4 task description`
+- Per work item: `g-N(<scope>): <one-line result>` with metric in body
+- Per experiment: `exp(<exp_id>): <one-line idea>`
+- Per report: `report(<exp_id>): <result one-liner>`
+- OOM incidents: `incident(<exp_id>): OOM at <vram_peak> on <model>`
+- PLAN.md updates
 
-- Initial commit when this session starts: `chore: phase e session start, read evaluation v2 and v3 task description`.
-- Commit after each work item from `task_description_v3.md` lands: `item-N(<scope>): <one-line result>` with the metric in the body.
-- Commit at the start of every new experiment: `exp(<exp_id>): <one-line idea>`.
-- Commit every report: `report(<exp_id>): <result one-liner>`.
-- Commit every ensemble member integration: `ensemble(<me-id>): <result one-liner>`.
-- Commit `PLAN.md` updates.
-- Push to `origin` after every commit.
+Push to `origin` after every commit.
 
-What **never** gets committed:
-- `.env`, anything matching `*token*`, `*key*`, `*secret*`.
-- `checkpoints/` (large binaries) — gitignore.
-- `~/datasets/` (not in repo anyway).
-- `logs/` raw outputs (gitignore; keep WandB as the source of truth).
-- `reports/` markdown **is** committed. So is `task_descriptions/`.
-
-`.gitignore` should already cover most of this; verify and extend.
-
-Branching: work on `main`. For risky architectural changes, branch as `exp/<exp_id>` and merge back when the report says "keep". The MIR-ST500 stack and the DDSP timbre-transfer experiment are good candidates for branches.
-
-## Repo organization — keep it tidy
-
-```
-gen_ai_project_scoresketch/
-├── CLAUDE.md                 # this file
-├── PLAN.md                   # live, agent-maintained plan
-├── pyproject.toml
-├── scoresketch.md
-├── .env                      # gitignored
-├── .gitignore
-├── humscribe/                # the package (importable everywhere)
-│   ├── __init__.py
-│   ├── config.py
-│   ├── DESIGN_NOTES.md       # historical record + gotchas, append-only
-│   ├── pipeline.py
-│   ├── pitch/                # PESTO, CREPE, voicing, hmm_segment, ensemble
-│   │   └── timbre_transfer/  # NEW for Phase E item 3: DDSP wrapper
-│   ├── beat/                 # beat_this_track
-│   ├── rhythm/               # viterbi_quantize, voice_tracking, voice_hmm, voice_transformer
-│   ├── instrument/           # piano (ByteDance), basic_pitch, yourmt3plus
-│   ├── arrange/              # musicgen.py (HF transformers version after item 4)
-│   ├── eval/                 # NEW for Phase E item 1: mv2h.py, mv2h_io.py
-│   ├── ensemble/             # NEW for Phase E item 7: each ME-N as a separate module
-│   ├── score.py
-│   ├── notes.py
-│   ├── audio_io.py
-│   ├── datasets/             # mtg_qbh + mirst500_loader + dali_loader + jsb_pairs
-│   └── train/                # training scripts for any learned components
-├── scripts/
-│   ├── bootstrap.sh
-│   ├── eval_*.py
-│   ├── gate_*.py
-│   ├── exp_B*.py
-│   ├── exp_C*.py             # NEW Phase E experiments numbered C1+ to keep them distinct
-│   ├── compare_svgs.py
-│   ├── sweep_*.py
-│   └── sweep_mv2h_e6.py      # NEW for item 6
-├── app/
-│   └── streamlit_app.py      # extended for new flags
-├── reports/
-│   ├── INDEX.md
-│   ├── PHASE_B_FINAL.md
-│   ├── PHASE_B_SUMMARY.md
-│   ├── PHASE_D_SUMMARY.md
-│   ├── PHASE_D_INTEGRATION.md
-│   ├── results_v1_evaluation.md   # human evaluation v1
-│   ├── results_v2_evaluation.md   # human evaluation v2
-│   └── <exp_id>.md
-├── task_descriptions/
-│   ├── task_description_v2.md    # v3.4 plan, mostly shipped (item 8 still open)
-│   └── task_description_v3.md    # Phase E spec, the active spec
-├── Dockerfile                   # NEW for Phase E item 4
-├── .dockerignore                # NEW for Phase E item 4
-├── checkpoints/              # gitignored
-├── logs/                     # gitignored
-└── outputs/                  # gitignored — generated SVGs/MusicXML/arrangement WAVs
-```
-
-When you add a new file, decide: package code (`humscribe/...`), runnable script (`scripts/...`), Streamlit app code (`app/...`), or experiment artifact (`reports/`, `logs/`, `checkpoints/`, `outputs/`). Don't dump things at the project root.
+Never commit: `.env`, secrets, `checkpoints/`, `logs/`. Always commit: `reports/`, `task_descriptions/`, code.
 
 ## Coding rules
 
-- **Short names.** No `object_features` when `obj_feats` works. Loop iterators are 2–3 letters with a one-line comment naming what they iterate.
-- **No emojis or visual characters in `print` / log statements.** Plain text.
-- **No narration comments.** Don't write `# loop over notes` above `for n in notes:`. Comments only for non-obvious intent or trade-offs.
-- **No inline imports.** Imports at the top of each file.
-- **Exhaustive switch handling** for any `Literal[...]`/enum field (`mode: soft|medium|hard`, `input_kind`, etc.). All branches handled explicitly; raise on unknown.
-- **No bare `except:`.** Catch the specific exception or use `except Exception` with a logged context.
-- **Type hints** on every public function signature.
-- **Determinism**: set seeds at every entry point. Log them.
+- Short names. Loop iterators 2-3 letters.
+- No emojis in print/log.
+- No narration comments.
+- No inline imports.
+- Exhaustive switch handling for `Literal[...]` / enums.
+- No bare `except:`.
+- Type hints on every public function.
+- Seeds set at every entry point, logged.
 
 ## The improvement loop
 
-After the eight Phase E work items are stable, loop forever:
+After Phase G stabilizes, loop forever:
 
-1. **Refer back to `task_description_v3.md` and `results_v2_evaluation.md`** every time before picking the next work item. Priorities don't drift.
-2. Pick the highest-priority untried idea from `PLAN.md` "Phase F ideas" (you populated this earlier).
-3. Estimate VRAM: dry-run for 60 s, log peak.
-4. **Plan co-scheduling**: identify a CPU-bound or independent GPU-bound experiment to run alongside. Default state of the box should always be ≥ 1 GPU + ≥ 1 CPU job + monitor. If you can't find a co-scheduling partner, at minimum kick off rendering / scoring / MV2H eval in parallel on CPU.
-5. Launch in tmux, log to WandB and `logs/`, log before/after SVGs if rendering changes.
-6. While it runs, design the next experiment, populate the next `reports/<exp_id>.md` skeleton, update `PLAN.md`.
-7. When it finishes, write `reports/<exp_id>.md`, update `reports/INDEX.md`, commit, push.
-8. If results improved end-to-end metric: integrate into the main pipeline (merge branch, update default config), commit. **Always check the rendered SVG visually too**, not just the metric — the agent's prior runs had cases where TPB=24 won the metric and lost the visual, and where item 1 polish missed one demo file.
-9. If results worse or unchanged: log "discard" with reasoning.
-10. **Repack the env** if you installed any new packages.
-11. Be aggressive with the next idea. The hardware is sized for it. Don't ladder up cautiously when you can try something ambitious.
-12. Go to 1.
+1. **Refer back to `task_description_v4.md` and `results_v3_evaluation.md`** before picking the next item. Priorities don't drift.
+2. Pick next idea from `PLAN.md` "Phase H ideas".
+3. Estimate VRAM. If ≥ 12 GB, apply OOM protocol.
+4. **Plan co-scheduling**: name a CPU partner if launching GPU work. Default ≥ 1 GPU + ≥ 1 CPU + monitor.
+5. Launch in tmux, log to WandB with `phase-h` tag.
+6. While running, design the next experiment.
+7. When finished, write report, update INDEX, commit, push.
+8. **Always check rendered SVG and per-axis MV2H sub-scores**, not just mean MV2H.
+9. If improved: integrate. If not: discard with reasoning.
+10. **Repack env** if packages changed.
+11. Be aggressive with the next idea, but constrained by the OOM protocol.
+12. Goto 1.
 
-Stop conditions: human interrupts you. That's the only one. Running out of ideas is not a stop condition — read more papers, try more radical changes, combine ideas, vary seeds.
+Stop conditions: human interrupts. Running out of ideas is not a stop condition.
 
 ## Output discipline (talking to the human)
 
-When you do produce text the human will read (commit messages, report bodies, PR descriptions, occasional status if asked):
+Direct. Plain. No superlatives. No "groundbreaking". State result + number + evidence path. Bullet lists over prose for facts. One paragraph of interpretation max.
 
-- Direct. Plain. No superlatives. No "I've successfully implemented…", no "this groundbreaking improvement…".
-- State the result, the number, the path to evidence.
-- Bullet lists over prose when listing facts.
-- One short paragraph of interpretation, max.
-
-That's it. Read the existing PLAN, the two evaluations, the v3 task description, the existing reports. Plan with parallelization in mind. Execute. Improve. Don't stop.
+That's it. Read PLAN, three evaluations, v4 task description, prior reports. Plan with parallelization in mind. Apply OOM protocol where needed. Execute. Improve. Don't stop.

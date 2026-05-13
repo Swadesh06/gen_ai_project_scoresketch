@@ -19,10 +19,11 @@ def load_notes(p: Path):
     return np.stack([on, on + du], axis=1), pi
 
 
-def score(ref_iv, ref_p, est_iv, est_p):
+def score(ref_iv, ref_p, est_iv, est_p, offset_ratio=None):
     p, r, f, _ = mir_eval.transcription.precision_recall_f1_overlap(
         ref_iv, ref_p, est_iv, est_p,
-        onset_tolerance=0.05, pitch_tolerance=50.0, offset_ratio=None)
+        onset_tolerance=0.05, pitch_tolerance=50.0,
+        offset_ratio=offset_ratio, offset_min_tolerance=0.05)
     return float(p), float(r), float(f)
 
 
@@ -43,24 +44,24 @@ def main():
         if not bf.exists(): continue
         a_iv, a_p = load_notes(af)
         b_iv, b_p = load_notes(bf)
-        # A1 as ref, A2 as est
-        p_ab, r_ab, f_ab = score(a_iv, a_p, b_iv, b_p)
-        # And reverse to confirm symmetry
-        p_ba, r_ba, f_ba = score(b_iv, b_p, a_iv, a_p)
+        f_no = score(a_iv, a_p, b_iv, b_p, offset_ratio=None)[2]
+        f_o20 = score(a_iv, a_p, b_iv, b_p, offset_ratio=0.2)[2]
+        f_o50 = score(a_iv, a_p, b_iv, b_p, offset_ratio=0.5)[2]
         rows.append({"clip": cid, "n_a1": len(a_iv), "n_a2": len(b_iv),
-                     "f_ab": f_ab, "f_ba": f_ba, "f_mean": (f_ab + f_ba) / 2})
-        print(f"  {cid:25s}  A1->A2 F={f_ab:.3f}  A2->A1 F={f_ba:.3f}  (n={len(a_iv)},{len(b_iv)})")
+                     "f_ab": f_no, "f_ba": f_no, "f_mean": f_no,
+                     "f_o20": f_o20, "f_o50": f_o50})
+        print(f"  {cid:25s}  no_off={f_no:.3f}  off20={f_o20:.3f}  off50={f_o50:.3f}")
     if not rows:
         print("no overlapping clips"); run.finish(); return
-    f_means = [r["f_mean"] for r in rows]
-    overall = float(np.mean(f_means))
-    overall_sd = float(np.std(f_means))
-    print(f"\nOverall IAA mean F1 = {overall:.3f} +/- {overall_sd:.3f}  (n_clips={len(rows)})")
-    print(f"Min: {min(f_means):.3f}  Max: {max(f_means):.3f}")
-    wandb.log({"iaa_mean_f1": overall, "iaa_std": overall_sd, "n_clips": len(rows)})
+    means = {k: float(np.mean([r[k] for r in rows])) for k in ("f_mean", "f_o20", "f_o50")}
+    print(f"\nIAA means (n={len(rows)} clips):")
+    for k, v in means.items(): print(f"  {k:10s} = {v:.3f}")
+    wandb.summary.update({"iaa_no_offset": means["f_mean"],
+                           "iaa_offset20": means["f_o20"],
+                           "iaa_offset50": means["f_o50"],
+                           "n_clips": len(rows)})
     out = Path("reports/_exp_B51_iaa.json")
-    out.write_text(json.dumps({"per_clip": rows, "iaa_mean_f1": overall,
-                               "iaa_std": overall_sd, "n_clips": len(rows)}, indent=2))
+    out.write_text(json.dumps({"per_clip": rows, "means": means, "n_clips": len(rows)}, indent=2))
     print(f"\nWrote {out}")
     run.finish()
 

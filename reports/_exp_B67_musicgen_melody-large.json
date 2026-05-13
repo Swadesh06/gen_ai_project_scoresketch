@@ -2,51 +2,51 @@
   "rows": [
     {
       "preset": "lo-fi hip hop",
-      "wall_s": 38.471447706222534,
-      "size_kb": 625,
-      "vram_peak_gb": 6.253172874450684,
+      "wall_s": 67.23267245292664,
+      "size_kb": 1875,
+      "vram_peak_gb": 6.696107864379883,
       "out": "outputs/musicgen_presets/vocadito_1_lo-fi_hip_hop.wav"
     },
     {
       "preset": "jazz trio",
-      "wall_s": 13.1392343044281,
-      "size_kb": 625,
-      "vram_peak_gb": 6.253199100494385,
+      "wall_s": 46.893805503845215,
+      "size_kb": 1875,
+      "vram_peak_gb": 6.694769859313965,
       "out": "outputs/musicgen_presets/vocadito_1_jazz_trio.wav"
     },
     {
       "preset": "EDM",
-      "wall_s": 13.174644470214844,
-      "size_kb": 625,
-      "vram_peak_gb": 6.253214359283447,
+      "wall_s": 46.928603410720825,
+      "size_kb": 1875,
+      "vram_peak_gb": 6.696158409118652,
       "out": "outputs/musicgen_presets/vocadito_1_EDM.wav"
     },
     {
       "preset": "orchestral cinematic",
-      "wall_s": 12.814733505249023,
-      "size_kb": 625,
-      "vram_peak_gb": 6.25319766998291,
+      "wall_s": 46.861061573028564,
+      "size_kb": 1875,
+      "vram_peak_gb": 6.690611839294434,
       "out": "outputs/musicgen_presets/vocadito_1_orchestral_cinematic.wav"
     },
     {
       "preset": "indie folk",
-      "wall_s": 12.966164112091064,
-      "size_kb": 625,
-      "vram_peak_gb": 6.2529401779174805,
+      "wall_s": 46.55601739883423,
+      "size_kb": 1875,
+      "vram_peak_gb": 6.693381309509277,
       "out": "outputs/musicgen_presets/vocadito_1_indie_folk.wav"
     },
     {
       "preset": "bossa nova",
-      "wall_s": 13.67257046699524,
-      "size_kb": 625,
-      "vram_peak_gb": 6.252773761749268,
+      "wall_s": 46.615049600601196,
+      "size_kb": 1875,
+      "vram_peak_gb": 6.692687034606934,
       "out": "outputs/musicgen_presets/vocadito_1_bossa_nova.wav"
     }
   ],
   "config": {
     "model_size": "melody-large",
-    "duration": 10.0,
-    "git_sha": "66f99b2",
+    "duration": 30.0,
+    "git_sha": "aa7cffc",
     "clip": "vocadito_1",
     "n_presets": 6
   }

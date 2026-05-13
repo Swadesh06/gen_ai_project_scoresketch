@@ -373,3 +373,58 @@ Skip ME-3, ME-6, ME-13.
 - F-7 multi-chorale C5b distribution (deferred — collided with CREPE on GPU; queue after MV2H done)
 - F-2g threshold ship (depends on tighten sweep result)
 - F-5: Lakh MIDI corpus LoRA training (much larger than 349 JSB pairs)
+
+
+## Phase G — session start (2026-05-13)
+
+### What's already done (verified from prior reports + git log)
+- Phase A through Phase E v3 strict-pass tally complete: items 1 + 8 strictly pass; items 2/3/6/7 strict-fail with full documentation; items 4/5 effectively pass but unverifiable in sandbox.
+- Phase F follow-throughs in production:
+  - F-1 octave sanity (`humscribe/beat/octave_sanity.py`), default `auto`. +0.0101 mean MV2H, +0.088 on Bach BWV 856.
+  - F-2e formant offset corrector (`humscribe/pitch/formant_corrector.py`), opt-in. +0.0508 on Vocadito offset20, +0.0028 MV2H.
+  - tpb=12 production default (was tpb=24). +0.0115 mean MV2H.
+  - C5b r=64 LoRA on JSB Chorales: test loss 0.983 vs C5 r=32 1.388.
+- B76 transformer voice tracker plumbed via `humscribe/rhythm/voice_transformer.py`, auto-routed in `pipeline._should_use_per_voice_dp()`.
+- HuggingFace MusicGen backend behind `HUMSCRIBE_MUSICGEN_BACKEND=hf`.
+- MV2H metric (`humscribe/eval/mv2h.py` + `mv2h_io.py`) is the headline.
+
+### MV2H sub-axis baseline framing (drives Phase G priorities)
+Per `reports/_metric_mv2h_asap.json` (ymt3_cache, non_aligned, 30 s window):
+- multi-pitch 0.96 — saturated
+- value (duration) 0.99 — saturated
+- voice 0.70 ASAP / 0.46 MAESTRO — headroom (B76 outputs not plumbed)
+- meter 0.10 ASAP / 0.14 MAESTRO — huge headroom (tatum grid not emitted)
+- harmony 0.00 — untapped (no chord lines emitted)
+
+The remaining wins are in the metric emission and use of free signals, not transcription. Phase G executes the 17-item plan in `task_descriptions/task_description_v4.md` against this framing.
+
+### Phase G execution order with co-scheduling
+1. Stage 1 (CPU-only, 7 items, parallel): G-1 (mv2h_io voice emission), G-2 (meter grid emission), G-3 (F-1b IOI octave detector), G-4 (same-pitch gap merge), G-5 (median pitch smoothing), G-6 (silent-region trimming), G-7 (Streamlit demo hums).
+2. Stage 2 (4×CPU + 1×small-GPU, 5 items, parallel-with-Stage-1): G-8 (round-trip metric), G-9 (confidence aggregation), G-10 (bar-MAD diagnostic), G-11 (render_tpb auto), G-12 (ME-14 ensemble).
+3. Stage 3 (GPU, 3 items, sequential on GPU):
+   - G-13 Lakh LoRA training — OOM protocol applies (estimated peak ~10 GB on MusicGen-Melody 1.5B). Dry-run first.
+   - G-14 multi-take averaging UX — Streamlit + pipeline (no new model).
+   - G-15 DDSP solo_flute2 retest — ~1 GB DDSP + ~5 GB pipeline.
+4. Stage 4 (close-out, human-in-loop or one-shot): G-16 C5b listening artifact, G-17 Docker harness.
+
+### OOM-protocol items (anticipated)
+- G-13 Lakh LoRA on MusicGen-Melody 1.5B (~10 GB est). Dry-run with `nvidia-smi --query-gpu=memory.used --format=csv -l 1 > logs/vram_g13.log` for first 60 s; halve batch if peak ≥ 14 GB; record incident at `reports/_OOM_INCIDENTS.md` if batch=1 still OOMs.
+- Any MusicGen-Large invocation (~13 GB est) — separate dry-run per invocation if it's a fresh code path.
+
+### Phase G ensemble member priority (carried from v3 ME-14)
+ME-9 → ME-4 → ME-11 → ME-7 → ME-10 → ME-1 → ME-14. v3 had all members net-negative or below the +0.01 bar; in Phase G the ensemble equivalent is G-12 (system-level selection over pipeline variants).
+
+### Phase H ideas to pursue after Phase G
+- Learned beat post-corrector targeting the 27pp ASAP score-beats vs real-beats gap.
+- Chord-recognition module to lift harmony sub-axis off 0.000 (ME-6 candidate).
+- Lakh LoRA generalisation experiments after G-13 ships.
+- Tempo-curve preservation in DP (Liszt structural).
+- MusicXML-conditioned LoRA for MusicGen (MIDI as third conditioning input).
+
+### Operating rules (kept from CLAUDE.md)
+- Every report cites all 5 MV2H sub-scores + mean.
+- Every ASAP number cites beat source.
+- Every rendering-affecting change includes before/after SVG paths.
+- WandB tag `phase-g` on every Phase G run.
+- Default state of the box: ≥ 1 GPU job + ≥ 1 CPU job + monitor — always.
+- `monitor` tmux running `nvidia-smi dmon -s pucvmet -d 5 > logs/gpu_monitor.log` is up.

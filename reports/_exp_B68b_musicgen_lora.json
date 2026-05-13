@@ -1,0 +1,41 @@
+{
+  "summary": {
+    "first_loss": NaN,
+    "last_loss": NaN,
+    "min_loss": NaN,
+    "mean_loss": NaN,
+    "max_vram_peak_gb": 8.523458003997803,
+    "n_steps_completed": 20,
+    "trainable_params_M": 2.359296,
+    "checkpoint_size_kb": 9234
+  },
+  "losses": [
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN,
+    NaN
+  ],
+  "config": {
+    "git_sha": "c90e4f3",
+    "n_steps": 20,
+    "lora_r": 16,
+    "lr": 0.0001,
+    "model": "facebook/musicgen-melody"
+  }
+}
