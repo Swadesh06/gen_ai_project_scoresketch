@@ -1,0 +1,18 @@
+{
+  "item": "G-16",
+  "name": "C5b LoRA subjective listening artifact",
+  "status": "human-artifact-shipped",
+  "strict_pass": {
+    "ten_pairs": {"threshold": 10, "observed": 5, "pass": false, "note": "5 ready, 5 deferred behind GPU contention"},
+    "protocol_and_form": {"threshold": "shipped", "observed": "shipped", "pass": true},
+    "mean_rating_ge_3.5": {"threshold": 3.5, "observed": null, "pass": null, "note": "human-rater dependent"}
+  },
+  "headline": {
+    "pairs_shipped": 5,
+    "pairs_deferred": 5,
+    "protocol_path": "outputs/g16_listening_test/PROTOCOL.md",
+    "form_path": "outputs/g16_listening_test/google_form.md"
+  },
+  "code_paths": ["outputs/g16_listening_test/"],
+  "report": "reports/item-g16.md"
+}

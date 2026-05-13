@@ -1,0 +1,37 @@
+{
+  "mode": "g2_beats",
+  "use_beats": true,
+  "use_voices": false,
+  "asap": {
+    "rows": [
+      {
+        "piece": "Bach__Fugue__bwv_846",
+        "multi_pitch": 0.9766839378238342,
+        "voice": 0.7433810047671435,
+        "meter": 0.32847682119205296,
+        "value": 0.9982519542814833,
+        "harmony": 0.0,
+        "mv2h": 0.6093587436129029,
+        "n_notes_gt": 389,
+        "n_notes_pred": 383,
+        "n_voices_pred": 1,
+        "n_beats_gt": 70
+      }
+    ],
+    "mean": {
+      "mv2h": 0.6093587436129029,
+      "multi_pitch": 0.9766839378238342,
+      "voice": 0.7433810047671435,
+      "meter": 0.32847682119205296,
+      "value": 0.9982519542814833,
+      "harmony": 0.0
+    },
+    "skipped": [],
+    "use_beats": true,
+    "use_voices": false,
+    "alignment": "non_aligned",
+    "eval_seconds": 30.0,
+    "tatums_per_beat": 4
+  },
+  "wall_s": 5.357616186141968
+}

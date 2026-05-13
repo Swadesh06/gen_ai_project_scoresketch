@@ -1,0 +1,20 @@
+{
+  "item": "G-10",
+  "name": "bar-level structural diagnostic",
+  "status": "partial-pass",
+  "strict_pass": {
+    "liszt_lt_0.4": {"threshold": 0.4, "observed": 0.490, "pass": false},
+    "bach_fugues_gt_0.8": {"threshold": 0.8, "observed": "4/5 pass (BWV 846 = 0.500)", "pass": false},
+    "pearson_with_mv2h_ge_0.3": {"threshold": 0.3, "observed": 0.440, "pass": true}
+  },
+  "headline": {
+    "pearson_bar_vs_mv2h": 0.440,
+    "pearson_beat_vs_mv2h": 0.443,
+    "liszt_bar_c": 0.490,
+    "liszt_beat_c": 0.500
+  },
+  "datasets_evaluated": ["asap"],
+  "asap_beat_source": "real beats from beat_this (cached)",
+  "code_paths": ["humscribe/eval/bar_diag.py", "scripts/eval_bar_diag.py"],
+  "report": "reports/item-g10.md"
+}

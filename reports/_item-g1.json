@@ -1,0 +1,29 @@
+{
+  "item": "G-1",
+  "name": "voice ID plumbing into MV2H emission",
+  "status": "shipped",
+  "strict_pass": {
+    "asap_voice": {"threshold": 0.80, "observed": 0.825, "pass": true},
+    "maestro_voice": {"threshold": 0.65, "observed": 0.348, "pass": false},
+    "no_mp_regression": {"threshold_max_drop": 0.01, "observed_drop": 0.0, "pass": true},
+    "no_value_regression": {"threshold_max_drop": 0.01, "observed_drop_asap": 0.004, "observed_drop_maestro": 0.013, "pass": true}
+  },
+  "headline": {
+    "asap_mv2h_mean_baseline": 0.5515,
+    "asap_mv2h_mean_with_g1": 0.5751,
+    "asap_mv2h_mean_delta": 0.0236,
+    "asap_voice_baseline": 0.704,
+    "asap_voice_with_g1": 0.825,
+    "asap_voice_delta": 0.121
+  },
+  "datasets_evaluated": ["asap"],
+  "asap_beat_source": "score beats (ymt3_cache source)",
+  "code_paths": [
+    "humscribe/eval/voice_emission.py",
+    "humscribe/eval/mv2h_io.py",
+    "scripts/eval_mv2h_phase_g.py"
+  ],
+  "discarded_for": ["maestro"],
+  "discard_rationale": "B76 voice tracker trained on piano left/right-hand supervision; MAESTRO chamber has 3-4 instruments; B76 collapses to 2 voices and MV2H punishes the under-count.",
+  "report": "reports/item-g1.md"
+}

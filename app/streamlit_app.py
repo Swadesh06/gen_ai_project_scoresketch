@@ -26,6 +26,19 @@ def _load_arranger(model_size: str = "melody"):
 def transcribe_tab() -> None:
     st.header("Transcribe")
     st.caption("Upload a humming or instrument WAV; HumScribe produces a notated score.")
+    # Phase G G-7: one-click pre-recorded demo hums. Source = Vocadito (40
+    # Creative-Commons-licensed clips; we ship 5 here, renamed to generic
+    # labels). Demos load directly without manual upload.
+    demos_dir = Path(__file__).parent / "demos"
+    demo_files = sorted(demos_dir.glob("demo_*.wav")) if demos_dir.exists() else []
+    selected_demo = None
+    if demo_files:
+        st.markdown("**Quick demo (no upload required)**")
+        labels = ["(none — upload your own)"] + [d.name for d in demo_files]
+        choice = st.selectbox("Pre-recorded hum", labels, key="demo_select")
+        if choice != labels[0]:
+            selected_demo = demos_dir / choice
+            st.audio(str(selected_demo), format="audio/wav")
     uploaded = st.file_uploader("Audio", type=["wav", "mp3", "flac", "m4a"], key="trans_upload")
     cols = st.columns(3)
     with cols[0]:
@@ -34,19 +47,46 @@ def transcribe_tab() -> None:
         mode = st.selectbox("Mode", ["soft", "medium", "hard"])
     with cols[2]:
         pitch_model = st.selectbox("Pitch model", ["pesto_crepevoicing", "pesto", "crepe"])
-    if not uploaded:
-        st.info("Upload a clip to transcribe.")
+    # Phase G G-14: multi-take averaging mode. The user records 2-3 takes
+    # of the same melody; we transcribe each and consensus-vote notes that
+    # appear in >=2 of N takes within +-50 ms of one another.
+    multi_take = st.checkbox("Multi-take consensus (3 takes)",
+                             value=False, key="multi_take",
+                             help="Upload 2-3 audio clips of the SAME melody. We keep notes that appear in >=2 of them within +-50 ms.")
+    extra_uploads = []
+    if multi_take:
+        extra_uploads = st.file_uploader(
+            "Additional takes (upload 2-3 of the same melody)",
+            type=["wav", "mp3", "flac", "m4a"],
+            accept_multiple_files=True, key="trans_upload_extra",
+        ) or []
+    if not uploaded and not selected_demo:
+        st.info("Pick a pre-recorded demo or upload a clip to transcribe.")
         return
     if not st.button("Transcribe", type="primary"):
         return
     from humscribe.config import PipelineConfig
     from humscribe.pipeline import transcribe
-    with tempfile.NamedTemporaryFile(suffix=Path(uploaded.name).suffix, delete=False) as tf:
-        tf.write(uploaded.getvalue())
-        wav_path = tf.name
+    if selected_demo is not None:
+        wav_path = str(selected_demo)
+    else:
+        with tempfile.NamedTemporaryFile(suffix=Path(uploaded.name).suffix, delete=False) as tf:
+            tf.write(uploaded.getvalue())
+            wav_path = tf.name
     cfg = PipelineConfig(input_kind=kind, mode=mode, pitch_model=pitch_model)
-    with st.spinner("Transcribing…"):
-        res = transcribe(wav_path, cfg=cfg)
+    if multi_take and extra_uploads:
+        from humscribe.eval.multi_take import consensus_transcribe
+        paths = [wav_path]
+        for u in extra_uploads:
+            with tempfile.NamedTemporaryFile(suffix=Path(u.name).suffix, delete=False) as tf2:
+                tf2.write(u.getvalue())
+                paths.append(tf2.name)
+        with st.spinner(f"Transcribing {len(paths)} takes and computing consensus..."):
+            res = consensus_transcribe(paths, cfg=cfg)
+        st.info(f"Multi-take: {len(paths)} takes consolidated → {res.n_notes} consensus notes")
+    else:
+        with st.spinner("Transcribing…"):
+            res = transcribe(wav_path, cfg=cfg)
     st.success(f"{res.n_notes} notes, BPM {int(round(res.bpm))}")
     st.components.v1.html(f"<div style='background:#fff'>{res.svg}</div>", height=600, scrolling=True)
     st.download_button("Download MusicXML", res.musicxml, file_name="transcription.musicxml",

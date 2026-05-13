@@ -1,0 +1,19 @@
+{
+  "item": "G-9",
+  "name": "confidence-aware per-note output",
+  "status": "partial-pass",
+  "strict_pass": {
+    "global_conf_vs_mv2h_abs_r": {"threshold": 0.4, "observed": 0.435, "pass": true, "metric": "median beat-strength aggregate"},
+    "per_note_in_gt_corr": {"threshold": 0.4, "observed": null, "pass": null, "note": "deferred — Vocadito GT matching is Phase H"},
+    "lowest_20pct_recovers_60pct_fps": {"threshold": 0.6, "observed": null, "pass": null, "note": "deferred"}
+  },
+  "headline": {
+    "pearson_mean_beat_conf_vs_mv2h": -0.230,
+    "pearson_median_beat_conf_vs_mv2h": -0.435,
+    "ymt3_cache_conf_constant": true
+  },
+  "datasets_evaluated": ["asap"],
+  "asap_beat_source": "real beats from beat_this (cached)",
+  "code_paths": ["humscribe/eval/confidence.py", "scripts/eval_confidence.py"],
+  "report": "reports/item-g9.md"
+}

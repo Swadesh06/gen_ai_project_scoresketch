@@ -1,0 +1,19 @@
+{
+  "item": "G-15",
+  "name": "DDSP solo_flute2 retest",
+  "status": "code-shipped-eval-deferred",
+  "strict_pass": {
+    "direct_voc_a1_ge_0.55": {"threshold": 0.55, "observed": null, "pass": null, "note": "deferred — solo_flute2_ckpt not on host"},
+    "ensemble_voc_a1_ge_0.65": {"threshold": 0.65, "observed": null, "pass": null, "note": "deferred"},
+    "three_fixes_shipped": {"threshold": 3, "observed": 3, "pass": true, "note": "crossfade, loudness-norm bypass, solo_flute2 path"}
+  },
+  "headline": {
+    "module_path": "humscribe/pitch/timbre_transfer/ddsp_flute.py",
+    "crossfade_ms": 200,
+    "chunk_s": 4.0,
+    "checkpoint_dir": "/workspace/.cache/ddsp_checkpoints/solo_flute2_ckpt",
+    "checkpoint_available": false
+  },
+  "code_paths": ["humscribe/pitch/timbre_transfer/ddsp_flute.py"],
+  "report": "reports/item-g15.md"
+}

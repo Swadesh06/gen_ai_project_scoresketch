@@ -1,0 +1,14 @@
+{
+  "mode": "baseline",
+  "use_beats": false,
+  "use_voices": false,
+  "vocadito": {
+    "rows": [],
+    "mean": {},
+    "use_beats": false,
+    "use_voices": false,
+    "alignment": "non_aligned",
+    "annotator": "A1"
+  },
+  "wall_s": 0.0002627372741699219
+}

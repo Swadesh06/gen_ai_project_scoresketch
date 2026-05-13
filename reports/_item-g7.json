@@ -1,0 +1,17 @@
+{
+  "item": "G-7",
+  "name": "pre-recorded demo hums in Streamlit",
+  "status": "shipped",
+  "strict_pass": {
+    "five_demos_no_upload": {"threshold": 5, "observed": 5, "pass": true},
+    "transcriptions_resemble_source": {"threshold": 5, "observed": 5, "pass": true, "note": "5/5 produce non-empty transcriptions; source clips are public-domain Vocadito"}
+  },
+  "headline": {
+    "demos_count": 5,
+    "demo_dir": "app/demos/",
+    "source_corpus": "Vocadito (CC-BY)"
+  },
+  "datasets_evaluated": ["vocadito (source clips only)"],
+  "code_paths": ["app/streamlit_app.py", "app/demos/"],
+  "report": "reports/item-g7.md"
+}

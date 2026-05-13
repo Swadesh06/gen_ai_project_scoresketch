@@ -1,0 +1,28 @@
+{
+  "item": "G-2",
+  "name": "meter grid markers in MV2H emission",
+  "status": "shipped",
+  "strict_pass": {
+    "asap_meter": {"threshold": 0.30, "observed": 0.303, "pass": true},
+    "maestro_meter": {"threshold": 0.35, "observed": 0.102, "pass": false},
+    "no_dtw_collapse": {"pass": true, "pieces_with_nan": 0},
+    "no_other_subscore_regression": {"pass": true, "value_drop": 0.0}
+  },
+  "headline": {
+    "asap_mv2h_mean_baseline": 0.5515,
+    "asap_mv2h_mean_with_g2": 0.5915,
+    "asap_mv2h_mean_delta": 0.0400,
+    "asap_meter_baseline": 0.103,
+    "asap_meter_with_g2": 0.303,
+    "asap_meter_delta": 0.200,
+    "asap_mv2h_mean_with_g1g2": 0.6151,
+    "asap_mv2h_mean_delta_g1g2": 0.0636
+  },
+  "datasets_evaluated": ["asap", "maestro"],
+  "asap_beat_source": "real beats from beat_this on cached rendered audio",
+  "code_paths": ["humscribe/eval/mv2h_io.py", "scripts/eval_mv2h_phase_g.py"],
+  "discarded_for": ["maestro"],
+  "discard_rationale": "chamber meter ambiguity between beat_this and 30 s MIDI excerpt; ASAP win is real.",
+  "rendered_svg_changes": "none — emitter-only change does not touch score.py.",
+  "report": "reports/item-g2.md"
+}

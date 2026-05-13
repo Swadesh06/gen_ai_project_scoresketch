@@ -67,6 +67,45 @@ def _tatum_grid_ms(bpm: float, total_ms: int, tatums_per_beat: int) -> list[int]
     return [int(round(i * step_ms)) for i in range(n + 1)]
 
 
+def _tatum_grid_from_beats(beats, total_ms: int, tatums_per_beat: int) -> list[int]:
+    """Phase G G-2: tatum pulses interpolated linearly between real beat
+    positions. Falls back to the last inter-beat interval to extend past the
+    last beat up to `total_ms` so pred and GT cover the same window.
+
+    `beats` is a sequence of beat times in seconds.
+    """
+    bs = [float(b) for b in beats]
+    if len(bs) < 2 or tatums_per_beat <= 0 or total_ms <= 0:
+        return [0]
+    pulses: list[int] = []
+    for k in range(len(bs) - 1):
+        seg_dur_ms = (bs[k + 1] - bs[k]) * 1000.0
+        if seg_dur_ms <= 0:
+            continue
+        for j in range(tatums_per_beat):
+            t_ms = int(round(bs[k] * 1000.0 + j * seg_dur_ms / tatums_per_beat))
+            if 0 <= t_ms <= total_ms:
+                pulses.append(t_ms)
+    # Extend past the last beat using the last ibi.
+    last_ibi_ms = (bs[-1] - bs[-2]) * 1000.0 if len(bs) >= 2 else 500.0
+    if last_ibi_ms > 0:
+        t = bs[-1] * 1000.0
+        # include the last beat itself as a tatum on the downbeat (j=0).
+        if 0 <= int(round(t)) <= total_ms:
+            pulses.append(int(round(t)))
+        step_ms = last_ibi_ms / tatums_per_beat
+        while t + step_ms <= total_ms:
+            t += step_ms
+            pulses.append(int(round(t)))
+    pulses.sort()
+    # Deduplicate consecutive identical positions caused by rounding.
+    dedup = [pulses[0]] if pulses else [0]
+    for p in pulses[1:]:
+        if p != dedup[-1]:
+            dedup.append(p)
+    return dedup
+
+
 def notes_to_mv2h_format(
     notes: Sequence[NoteEvent],
     bpm: float,
@@ -77,6 +116,7 @@ def notes_to_mv2h_format(
     key_tonic: int | None = None,
     key_mode: str = "Maj",
     quantise_to_tatum: bool = False,
+    beats: Sequence[float] | None = None,
 ) -> str:
     """Convert (NoteEvent[], bpm, time_sig) -> MV2H text.
 
@@ -121,7 +161,16 @@ def notes_to_mv2h_format(
             off_val = on_val + max(int(tatum_ms), 1)
         max_off_ms = max(max_off_ms, off_ms)
         lines.append(f"Note {int(midi)} {on_ms} {on_val} {off_val} {int(v)}")
-    for t in _tatum_grid_ms(float(bpm), max_off_ms, tatums_per_beat):
+    if beats is not None and len(list(beats)) >= 2:
+        # Phase G G-2: place tatums at real beat positions (interpolated) so
+        # MV2H's meter sub-score compares position-accurate grids on both
+        # sides. Uniform-from-bpm fallback collapses meter on tempo-rubato
+        # pieces (Liszt) and any clip where beat_this's median IBI differs
+        # from the GT's first tempo marking.
+        tat_positions = _tatum_grid_from_beats(beats, max_off_ms, tatums_per_beat)
+    else:
+        tat_positions = _tatum_grid_ms(float(bpm), max_off_ms, tatums_per_beat)
+    for t in tat_positions:
         lines.append(f"Tatum {t}")
     lines.append(_hierarchy_line(time_sig, tatums_per_subbeat=tatums_per_beat // 2 if tatums_per_beat >= 2 else 1))
     if key_tonic is not None:

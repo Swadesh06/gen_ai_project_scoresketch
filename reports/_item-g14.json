@@ -1,0 +1,17 @@
+{
+  "item": "G-14",
+  "name": "multi-take averaging UX",
+  "status": "code-shipped-eval-deferred",
+  "strict_pass": {
+    "consensus_f1_ge_0.72": {"threshold": 0.72, "observed": null, "pass": null, "note": "deferred — needs 5 user-recorded triplets"},
+    "single_take_f1_ge_0.65": {"threshold": 0.65, "observed": null, "pass": null, "note": "deferred"},
+    "algorithm_and_ui_shipped": {"threshold": "shipped", "observed": "shipped", "pass": true}
+  },
+  "headline": {
+    "consensus_threshold_takes": "ceil(N/2)",
+    "onset_tolerance_s": 0.05,
+    "pitch_tolerance_semitones": 1
+  },
+  "code_paths": ["humscribe/eval/multi_take.py", "app/streamlit_app.py"],
+  "report": "reports/item-g14.md"
+}

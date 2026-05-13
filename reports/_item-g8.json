@@ -1,0 +1,22 @@
+{
+  "item": "G-8",
+  "name": "round-trip self-consistency metric",
+  "status": "discarded",
+  "strict_pass": {
+    "correlation_abs_r": {"threshold": 0.3, "observed": 0.642, "pass": true},
+    "flags_liszt_highest_distance": {"threshold": "Liszt highest", "observed": "Liszt lowest", "pass": false},
+    "catches_mv2h_lt_0.30": {"threshold": 0.8, "observed": "vacuous (no piece < 0.30)", "pass": null}
+  },
+  "headline": {
+    "pearson_dist_vs_mv2h": 0.642,
+    "spearman_dist_vs_mv2h": null,
+    "liszt_rt_distance": 0.0196,
+    "max_rt_distance_piece": "Bach__Fugue__bwv_846",
+    "max_rt_distance_value": 0.04149
+  },
+  "datasets_evaluated": ["asap"],
+  "asap_beat_source": "score beats (ymt3_cache + real-beats for G-2 emission)",
+  "code_paths": ["humscribe/eval/round_trip.py", "scripts/eval_round_trip.py"],
+  "discard_rationale": "Distance correlates positively with MV2H (wrong sign for a quality signal) because the dominant driver is note count, not structural correctness. Liszt has the LOWEST distance but is among the worst-MV2H pieces.",
+  "report": "reports/item-g8.md"
+}

@@ -1,0 +1,141 @@
+{
+  "mode": "baseline",
+  "use_beats": false,
+  "use_voices": false,
+  "asap": {
+    "rows": [
+      {
+        "piece": "Bach__Fugue__bwv_846",
+        "multi_pitch": 0.9766839378238342,
+        "voice": 0.7466813348001466,
+        "meter": 0.0,
+        "value": 0.9982571413607667,
+        "harmony": 0.0,
+        "mv2h": 0.5443244827969496,
+        "n_notes_gt": 389,
+        "n_notes_pred": 383,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      },
+      {
+        "piece": "Bach__Fugue__bwv_848",
+        "multi_pitch": 0.9841269841269841,
+        "voice": 0.7740296803652967,
+        "meter": 0.3,
+        "value": 0.996592294403864,
+        "harmony": 0.0,
+        "mv2h": 0.6109497917792289,
+        "n_notes_gt": 346,
+        "n_notes_pred": 347,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      },
+      {
+        "piece": "Bach__Fugue__bwv_854",
+        "multi_pitch": 0.9893617021276594,
+        "voice": 0.7705291005291003,
+        "meter": 0.30303030303030304,
+        "value": 0.9994659813351403,
+        "harmony": 0.0,
+        "mv2h": 0.6124774174044406,
+        "n_notes_gt": 378,
+        "n_notes_pred": 374,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      },
+      {
+        "piece": "Bach__Fugue__bwv_856",
+        "multi_pitch": 0.8955555555555555,
+        "voice": 0.7278749595076126,
+        "meter": 0.13192182410423453,
+        "value": 0.9920240740926916,
+        "harmony": 0.0,
+        "mv2h": 0.5494752826520188,
+        "n_notes_gt": 464,
+        "n_notes_pred": 436,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      },
+      {
+        "piece": "Bach__Fugue__bwv_857",
+        "multi_pitch": 0.9820359281437127,
+        "voice": 0.7480392156862743,
+        "meter": 0.06418918918918919,
+        "value": 0.9904159422988646,
+        "harmony": 0.0,
+        "mv2h": 0.5569360550636081,
+        "n_notes_gt": 250,
+        "n_notes_pred": 251,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      },
+      {
+        "piece": "Beethoven__Piano_Sonatas__21-1",
+        "multi_pitch": 0.951417004048583,
+        "voice": 0.6756000000000008,
+        "meter": 0.07003891050583658,
+        "value": 0.9720569393700232,
+        "harmony": 0.0,
+        "mv2h": 0.5338225707848887,
+        "n_notes_gt": 487,
+        "n_notes_pred": 501,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      },
+      {
+        "piece": "Schumann__Toccata",
+        "multi_pitch": 0.9493844049247606,
+        "voice": 0.6651787718454388,
+        "meter": 0.01951219512195122,
+        "value": 0.9807343750880806,
+        "harmony": 0.0,
+        "mv2h": 0.5229619493960462,
+        "n_notes_gt": 740,
+        "n_notes_pred": 722,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      },
+      {
+        "piece": "Chopin__Berceuse_op_57",
+        "multi_pitch": 0.9774436090225563,
+        "voice": 0.6575980392156863,
+        "meter": 0.0,
+        "value": 0.9956637412756548,
+        "harmony": 0.0,
+        "mv2h": 0.5261410779027795,
+        "n_notes_gt": 135,
+        "n_notes_pred": 131,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      },
+      {
+        "piece": "Liszt__Sonata",
+        "multi_pitch": 0.9547038327526133,
+        "voice": 0.5662757640369582,
+        "meter": 0.038748137108792845,
+        "value": 0.9725579765041102,
+        "harmony": 0.0,
+        "mv2h": 0.5064571420804949,
+        "n_notes_gt": 145,
+        "n_notes_pred": 142,
+        "n_voices_pred": 1,
+        "n_beats_gt": 0
+      }
+    ],
+    "mean": {
+      "mv2h": 0.5515050855400506,
+      "multi_pitch": 0.962301439836251,
+      "voice": 0.7035340962207238,
+      "meter": 0.10304895100670082,
+      "value": 0.9886409406365774,
+      "harmony": 0.0
+    },
+    "skipped": [],
+    "use_beats": false,
+    "use_voices": false,
+    "alignment": "non_aligned",
+    "eval_seconds": 30.0,
+    "tatums_per_beat": 4
+  },
+  "wall_s": 20.909950971603394
+}

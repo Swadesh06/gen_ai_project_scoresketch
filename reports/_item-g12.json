@@ -1,0 +1,21 @@
+{
+  "item": "G-12",
+  "name": "ME-14 system-level ensemble selection",
+  "status": "discarded",
+  "strict_pass": {
+    "asap_mv2h_lift": {"threshold": 0.015, "observed": 0.0049, "pass": false},
+    "no_piece_regression": {"threshold_max_regression": 0.02, "observed_max_regression": 0.0, "pass": true}
+  },
+  "headline": {
+    "single_tpb12_mean": 0.5492,
+    "oracle_ensemble_mean": 0.5541,
+    "oracle_lift": 0.0049,
+    "n_pieces_strictly_winning": 5,
+    "n_pieces_tied": 4
+  },
+  "datasets_evaluated": ["asap"],
+  "asap_beat_source": "real beats from beat_this (cached)",
+  "code_paths": ["scripts/eval_me14_g12.py"],
+  "discard_rationale": "Oracle ensemble lift over 3-config tpb sweep is +0.0049 (below +0.015 strict criterion).",
+  "report": "reports/item-g12.md"
+}

@@ -1,0 +1,86 @@
+{
+  "mode": "g1g2_both",
+  "use_beats": true,
+  "use_voices": true,
+  "maestro": {
+    "rows": [
+      {
+        "clip": "MIDI-Unprocessed_Chamber1_MID--AUDIO_07_R3_2018_wav--2_30s.wav",
+        "multi_pitch": 0.6666666666666666,
+        "voice": 0.49512670565302147,
+        "meter": 0.04366812227074236,
+        "value": 0.8783783783783784,
+        "harmony": 0.0,
+        "mv2h": 0.4167679745937618,
+        "n_notes_gt": 343,
+        "n_notes_pred": 173,
+        "bpm_pred": 78.94736842105284,
+        "n_voices_pred": 2
+      },
+      {
+        "clip": "MIDI-Unprocessed_Chamber2_MID--AUDIO_09_R3_2018_wav--1_30s.wav",
+        "multi_pitch": 0.9538461538461539,
+        "voice": 0.3114754098360656,
+        "meter": 0.15469613259668508,
+        "value": 0.8247128403009939,
+        "harmony": 0.0,
+        "mv2h": 0.44894610731597967,
+        "n_notes_gt": 200,
+        "n_notes_pred": 190,
+        "bpm_pred": 130.43478260869554,
+        "n_voices_pred": 2
+      },
+      {
+        "clip": "MIDI-Unprocessed_Chamber2_MID--AUDIO_09_R3_2018_wav--3_30s.wav",
+        "multi_pitch": 0.9069767441860465,
+        "voice": 0.30860215053763435,
+        "meter": 0.09484536082474226,
+        "value": 0.9225530264091223,
+        "harmony": 0.0,
+        "mv2h": 0.44659545639150905,
+        "n_notes_gt": 371,
+        "n_notes_pred": 317,
+        "bpm_pred": 83.33333333333326,
+        "n_voices_pred": 2
+      },
+      {
+        "clip": "MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--1_30s.wav",
+        "multi_pitch": 0.937984496124031,
+        "voice": 0.39830508474576265,
+        "meter": 0.2060390763765542,
+        "value": 0.6581547181267373,
+        "harmony": 0.0,
+        "mv2h": 0.440096675074617,
+        "n_notes_gt": 134,
+        "n_notes_pred": 124,
+        "bpm_pred": 153.8461538461537,
+        "n_voices_pred": 2
+      },
+      {
+        "clip": "MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--2_30s.wav",
+        "multi_pitch": 0.9956709956709957,
+        "voice": 0.22424242424242422,
+        "meter": 0.009501187648456057,
+        "value": 0.7497945777547537,
+        "harmony": 0.0,
+        "mv2h": 0.39584183706332593,
+        "n_notes_gt": 116,
+        "n_notes_pred": 115,
+        "bpm_pred": 73.17073170731705,
+        "n_voices_pred": 2
+      }
+    ],
+    "mean": {
+      "mv2h": 0.42964961008783875,
+      "multi_pitch": 0.8922290112987786,
+      "voice": 0.3475503550029816,
+      "meter": 0.101749975943436,
+      "value": 0.8067187081939972,
+      "harmony": 0.0
+    },
+    "use_beats": true,
+    "use_voices": true,
+    "alignment": "aligned"
+  },
+  "wall_s": 35.55907917022705
+}

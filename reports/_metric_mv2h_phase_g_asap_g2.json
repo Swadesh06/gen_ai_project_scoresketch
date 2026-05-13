@@ -1,0 +1,141 @@
+{
+  "mode": "g2_beats",
+  "use_beats": true,
+  "use_voices": false,
+  "asap": {
+    "rows": [
+      {
+        "piece": "Bach__Fugue__bwv_846",
+        "multi_pitch": 0.9766839378238342,
+        "voice": 0.7433810047671435,
+        "meter": 0.32847682119205296,
+        "value": 0.9982519542814833,
+        "harmony": 0.0,
+        "mv2h": 0.6093587436129029,
+        "n_notes_gt": 389,
+        "n_notes_pred": 383,
+        "n_voices_pred": 1,
+        "n_beats_gt": 70
+      },
+      {
+        "piece": "Bach__Fugue__bwv_848",
+        "multi_pitch": 0.9841269841269841,
+        "voice": 0.7740296803652967,
+        "meter": 0.45964912280701753,
+        "value": 0.996592294403864,
+        "harmony": 0.0,
+        "mv2h": 0.6428796163406325,
+        "n_notes_gt": 346,
+        "n_notes_pred": 347,
+        "n_voices_pred": 1,
+        "n_beats_gt": 70
+      },
+      {
+        "piece": "Bach__Fugue__bwv_854",
+        "multi_pitch": 0.9893617021276594,
+        "voice": 0.7705291005291003,
+        "meter": 0.4703832752613241,
+        "value": 0.9994659813351403,
+        "harmony": 0.0,
+        "mv2h": 0.6459480118506449,
+        "n_notes_gt": 378,
+        "n_notes_pred": 374,
+        "n_voices_pred": 1,
+        "n_beats_gt": 70
+      },
+      {
+        "piece": "Bach__Fugue__bwv_856",
+        "multi_pitch": 0.8955555555555555,
+        "voice": 0.7278749595076126,
+        "meter": 0.22857142857142856,
+        "value": 0.9920240740926916,
+        "harmony": 0.0,
+        "mv2h": 0.5688052035454577,
+        "n_notes_gt": 464,
+        "n_notes_pred": 436,
+        "n_voices_pred": 1,
+        "n_beats_gt": 140
+      },
+      {
+        "piece": "Bach__Fugue__bwv_857",
+        "multi_pitch": 0.9820359281437127,
+        "voice": 0.7480392156862743,
+        "meter": 0.4633431085043988,
+        "value": 0.9904159422988646,
+        "harmony": 0.0,
+        "mv2h": 0.6367668389266501,
+        "n_notes_gt": 250,
+        "n_notes_pred": 251,
+        "n_voices_pred": 1,
+        "n_beats_gt": 70
+      },
+      {
+        "piece": "Beethoven__Piano_Sonatas__21-1",
+        "multi_pitch": 0.951417004048583,
+        "voice": 0.6756000000000008,
+        "meter": 0.17073170731707316,
+        "value": 0.9720569393700232,
+        "harmony": 0.0,
+        "mv2h": 0.553961130147136,
+        "n_notes_gt": 487,
+        "n_notes_pred": 501,
+        "n_voices_pred": 1,
+        "n_beats_gt": 89
+      },
+      {
+        "piece": "Schumann__Toccata",
+        "multi_pitch": 0.9493844049247606,
+        "voice": 0.6651787718454388,
+        "meter": 0.3739837398373983,
+        "value": 0.9807343750880806,
+        "harmony": 0.0,
+        "mv2h": 0.5938562583391357,
+        "n_notes_gt": 740,
+        "n_notes_pred": 722,
+        "n_voices_pred": 1,
+        "n_beats_gt": 72
+      },
+      {
+        "piece": "Chopin__Berceuse_op_57",
+        "multi_pitch": 0.9774436090225563,
+        "voice": 0.6575980392156863,
+        "meter": 0.02531645569620253,
+        "value": 0.9956637412756548,
+        "harmony": 0.0,
+        "mv2h": 0.5312043690420201,
+        "n_notes_gt": 135,
+        "n_notes_pred": 131,
+        "n_voices_pred": 1,
+        "n_beats_gt": 24
+      },
+      {
+        "piece": "Liszt__Sonata",
+        "multi_pitch": 0.9547038327526133,
+        "voice": 0.5662757640369582,
+        "meter": 0.21052631578947367,
+        "value": 0.9725579765041102,
+        "harmony": 0.0,
+        "mv2h": 0.5408127778166312,
+        "n_notes_gt": 145,
+        "n_notes_pred": 142,
+        "n_voices_pred": 1,
+        "n_beats_gt": 74
+      }
+    ],
+    "mean": {
+      "mv2h": 0.5915103277356901,
+      "multi_pitch": 0.962301439836251,
+      "voice": 0.7031673928837234,
+      "meter": 0.3034424416640411,
+      "value": 0.9886403642944348,
+      "harmony": 0.0
+    },
+    "skipped": [],
+    "use_beats": true,
+    "use_voices": false,
+    "alignment": "non_aligned",
+    "eval_seconds": 30.0,
+    "tatums_per_beat": 4
+  },
+  "wall_s": 19.350027799606323
+}

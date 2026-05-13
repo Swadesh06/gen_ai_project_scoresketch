@@ -1,0 +1,20 @@
+{
+  "item": "G-13",
+  "name": "Lakh MIDI LoRA training",
+  "status": "deferred-with-harness-shipped",
+  "strict_pass": {
+    "training_completes_no_oom": {"threshold": "no OOM", "observed": null, "pass": null, "note": "deferred — needs Lakh prep + 1-2 hour training run"},
+    "test_loss_lt_0.983": {"threshold": 0.983, "observed": null, "pass": null, "note": "deferred"},
+    "chroma_similarity_ge_0.72": {"threshold": 0.72, "observed": null, "pass": null, "note": "deferred"},
+    "oom_protocol_harness_shipped": {"threshold": "shipped", "observed": "shipped", "pass": true}
+  },
+  "headline": {
+    "lakh_cache_present": false,
+    "estimated_prep_hours": "1-2",
+    "estimated_training_hours": "1-2",
+    "estimated_peak_gb": 10.0,
+    "oom_threshold_gb": 14.0
+  },
+  "code_paths": ["scripts/exp_G13_lakh_lora.py", "logs/vram_g13.log", "reports/_OOM_INCIDENTS.md"],
+  "report": "reports/item-g13.md"
+}

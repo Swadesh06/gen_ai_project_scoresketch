@@ -39,8 +39,25 @@ class TranscribeResult:
 def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> TranscribeResult:
     cfg = cfg or PipelineConfig()
     audio, sr = load_audio(audio_path, target_sr=cfg.sample_rate)
+    # Phase G G-6: trim leading/trailing silence so beat_this doesn't place beats
+    # in silence. Humming only. The trim shifts downstream timing by `lead_s`;
+    # we forward this through to beat positions later.
+    lead_s, trail_s = 0.0, 0.0
+    beat_audio_path = audio_path
+    if cfg.is_humming() and cfg.silent_trim_g6 == "auto":
+        from humscribe.post_process import trim_silence
+        trimmed, lead_s, trail_s = trim_silence(audio, sr, db_threshold=cfg.silent_trim_db)
+        if lead_s > 0.0 or trail_s > 0.0:
+            import tempfile, soundfile  # type: ignore[import-untyped]
+            tf = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+            soundfile.write(tf.name, trimmed, sr)
+            beat_audio_path = tf.name
     notes = _branch_notes(audio_path, audio, sr, cfg)
     notes = _filter_short_notes(notes, cfg.mode_config.min_note_seconds)
+    # Phase G G-4: merge consecutive same-pitch NoteEvents (humming branch).
+    if cfg.is_humming() and cfg.same_pitch_merge == "auto" and len(notes) > 1:
+        from humscribe.post_process import merge_same_pitch
+        notes = merge_same_pitch(notes, gap_s=cfg.same_pitch_merge_ms / 1000.0)
     # Phase F-2e: snap heuristic offsets to BiLSTM peaks when the model is
     # confident. Vocadito offset20 F1 0.343 → 0.370 at min_prob=0.30,
     # search_ms=50. Only applies to humming branch.
@@ -53,7 +70,10 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
     # used per-piece score-derived targets in benchmarks). Pieces with truly
     # extreme tempos (Liszt fast passages) keep their detected octave because
     # the log2 distance to 110 is minimised in the correct octave.
-    beats, downbeats, bpm = track_beats_beat_this(audio_path, target_bpm=110.0)
+    beats, downbeats, bpm = track_beats_beat_this(beat_audio_path, target_bpm=110.0)
+    if lead_s > 0.0 and len(beats) > 0:
+        beats = beats + lead_s
+        downbeats = downbeats + lead_s
     # Phase F-1: octave sanity check. Beat_this's target_bpm=110 covers most
     # cases but mis-octaves on slow pieces (Chopin Berceuse: detected 120
     # vs true 40) and dense fast pieces (Bach 856: detected 81 vs true
@@ -96,12 +116,21 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
         q_on = np.zeros(len(onsets), dtype=np.int64)
         q_off = np.zeros(len(onsets), dtype=np.int64)
     time_sig = _infer_time_signature(beats, downbeats)
+    # Phase G G-11: render_tpb auto-detect — slow pieces (median IOI > 0.3 s)
+    # rendered at tpb=12 produce sextuplets/triplets that the human reader
+    # can't parse cheaply; tpb=8 stays on 8th/16th/triplet ground.
+    render_tpb_eff = cfg.render_tpb
+    if cfg.render_tpb_auto == "auto" and len(onsets) >= 4:
+        sorted_onsets = np.sort(onsets)
+        median_ioi = float(np.median(np.diff(sorted_onsets)))
+        if median_ioi > 0.30 and cfg.render_tpb == 12:
+            render_tpb_eff = 8
     s = build_stream(
         notes, bpm=bpm, time_sig=time_sig,
         tatum_onsets=q_on if len(onsets) > 0 else None,
         tatum_offsets=q_off if len(onsets) > 0 else None,
         tatums_per_beat=cfg.tatums_per_beat,
-        render_tpb=cfg.render_tpb,
+        render_tpb=render_tpb_eff,
         estimate_key=cfg.estimate_key,
         enharmonic_spelling=cfg.enharmonic_spelling,
     )
@@ -127,6 +156,11 @@ def _branch_notes(audio_path: str, audio: np.ndarray, sr: int, cfg: PipelineConf
             t, hz, vc = track_pitch_hybrid_voicing(audio, sr)
         else:
             raise ValueError(f"unknown pitch_model: {cfg.pitch_model!r}")
+        # Phase G G-5: 250 ms voiced-only median smoothing on the pitch trace
+        # before segmentation. Mauch & Dixon 2014 pYIN published practice.
+        if cfg.median_smooth_g5 == "auto":
+            from humscribe.post_process import median_smooth_pitch
+            hz, vc = median_smooth_pitch(t, hz, vc, window_ms=cfg.median_smooth_window_ms)
         return segment_pitch_to_notes(t, hz, vc, cfg.mode_config)
     if cfg.transcriber == "bytedance_piano":
         return transcribe_piano(audio_path)

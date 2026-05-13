@@ -1,0 +1,22 @@
+{
+  "item": "G-3",
+  "name": "F-1b second-signal octave detector (IOI signal)",
+  "status": "discarded",
+  "strict_pass": {
+    "detector_accuracy_asap": {"threshold": "9/9", "observed": "6/9", "pass": false},
+    "chopin_mv2h_lift": {"threshold": 0.04, "observed": 0.0000, "pass": false},
+    "no_false_fires": {"threshold": true, "observed_false_fire_count": 0, "pass": true}
+  },
+  "headline": {
+    "chopin_baseline_mv2h": 0.5261,
+    "chopin_f1_mv2h": 0.5312,
+    "chopin_g3_mv2h": 0.5312,
+    "chopin_g3_lift": 0.0,
+    "asap_9_mv2h_mean_with_g3": 0.5915
+  },
+  "datasets_evaluated": ["asap"],
+  "asap_beat_source": "real beats from beat_this(target_bpm=110)",
+  "code_paths": ["humscribe/beat/octave_sanity.py"],
+  "discard_rationale": "Chopin Berceuse needs a 3-tier (1/3 BPM) octave correction; halve/double cannot reach a 3x error. The IOI ≥ 0.4 s threshold also doesn't trigger on Chopin's YMT3 transcription (actual median IOI = 0.16 s).",
+  "report": "reports/item-g3.md"
+}

@@ -1,0 +1,141 @@
+{
+  "mode": "g1g2_both",
+  "use_beats": true,
+  "use_voices": true,
+  "asap": {
+    "rows": [
+      {
+        "piece": "Bach__Fugue__bwv_846",
+        "multi_pitch": 0.9766839378238342,
+        "voice": 0.8302631578947368,
+        "meter": 0.32847682119205296,
+        "value": 0.9908028082579516,
+        "harmony": 0.0,
+        "mv2h": 0.6252453450337151,
+        "n_notes_gt": 389,
+        "n_notes_pred": 383,
+        "n_voices_pred": 2,
+        "n_beats_gt": 70
+      },
+      {
+        "piece": "Bach__Fugue__bwv_848",
+        "multi_pitch": 0.9841269841269841,
+        "voice": 0.8313131313131312,
+        "meter": 0.45964912280701753,
+        "value": 0.9918313933356269,
+        "harmony": 0.0,
+        "mv2h": 0.6533841263165521,
+        "n_notes_gt": 346,
+        "n_notes_pred": 347,
+        "n_voices_pred": 2,
+        "n_beats_gt": 70
+      },
+      {
+        "piece": "Bach__Fugue__bwv_854",
+        "multi_pitch": 0.9893617021276594,
+        "voice": 0.9078947368421053,
+        "meter": 0.4703832752613241,
+        "value": 0.9987194013920915,
+        "harmony": 0.0,
+        "mv2h": 0.673271823124636,
+        "n_notes_gt": 378,
+        "n_notes_pred": 374,
+        "n_voices_pred": 2,
+        "n_beats_gt": 70
+      },
+      {
+        "piece": "Bach__Fugue__bwv_856",
+        "multi_pitch": 0.8955555555555555,
+        "voice": 0.7864450127877238,
+        "meter": 0.22857142857142856,
+        "value": 0.9898024235014444,
+        "harmony": 0.0,
+        "mv2h": 0.5800748840832306,
+        "n_notes_gt": 464,
+        "n_notes_pred": 436,
+        "n_voices_pred": 2,
+        "n_beats_gt": 140
+      },
+      {
+        "piece": "Bach__Fugue__bwv_857",
+        "multi_pitch": 0.9820359281437127,
+        "voice": 0.8102453102453102,
+        "meter": 0.4633431085043988,
+        "value": 0.9871633095603362,
+        "harmony": 0.0,
+        "mv2h": 0.6485575312907516,
+        "n_notes_gt": 250,
+        "n_notes_pred": 251,
+        "n_voices_pred": 2,
+        "n_beats_gt": 70
+      },
+      {
+        "piece": "Beethoven__Piano_Sonatas__21-1",
+        "multi_pitch": 0.951417004048583,
+        "voice": 0.8550048590864918,
+        "meter": 0.17073170731707316,
+        "value": 0.9655463584025021,
+        "harmony": 0.0,
+        "mv2h": 0.58853998577093,
+        "n_notes_gt": 487,
+        "n_notes_pred": 501,
+        "n_voices_pred": 2,
+        "n_beats_gt": 89
+      },
+      {
+        "piece": "Schumann__Toccata",
+        "multi_pitch": 0.9493844049247606,
+        "voice": 0.8742625368731564,
+        "meter": 0.3739837398373983,
+        "value": 0.9798385184594037,
+        "harmony": 0.0,
+        "mv2h": 0.6354938400189438,
+        "n_notes_gt": 740,
+        "n_notes_pred": 722,
+        "n_voices_pred": 2,
+        "n_beats_gt": 72
+      },
+      {
+        "piece": "Chopin__Berceuse_op_57",
+        "multi_pitch": 0.9774436090225563,
+        "voice": 0.73078231292517,
+        "meter": 0.02531645569620253,
+        "value": 0.9906354765605978,
+        "harmony": 0.0,
+        "mv2h": 0.5448355708409054,
+        "n_notes_gt": 135,
+        "n_notes_pred": 131,
+        "n_voices_pred": 2,
+        "n_beats_gt": 24
+      },
+      {
+        "piece": "Liszt__Sonata",
+        "multi_pitch": 0.9547038327526133,
+        "voice": 0.7942760942760944,
+        "meter": 0.21052631578947367,
+        "value": 0.9730153435623748,
+        "harmony": 0.0,
+        "mv2h": 0.5865043172761112,
+        "n_notes_gt": 145,
+        "n_notes_pred": 142,
+        "n_voices_pred": 2,
+        "n_beats_gt": 74
+      }
+    ],
+    "mean": {
+      "mv2h": 0.6151008248617528,
+      "multi_pitch": 0.962301439836251,
+      "voice": 0.8244985724715467,
+      "meter": 0.3034424416640411,
+      "value": 0.9852616703369255,
+      "harmony": 0.0
+    },
+    "skipped": [],
+    "use_beats": true,
+    "use_voices": true,
+    "alignment": "non_aligned",
+    "eval_seconds": 30.0,
+    "tatums_per_beat": 4
+  },
+  "wall_s": 29.414536952972412
+}

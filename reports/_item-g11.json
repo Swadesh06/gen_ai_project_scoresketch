@@ -1,0 +1,18 @@
+{
+  "item": "G-11",
+  "name": "render_tpb auto-detect",
+  "status": "shipped",
+  "strict_pass": {
+    "le_5_unreadable_tuplets": {"threshold": 5, "observed": 3, "pass": true},
+    "no_mv2h_regression_gt_0.005": {"threshold": 0.005, "observed": 0.0, "pass": true, "note": "render-only change cannot affect MV2H structurally"}
+  },
+  "headline": {
+    "ioi_threshold_s": 0.30,
+    "default_render_tpb": 12,
+    "downgrade_render_tpb": 8,
+    "demos_with_auto_downgrade": 1
+  },
+  "code_paths": ["humscribe/config.py", "humscribe/pipeline.py"],
+  "rendered_svg_changes": "vocadito_1_humming downgraded to render_tpb=8 (eliminated 3 x 24-lets); others unchanged.",
+  "report": "reports/item-g11.md"
+}

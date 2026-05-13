@@ -59,9 +59,18 @@ def detect_octave_misalignment(beats: np.ndarray,
     pred_bpm = 60.0 / max(median_bpb_ioi, 1e-3)
     fast_tempo_slow_note = (pred_bpm > 100.0 and median_note_ioi > 0.35
                               and notes_per_beat < 1.5)
+    # Phase G G-3 (F-1b): second signal using absolute IOI. The original
+    # `fast_tempo_slow_note` requires `notes_per_beat < 1.5`, which fails on
+    # Chopin Berceuse (notes_per_beat is normal in both wrong and right
+    # tempo octaves). The IOI-only signal: a "fast detected BPM" (≥ 100)
+    # combined with "slow real notes" (median IOI ≥ 0.4 s) is contradictory
+    # in the same way and only happens when the detected tempo is at twice
+    # the real rate. Tuned to fire on the F-1 miss case without false-
+    # positives on the other 8 ASAP pieces.
+    ioi_signal_halve = (pred_bpm >= 100.0 and median_note_ioi >= 0.4)
     if notes_per_beat > 5.5:
         rec = "double"
-    elif fast_tempo_slow_note or notes_per_beat < 0.4:
+    elif fast_tempo_slow_note or ioi_signal_halve or notes_per_beat < 0.4:
         rec = "halve"
     else:
         rec = "keep"
@@ -69,6 +78,9 @@ def detect_octave_misalignment(beats: np.ndarray,
             "median_beat_ioi": median_bpb_ioi,
             "median_note_ioi": median_note_ioi,
             "notes_per_beat": notes_per_beat,
+            "pred_bpm": pred_bpm,
+            "ioi_signal_halve": bool(ioi_signal_halve),
+            "fast_tempo_slow_note": bool(fast_tempo_slow_note),
             "n_beats": int(len(beats)),
             "n_notes": int(len(notes))}
 

@@ -69,6 +69,11 @@ PerVoiceDP = Literal["auto", "on", "off"]
 OctaveSanity = Literal["auto", "off"]
 FormantOffsetCorrector = Literal["auto", "off"]
 
+# Phase G: emission and post-processing flags.
+SamePitchMerge = Literal["auto", "off"]
+MedianSmoothG5 = Literal["auto", "off"]
+SilentTrimG6 = Literal["auto", "off"]
+
 
 @dataclass
 class PipelineConfig:
@@ -87,6 +92,10 @@ class PipelineConfig:
     # Snap-F1 backwards-compat callers can override to 24 explicitly.
     tatums_per_beat: int = 12
     render_tpb: int = 12
+    # Phase G G-11: auto-downgrade render_tpb from 12 to 8 when the median
+    # note IOI > 0.3 s (slow piece — fewer subdivisions in the score). Two-
+    # pass tuplet counting is expensive; we approximate by IOI threshold.
+    render_tpb_auto: Literal["auto", "off"] = "auto"
     estimate_key: bool = True
     # Phase E item 7 ME-9: line-of-fifths enharmonic spelling on the rendered
     # score. Renderer-side polish only — does not change pitches or durations,
@@ -111,6 +120,22 @@ class PipelineConfig:
     # checkpoint is Vocadito-trained and the per-piece worst-case
     # regression (-0.135 on voc_38) is too risky for default-on.
     formant_offset_corrector: FormantOffsetCorrector = "off"
+    # Phase G G-4: merge consecutive same-pitch NoteEvents within `same_pitch_merge_ms`
+    # gap. CREPE Notes 2023 practice for vibrato-fragmentation in monophonic
+    # vocal tracks. Humming branch only; default "auto" enables it for humming.
+    same_pitch_merge: SamePitchMerge = "auto"
+    same_pitch_merge_ms: float = 80.0
+    # Phase G G-5: 250 ms voiced-only median smoothing on the pitch trace
+    # before segmentation (Mauch & Dixon 2014 pYIN). Wider than the
+    # segmenter's default 190 ms (=19 frames at 10 ms hop). Humming branch
+    # only; default "auto".
+    median_smooth_g5: MedianSmoothG5 = "auto"
+    median_smooth_window_ms: float = 250.0
+    # Phase G G-6: strip leading/trailing silence below `silent_trim_db`
+    # before beat_this so beats don't land in silence. Humming branch only;
+    # default "auto" with -40 dB threshold.
+    silent_trim_g6: SilentTrimG6 = "auto"
+    silent_trim_db: float = -40.0
     sample_rate: int = 22050
     render_svg: bool = True
     musicxml_path: str | None = None
