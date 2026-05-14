@@ -49,22 +49,50 @@ def _load_demo_meta(demos_dir: str) -> list[dict]:
 
 
 def _render_svg(svg: str) -> None:
-    """Render a music21/Verovio SVG inline. The renderer emits a fixed-
-    width SVG; we wrap it in a scrollable div sized for typical scores."""
-    # Force the SVG to fit the iframe width while keeping its aspect ratio.
-    svg_responsive = re.sub(
-        r'<svg([^>]*?)>',
-        r'<svg\1 style="width:100%;height:auto;max-width:100%;display:block;">',
-        svg,
-        count=1,
-    )
+    """Render a music21/Verovio SVG inline.
+
+    Verovio emits the root tag as `<svg width="840px" height="202px" ...>`
+    with NO viewBox. With `height:auto` CSS the browser then doesn't know
+    the aspect ratio, and short (single-system) scores -- which is what
+    the humming branch usually produces -- collapse to near-zero height.
+    The fix: parse the explicit width / height, inject a `viewBox`, and
+    strip the pixel-dimension attributes so the responsive style wins.
+    """
+    m = re.search(r'<svg([^>]*?)>', svg)
+    if m:
+        attrs = m.group(1)
+        w_match = re.search(r'\bwidth="(\d+(?:\.\d+)?)(?:px)?"', attrs)
+        h_match = re.search(r'\bheight="(\d+(?:\.\d+)?)(?:px)?"', attrs)
+        has_viewbox = re.search(r'\bviewBox=', attrs) is not None
+        if w_match and h_match:
+            w_px = float(w_match.group(1))
+            h_px = float(h_match.group(1))
+            new_attrs = re.sub(
+                r'\b(?:width|height)="[^"]+"',
+                "", attrs,
+            ).strip()
+            new_attrs += (f' viewBox="0 0 {int(w_px)} {int(h_px)}"'
+                            if not has_viewbox else "")
+            new_attrs += (' style="width:100%;height:auto;max-width:100%;'
+                            'display:block;"')
+            svg = svg[: m.start()] + f"<svg {new_attrs}>" + svg[m.end():]
+        else:
+            # Fallback: at least add the responsive style.
+            svg = re.sub(
+                r'<svg([^>]*?)>',
+                r'<svg\1 style="width:100%;height:auto;max-width:100%;display:block;">',
+                svg, count=1,
+            )
+    # Height the iframe to fit short and long scores both. Piano scores can
+    # be 1200+ px tall after the width-100% stretch; scrolling=True so the
+    # iframe gives a scroll bar instead of clipping.
     html = f"""
     <div style="background:#fff;padding:14px;border:1px solid #ddd;
                 border-radius:6px;overflow-x:auto;overflow-y:auto;">
-      {svg_responsive}
+      {svg}
     </div>
     """
-    st.components.v1.html(html, height=1000, scrolling=True)
+    st.components.v1.html(html, height=1100, scrolling=True)
 
 
 def _mode_inputs(mode: str, defaults: dict | None = None) -> dict:
