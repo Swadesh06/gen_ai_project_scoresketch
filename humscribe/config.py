@@ -150,6 +150,20 @@ class PipelineConfig:
     render_svg: bool = True
     musicxml_path: str | None = None
     svg_path: str | None = None
+    # Mode-aware UI overrides (Streamlit medium/hard modes pass values here):
+    #   target_bpm: if set, replaces the beat_this `target_bpm=110.0` default
+    #               (B88 fix) for the inference octave-snap. Useful when the
+    #               user knows the tempo a priori.
+    #   key_override: e.g. "C major" / "A minor". When set, bypasses the
+    #                 Krumhansl-Schmuckler key estimator and forces the named
+    #                 key signature on the rendered score.
+    #   time_sig_override: e.g. "4/4" / "3/4" / "6/8". When set, bypasses
+    #                      _infer_time_signature() in pipeline.py.
+    # All three default to None for full backward compatibility; the existing
+    # auto-detect paths run when they're unset.
+    target_bpm: float | None = None
+    key_override: str | None = None
+    time_sig_override: str | None = None
     mode_config: ModeConfig = field(init=False)
 
     def __post_init__(self) -> None:

@@ -31,6 +31,7 @@ def build_stream(
     render_tpb: int | None = None,
     estimate_key: bool = True,
     enharmonic_spelling: bool = False,
+    key_override: str | None = None,
 ) -> stream.Stream:
     """Build a music21 Stream from notes.
 
@@ -68,7 +69,23 @@ def build_stream(
         n.duration = m21dur.Duration(ql)
         s.append(n)
     inferred_key = None
-    if estimate_key:
+    if key_override:
+        # UI-supplied key string like "C major", "G major", "A minor". The
+        # music21 Key constructor wants ("C", "major") not "C major", and
+        # signals mode via tonic case ("c" -> minor), so we parse manually.
+        try:
+            parts = key_override.strip().split()
+            tonic = parts[0] if parts else "C"
+            mode = parts[1].lower() if len(parts) > 1 else "major"
+            if mode not in {"major", "minor"}:
+                mode = "major"
+            k = m21key.Key(tonic, mode)
+            ks = m21key.KeySignature(k.sharps)
+            s.insert(0, ks)
+            inferred_key = k
+        except Exception:
+            pass
+    elif estimate_key:
         try:
             k = KrumhanslSchmuckler().getSolution(s)
             if k is not None:

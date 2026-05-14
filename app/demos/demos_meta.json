@@ -1,0 +1,62 @@
+[
+  {
+    "file": "demo_1_piano_bach_bwv854.wav",
+    "duration_s": 25.0,
+    "kind": "piano",
+    "mode_default": "hard",
+    "pitch_model": "pesto",
+    "bpm_hint": 120,
+    "key": "C major",
+    "time_sig": "4/4",
+    "label": "Piano - Bach Fugue BWV 854",
+    "blurb": "ASAP-rendered Bach fugue. Use 'hard' mode to lock the key + time sig."
+  },
+  {
+    "file": "demo_2_piano_maestro_chamber.wav",
+    "duration_s": 25.0,
+    "kind": "piano",
+    "mode_default": "medium",
+    "pitch_model": "pesto",
+    "bpm_hint": 73,
+    "key": null,
+    "time_sig": null,
+    "label": "Piano - MAESTRO chamber excerpt",
+    "blurb": "Real recording; 'medium' mode with the BPM hint produces the cleanest score."
+  },
+  {
+    "file": "demo_3_humming_vocadito_1.wav",
+    "duration_s": 25.0,
+    "kind": "humming",
+    "mode_default": "soft",
+    "pitch_model": "pesto_crepevoicing",
+    "bpm_hint": 115,
+    "key": null,
+    "time_sig": null,
+    "label": "Humming - Vocadito clip 1 (headline G-4 example)",
+    "blurb": "The Vocadito clip from the G-4 before/after figure. 'soft' mode is enough."
+  },
+  {
+    "file": "demo_4_humming_vocadito_8.wav",
+    "duration_s": 17.04,
+    "kind": "humming",
+    "mode_default": "soft",
+    "pitch_model": "pesto_crepevoicing",
+    "bpm_hint": 95,
+    "key": null,
+    "time_sig": null,
+    "label": "Humming - Vocadito clip 8 (different singer)",
+    "blurb": "Variety; same humming branch handles a different vocal timbre."
+  },
+  {
+    "file": "demo_5_humming_vocadito_15.wav",
+    "duration_s": 20.28,
+    "kind": "humming",
+    "mode_default": "medium",
+    "pitch_model": "pesto_crepevoicing",
+    "bpm_hint": 100,
+    "key": null,
+    "time_sig": null,
+    "label": "Humming - Vocadito clip 15 (mid-tempo)",
+    "blurb": "Tighter rhythmic figure; 'medium' mode with the BPM hint tightens snap."
+  }
+]

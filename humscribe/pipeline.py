@@ -70,7 +70,9 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
     # used per-piece score-derived targets in benchmarks). Pieces with truly
     # extreme tempos (Liszt fast passages) keep their detected octave because
     # the log2 distance to 110 is minimised in the correct octave.
-    beats, downbeats, bpm = track_beats_beat_this(beat_audio_path, target_bpm=110.0)
+    # Allow UI-side BPM hint to override the B88 default of 110.0.
+    eff_target_bpm = float(cfg.target_bpm) if cfg.target_bpm else 110.0
+    beats, downbeats, bpm = track_beats_beat_this(beat_audio_path, target_bpm=eff_target_bpm)
     if lead_s > 0.0 and len(beats) > 0:
         beats = beats + lead_s
         downbeats = downbeats + lead_s
@@ -115,7 +117,7 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
     else:
         q_on = np.zeros(len(onsets), dtype=np.int64)
         q_off = np.zeros(len(onsets), dtype=np.int64)
-    time_sig = _infer_time_signature(beats, downbeats)
+    time_sig = cfg.time_sig_override or _infer_time_signature(beats, downbeats)
     # Phase G G-11: render_tpb auto-detect — slow pieces (median IOI > 0.3 s)
     # rendered at tpb=12 produce sextuplets/triplets that the human reader
     # can't parse cheaply; tpb=8 stays on 8th/16th/triplet ground.
@@ -133,6 +135,7 @@ def transcribe(audio_path: str, cfg: PipelineConfig | None = None) -> Transcribe
         render_tpb=render_tpb_eff,
         estimate_key=cfg.estimate_key,
         enharmonic_spelling=cfg.enharmonic_spelling,
+        key_override=cfg.key_override,
     )
     musicxml = write_musicxml(s, cfg.musicxml_path)
     svg = render_svg(s, notes, bpm) if cfg.render_svg else ""
