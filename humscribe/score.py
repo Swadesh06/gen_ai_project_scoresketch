@@ -162,13 +162,18 @@ def render_svg(s: stream.Stream, notes: Sequence[NoteEvent], bpm: float) -> str:
 
 def _verovio_svg(s: stream.Stream, relaxed: bool = False) -> str:
     """Render music21 Stream via Verovio's MusicXML loader. Returns first page SVG.
+
+    Goes through `loadFile(temp_path)` instead of `loadData(string)` because the
+    string-buffer path silently rejects MusicXML under Streamlit's threaded
+    runtime (returns False from loadData even on well-formed input that the
+    CLI accepts). The file path is robust across runtimes.
+
     Raises on any error so render_svg falls back."""
+    import tempfile
     import verovio
     musicxml = write_musicxml(s)
     tk = verovio.toolkit()
     if relaxed:
-        # Looser page settings + autoLayout fixes; helps when Verovio's strict
-        # page builder rejects ties-left-open or empty trailing measures.
         tk.setOptions({
             "scale": 35, "pageHeight": 4000, "pageWidth": 2100,
             "adjustPageHeight": True, "adjustPageWidth": True,
@@ -182,12 +187,28 @@ def _verovio_svg(s: stream.Stream, relaxed: bool = False) -> str:
             "adjustPageHeight": True, "adjustPageWidth": False,
             "footer": "none", "header": "none",
         })
-    if not tk.loadData(musicxml):
-        raise RuntimeError("verovio could not load musicxml")
-    n_pages = tk.getPageCount()
-    if n_pages < 1:
-        raise RuntimeError("verovio rendered no pages")
-    return tk.renderToSVG(1)
+    # Try file-path load first (robust under Streamlit), then in-memory.
+    loaded = False
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".musicxml", encoding="utf-8", delete=False,
+    ) as tf:
+        tf.write(musicxml)
+        tmp_path = tf.name
+    try:
+        loaded = bool(tk.loadFile(tmp_path))
+        if not loaded:
+            loaded = bool(tk.loadData(musicxml))
+        if not loaded:
+            raise RuntimeError("verovio could not load musicxml (file + data both failed)")
+        n_pages = tk.getPageCount()
+        if n_pages < 1:
+            raise RuntimeError("verovio rendered no pages")
+        return tk.renderToSVG(1)
+    finally:
+        try:
+            Path(tmp_path).unlink(missing_ok=True)
+        except Exception:
+            pass
 
 
 def _engrave_failed_svg(n_notes: int, bpm: float) -> str:
