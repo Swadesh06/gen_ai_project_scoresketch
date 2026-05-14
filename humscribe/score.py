@@ -117,11 +117,33 @@ def write_musicxml(s: stream.Stream, out_path: str | Path | None = None) -> str:
 
 
 def render_svg(s: stream.Stream, notes: Sequence[NoteEvent], bpm: float) -> str:
-    """Real notation via Verovio (preferred) > music21+LilyPond > piano-roll fallback."""
+    """Real notation via Verovio. Tries strict options first, then a relaxed
+    retry with `mei-basic`-like settings, then a music21 + LilyPond bridge
+    if installed. Only falls back to the piano-roll SVG when every engraved-
+    notation path fails AND there are no notes to engrave.
+
+    The Streamlit UI explicitly does not want the piano-roll output, so any
+    Verovio failure is logged to stderr and surfaced via a banner SVG that
+    instructs the user instead of silently returning bars.
+    """
+    import sys
+    if not notes:
+        return _empty_svg("(no notes detected)")
+    # Pass 1: strict options (the production page layout we've used since B+1).
     try:
         return _verovio_svg(s)
-    except Exception:
-        pass
+    except Exception as e1:
+        print(f"[render_svg] verovio strict failed: {type(e1).__name__}: {e1}",
+              file=sys.stderr)
+    # Pass 2: relaxed Verovio options. Some music21 outputs (long ties,
+    # extreme tuplets, empty measures) trip the strict page builder; the
+    # relaxed pass disables auto-page-height + uses a wider scale window.
+    try:
+        return _verovio_svg(s, relaxed=True)
+    except Exception as e2:
+        print(f"[render_svg] verovio relaxed failed: {type(e2).__name__}: {e2}",
+              file=sys.stderr)
+    # Pass 3: music21 + LilyPond bridge (rarely installed in env).
     try:
         from music21 import environment
         env = environment.Environment()
@@ -130,28 +152,68 @@ def render_svg(s: stream.Stream, notes: Sequence[NoteEvent], bpm: float) -> str:
         if ms or lp:
             tmp = s.write("musicxml.svg")
             return Path(tmp).read_text()
-    except Exception:
-        pass
-    return _pianoroll_svg(notes, bpm)
+    except Exception as e3:
+        print(f"[render_svg] lilypond bridge failed: {type(e3).__name__}: {e3}",
+              file=sys.stderr)
+    # All engraved-notation paths failed. Surface a clear banner so the user
+    # can see what to do, not the silent piano-roll fallback.
+    return _engrave_failed_svg(len(notes), bpm)
 
 
-def _verovio_svg(s: stream.Stream) -> str:
+def _verovio_svg(s: stream.Stream, relaxed: bool = False) -> str:
     """Render music21 Stream via Verovio's MusicXML loader. Returns first page SVG.
     Raises on any error so render_svg falls back."""
     import verovio
     musicxml = write_musicxml(s)
     tk = verovio.toolkit()
-    tk.setOptions({
-        "scale": 40, "pageHeight": 2970, "pageWidth": 2100,
-        "adjustPageHeight": True, "adjustPageWidth": False,
-        "footer": "none", "header": "none",
-    })
+    if relaxed:
+        # Looser page settings + autoLayout fixes; helps when Verovio's strict
+        # page builder rejects ties-left-open or empty trailing measures.
+        tk.setOptions({
+            "scale": 35, "pageHeight": 4000, "pageWidth": 2100,
+            "adjustPageHeight": True, "adjustPageWidth": True,
+            "footer": "none", "header": "none",
+            "breaks": "auto",
+            "spacingLinear": 0.25, "spacingNonLinear": 0.6,
+        })
+    else:
+        tk.setOptions({
+            "scale": 40, "pageHeight": 2970, "pageWidth": 2100,
+            "adjustPageHeight": True, "adjustPageWidth": False,
+            "footer": "none", "header": "none",
+        })
     if not tk.loadData(musicxml):
         raise RuntimeError("verovio could not load musicxml")
     n_pages = tk.getPageCount()
     if n_pages < 1:
         raise RuntimeError("verovio rendered no pages")
     return tk.renderToSVG(1)
+
+
+def _engrave_failed_svg(n_notes: int, bpm: float) -> str:
+    """Banner SVG shown when every Verovio path fails on a non-empty note set.
+    Replaces the silent piano-roll fallback so the UI tells the user what
+    happened and what to do next (re-run, try medium/hard mode, check audio)."""
+    msg1 = "Score engraving failed"
+    msg2 = f"transcription returned {n_notes} notes at BPM {bpm:.0f}, but"
+    msg3 = "Verovio could not lay out the notation. Try a different mode"
+    msg4 = "(soft / medium / hard) or re-record with a clearer melody."
+    return (
+        '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
+        '<svg xmlns="http://www.w3.org/2000/svg" width="700" height="180" '
+        'viewBox="0 0 700 180">\n'
+        '<rect width="100%" height="100%" fill="#fff6f0" stroke="#d97b3a" '
+        'stroke-width="2"/>\n'
+        f'<text x="20" y="44" font-family="sans-serif" font-size="20" '
+        f'fill="#a04020" font-weight="bold">{sx.escape(msg1)}</text>\n'
+        f'<text x="20" y="84" font-family="sans-serif" font-size="13" '
+        f'fill="#333">{sx.escape(msg2)}</text>\n'
+        f'<text x="20" y="108" font-family="sans-serif" font-size="13" '
+        f'fill="#333">{sx.escape(msg3)}</text>\n'
+        f'<text x="20" y="132" font-family="sans-serif" font-size="13" '
+        f'fill="#333">{sx.escape(msg4)}</text>\n'
+        '</svg>'
+    )
 
 
 def _pianoroll_svg(notes: Sequence[NoteEvent], bpm: float) -> str:
